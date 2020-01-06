@@ -47,4 +47,11 @@ let design tree = let rec designn (Node(label, subtrees)) = let (trees, extents)
 [<EntryPoint>]
 let main argv =
     printfn "Hello World from F#!"
+    let tree = design (Node("hello", [
+        Node("world", [
+            Node("abc", []);
+            Node("def", [])
+            ]);
+        Node("f#", [])
+     ]))
     0 // return an integer exit code
