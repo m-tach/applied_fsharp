@@ -28,7 +28,7 @@ let rec fitlistl es = let rec fitlistll acc bb = match bb with
 let fitlistr es = let rec fitlistrr acc bb = match bb with
                                              | [] -> []
                                              | (b::btail) -> let x = -(fit b acc)
-                                                             x::(fitlistrr (merge (moveextent (b, x), acc)) es)
+                                                             x::(fitlistrr (merge (moveextent (b, x), acc)) btail)
                   List.rev (fitlistrr [] (List.rev es));;
 
 let mean (x,y) = (x + y) / 2.0;;
