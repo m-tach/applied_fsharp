@@ -1,12 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Library</OutputType>
+    <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../Trees_impl/Project_1.fsproj">
       <Name>Project_1.fsproj</Name>
+    </ProjectReference>
+    <ProjectReference Include="../Postscript_impl/Project_gsgen.fsproj">
+      <Name>Project_gsgen.fsproj</Name>
+    </ProjectReference>
+    <ProjectReference Include="../AST_impl/AST_impl.fsproj">
+      <Name>AST_impl.fsproj</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
