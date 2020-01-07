@@ -8,6 +8,16 @@ open System.Text
 
 module PostScriptGen =
 
+    // Configs
+    let PAGE_WIDTH_SCALING = 200.0
+    let ROOT_X_OFFSET      = 70.0
+    let ROOT_X_SCALING     = 240.0
+
+    let MOVE_Y_START       = 8.0
+    let MOVE_Y_MIDDLE      = 25.0
+    let MOVE_Y_BOTTOM      = 40.0
+    let MOVE_Y_STEPSIZE    = 50.0
+
     // Finds the width of the tree, used for fitting.
     let rec findLargestX (Node((_, x), subtree)) : float =
         match subtree with
@@ -19,11 +29,19 @@ module PostScriptGen =
         | [] -> x
         | _ -> x + List.min (List.map findLargestX subtree)
 
+    let rec findLongestLabel (Node((label, x), subtree)) : int =
+        match subtree with
+        | [] -> String.length label
+        | _ -> List.max ( (String.length label) :: (List.map findLongestLabel subtree) )
+    
+    let getScalingX tree : float =
+        0.17 / float(findLongestLabel tree)
+
     let findWidth tree : float =
-        (Math.Abs (findLargestX tree) + Math.Abs (findSmallestX tree)) * 40.0
+        (Math.Abs (findLargestX tree) + Math.Abs (findSmallestX tree)) * PAGE_WIDTH_SCALING + (getScalingX tree) * 2.0
 
     let findRootX tree : float =
-        (Math.Abs (findSmallestX tree)) * 40.0
+        (Math.Abs (findSmallestX tree)) * ROOT_X_SCALING + (getScalingX tree) + ROOT_X_OFFSET
 
     // Used to convert floats to pixel values for the PostScript.
     let toIntString (x : float) =
@@ -45,21 +63,21 @@ module PostScriptGen =
                     yield "\nnewpath\n"
                     yield (toIntString x)
                     yield " "
-                    yield (toIntString (y - 8.0))
+                    yield (toIntString (y - MOVE_Y_START))
                     yield " moveto\n"
                     yield (toIntString x)
                     yield " "
-                    yield (toIntString (y - 25.0))
+                    yield (toIntString (y - MOVE_Y_MIDDLE))
                     yield " lineto\n"
                     yield (toIntString (x + dx / maxX))
                     yield " "
-                    yield (toIntString (y - 25.0))
+                    yield (toIntString (y - MOVE_Y_MIDDLE))
                     yield " lineto\n"
                     yield (toIntString (x + dx / maxX))
                     yield " "
-                    yield (toIntString (y - 40.0))
+                    yield (toIntString (y - MOVE_Y_BOTTOM))
                     yield " lineto\nstroke\n"
-                    yield! generateImpl (Node((label2, dx), subtree2)) (x + dx / maxX) (y - 50.0) maxX
+                    yield! generateImpl (Node((label2, dx), subtree2)) (x + dx / maxX) (y - MOVE_Y_STEPSIZE) maxX
                 }
             ) subtree)
         }
@@ -71,7 +89,7 @@ module PostScriptGen =
             yield "%!\n<</PageSize["
             yield (toIntString (width + 200.0))
             yield " 1400]/ImagingBBox null>> setpagedevice\n/Times-Roman findfont 10 scalefont setfont\n1 1 scale\n"
-            yield! (generateImpl designResult ((findRootX designResult) + 100.0) 1340.0 ((findLargestX designResult + 20.0) / 1000.0))
+            yield! (generateImpl designResult ((findRootX designResult) + 100.0) 1340.0 (getScalingX designResult))
             yield "\nshowpage"
         }))
 
@@ -102,7 +120,7 @@ module PostScriptGen =
         s.Append "%!\n<</PageSize[" |> ignore
         s.Append (toIntString (width + 200.0)) |> ignore
         s.Append " 1400]/ImagingBBox null>> setpagedevice\n/Times-Roman findfont 10 scalefont setfont\n1 1 scale\n" |> ignore
-        generateImplBuilder s designResult ((findRootX designResult) + 100.0) 1340.0 ((findLargestX designResult + 20.0) / 1000.0)
+        generateImplBuilder s designResult ((findRootX designResult) + 100.0) 1340.0 (getScalingX designResult)
         s.Append "\nshowpage" |> ignore
         s.ToString()
     
@@ -150,7 +168,7 @@ module PostScriptGen =
             "%!\n<</PageSize["
             (toIntString (width + 200.0))
             " 1400]/ImagingBBox null>> setpagedevice\n/Times-Roman findfont 10 scalefont setfont\n1 1 scale\n";
-            (generateImplConcat designResult ((findRootX designResult) + 100.0) 1340.0 2.0);
+            (generateImplConcat designResult ((findRootX designResult) + 100.0) 1340.0 (getScalingX designResult));
             "\nshowpage"
         ]
 
@@ -172,7 +190,7 @@ module PostScriptGen =
         let width = findWidth designResult
         String.concat "" (["%!\n<</PageSize["; (toIntString (width + 200.0));
         " 1400]/ImagingBBox null>> setpagedevice\n/Times-Roman findfont 10 scalefont setfont\n1 1 scale\n"] @
-        (generateImplConcat2 designResult ((findRootX designResult) + 100.0) 1340.0 2.0) @ ["\nshowpage"])
+        (generateImplConcat2 designResult ((findRootX designResult) + 100.0) 1340.0 (getScalingX designResult)) @ ["\nshowpage"])
 
     // Additional function to save the PostScript to a file and open external library GhostScript to view the visual tree.
     // TYPE 'quit' TWICE TO EXIT!
