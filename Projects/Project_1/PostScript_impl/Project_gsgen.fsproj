@@ -9,7 +9,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="../Trees_impl/Program.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 </Project>
