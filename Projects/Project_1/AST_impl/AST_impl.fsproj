@@ -4,7 +4,14 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
-
+  <ItemGroup>
+    <ProjectReference Include="../Trees_impl/Project_1.fsproj">
+      <Name>Project_1.fsproj</Name>
+    </ProjectReference>
+    <ProjectReference Include="../Postscript_impl/Project_gsgen.fsproj">
+      <Name>Project_1.fsproj</Name>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.fs" />
   </ItemGroup>
