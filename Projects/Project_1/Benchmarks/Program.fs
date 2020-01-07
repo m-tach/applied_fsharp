@@ -22,13 +22,19 @@ type BenchmarkPostscriptGen () =
         tree <- TreeDesign.design (randomTree self.TreeSize (new Random()))
 
     [<Benchmark>]
-    member self.StringConcatDefault () = PostScriptGen.generate tree
+    member self.StringConcat () = PostScriptGen.generateConcat tree
+
+    [<Benchmark>]
+    member self.StringBuilder () = PostScriptGen.generateBuilder tree
+
+    [<Benchmark>]
+    member self.Sequence () = PostScriptGen.generate tree
 
 let defaultSwitch () = BenchmarkSwitcher [|typeof<BenchmarkPostscriptGen>|]
 
 [<EntryPoint>]
 let Main args =
-    let result = PostScriptGen.generate tree
-    PostScriptGen.psToPdfFile result
-    //let summary = defaultSwitch().Run args
+    (*let result = PostScriptGen.generate tree
+    PostScriptGen.psToPdfFile result*)
+    let summary = defaultSwitch().Run args
     0
