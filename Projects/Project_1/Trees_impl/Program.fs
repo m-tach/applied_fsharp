@@ -1,10 +1,10 @@
-﻿namespace TreeDesign
+namespace TreeDesign
 open System
 
-type Tree<'x> = Node of 'x * Tree<'x> list
+    type Tree<'x> = Node of 'x * Tree<'x> list
 
 module TreeDesign =
-    
+
 
     let movetree (Node((label, x), subtrees), dx:float) = Node((label, x + dx), subtrees)
 

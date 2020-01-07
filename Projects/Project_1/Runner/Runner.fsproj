@@ -1,4 +1,5 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.1</TargetFramework>
@@ -7,9 +8,15 @@
     <ProjectReference Include="../Trees_impl/Project_1.fsproj">
       <Name>Project_1.fsproj</Name>
     </ProjectReference>
+    <ProjectReference Include="../Postscript_impl/Project_gsgen.fsproj">
+      <Name>Project_gsgen.fsproj</Name>
+    </ProjectReference>
+    <ProjectReference Include="../AST_impl/AST_impl.fsproj">
+      <Name>AST_impl.fsproj</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="../Trees_impl/Program.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
+
 </Project>
