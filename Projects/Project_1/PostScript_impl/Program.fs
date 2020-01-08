@@ -19,7 +19,9 @@ module PostScriptGen =
     let private MOVE_Y_STEPSIZE    = 50.0
 
     (*
-        All values are relative to the y value of the parent label
+        Shows what the constant values represent by showing how the
+        lines from a parent to child are drawn and what the y values are.
+        All values are relative to the y value of the parent label.
 
                   Parent Label
                         |      <-MOVE_Y_START
@@ -59,17 +61,17 @@ module PostScriptGen =
         | Node(_, []) -> 1.0
         | Node(_, subtrees) -> 1.0 + (List.max (List.map findTreeDepth subtrees))
     
-    let private getScalingX tree : float =
-        50.0 * (float(findLongestLabel tree) / 5.0)
+    let private getLabelSize tree : float =
+        30.0 * (float(findLongestLabel tree) / 5.0)
 
     let private getTreeWidth tree : float =
-        (Math.Abs (findLargestX tree) + Math.Abs (findSmallestX tree) + 1.0) * (getScalingX tree)
+        (Math.Abs (findLargestX tree) + Math.Abs (findSmallestX tree) + 1.0) * (getLabelSize tree)
 
     let private getTreeHeight tree : float = 
         ((findTreeDepth tree)) * MOVE_Y_STEPSIZE
 
     let private getRootX tree : float =
-        ( Math.Abs(findSmallestX tree) * (getScalingX tree) + (getScalingX tree) * 0.5)
+        ( Math.Abs(findSmallestX tree) * (getLabelSize tree) + (getLabelSize tree) / 2.0)
 
     let private getRootY tree : float =
         (getTreeHeight tree) - (MOVE_Y_STEPSIZE / 2.0)
@@ -129,7 +131,7 @@ module PostScriptGen =
             yield " "
             yield (toIntString (pageheight))
             yield "]/ImagingBBox null>> setpagedevice\n/Times-Roman findfont 10 scalefont setfont\n1 1 scale\n"
-            yield! (generateImpl designResult treeRootX treeRootY (getScalingX designResult))
+            yield! (generateImpl designResult treeRootX treeRootY (getLabelSize designResult))
             yield "\nshowpage"
         }))
 
@@ -165,7 +167,7 @@ module PostScriptGen =
         s.Append " " |> ignore
         s.Append (toIntString pageheight) |> ignore
         s.Append "]/ImagingBBox null>> setpagedevice\n/Times-Roman findfont 10 scalefont setfont\n1 1 scale\n" |> ignore
-        generateImplBuilder s designResult treeRootX treeRootY (getScalingX designResult)
+        generateImplBuilder s designResult treeRootX treeRootY (getLabelSize designResult)
         s.Append "\nshowpage" |> ignore
         s.ToString()
     
@@ -218,7 +220,7 @@ module PostScriptGen =
             " "
             (toIntString pageheight)
             "]/ImagingBBox null>> setpagedevice\n/Times-Roman findfont 10 scalefont setfont\n1 1 scale\n";
-            (generateImplConcat designResult treeRootX treeRootY (getScalingX designResult));
+            (generateImplConcat designResult treeRootX treeRootY (getLabelSize designResult));
             "\nshowpage"
         ]
 
@@ -243,7 +245,7 @@ module PostScriptGen =
         let treeRootY = getRootY designResult
         String.concat "" (["%!\n<</PageSize["; (toIntString pagewidth); " "; (toIntString pageheight);
         "]/ImagingBBox null>> setpagedevice\n/Times-Roman findfont 10 scalefont setfont\n1 1 scale\n"] @
-        (generateImplConcat2 designResult treeRootX treeRootY (getScalingX designResult)) @ ["\nshowpage"])
+        (generateImplConcat2 designResult treeRootX treeRootY (getLabelSize designResult)) @ ["\nshowpage"])
 
     // Additional function to save the PostScript to a file and open external library GhostScript to view the visual tree.
     // TYPE 'quit' TWICE TO EXIT!
