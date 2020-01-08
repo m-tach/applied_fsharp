@@ -18,6 +18,24 @@ module PostScriptGen =
     let MOVE_Y_BOTTOM      = 40.0
     let MOVE_Y_STEPSIZE    = 50.0
 
+    (*
+                      Label
+                        |  <-MOVE_Y_START
+                        |
+                        |
+                        |
+                        |
+                        |
+      MOVE_Y_MIDDLE ->  ---------------------
+                                            |
+                                            |
+                                            |
+                                            |
+                                            |
+                                            |   <- MOVE_Y_BOTTOM
+                                          Label <- MOVE_Y_STEPSIZE
+    *)
+
     // Finds the width of the tree, used for fitting.
     let rec findLargestX (Node((_, x), subtree)) : float =
         match subtree with
@@ -65,18 +83,22 @@ module PostScriptGen =
                     yield " "
                     yield (toIntString (y - MOVE_Y_START))
                     yield " moveto\n"
+
                     yield (toIntString x)
                     yield " "
                     yield (toIntString (y - MOVE_Y_MIDDLE))
                     yield " lineto\n"
+
                     yield (toIntString (x + dx / maxX))
                     yield " "
                     yield (toIntString (y - MOVE_Y_MIDDLE))
                     yield " lineto\n"
+
                     yield (toIntString (x + dx / maxX))
                     yield " "
                     yield (toIntString (y - MOVE_Y_BOTTOM))
                     yield " lineto\nstroke\n"
+                    
                     yield! generateImpl (Node((label2, dx), subtree2)) (x + dx / maxX) (y - MOVE_Y_STEPSIZE) maxX
                 }
             ) subtree)
