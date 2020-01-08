@@ -31,13 +31,13 @@ let rec randomTree n (rnd:Random) = match n with
                                                                                                 (left - allocatedNodes, (randomTree allocatedNodes rnd)::nodes)) (n - subTreeCount, []) [1..(subTreeCount - 1)]
                                                 Node("Test", (randomTree (fst subtrees) rnd)::(snd subtrees))
                                        
-let makeRandomTree n = randomTree (n - 1) (new Random(334234))
+let makeRandomTree n = randomTree (n - 1) (new Random(3334234))
 
 
 
 [<EntryPoint>]
 let main argv =
     //let result = PostScriptGen.generate (TreeDesign.design randomTree)
-    let result = PostScriptGen.generate (TreeDesign.design (makeRandomTree 100))
+    let result = PostScriptGen.generate (TreeDesign.design (makeRandomTree 10))
     PostScriptGen.psToPdfFile result
     0 // return an integer exit code
