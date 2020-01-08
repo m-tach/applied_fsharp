@@ -62,7 +62,7 @@ module PostScriptGen =
         | Node(_, subtrees) -> 1.0 + (List.max (List.map findTreeDepth subtrees))
     
     let private getLabelSize tree : float =
-        0.17 / (float(findLongestLabel tree))
+        7.0 * (float(findLongestLabel tree))
 
     let private getTreeWidth tree : float =
         (Math.Abs (findLargestX tree) + Math.Abs (findSmallestX tree) + 1.0) * (getLabelSize tree)
