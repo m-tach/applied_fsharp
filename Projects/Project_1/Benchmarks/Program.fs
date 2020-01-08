@@ -28,6 +28,9 @@ type BenchmarkPostscriptGen () =
     member self.StringConcat () = PostScriptGen.generateConcat tree
 
     [<Benchmark>]
+    member self.StringConcat2 () = PostScriptGen.generateConcat2 tree
+
+    [<Benchmark>]
     member self.StringBuilder () = PostScriptGen.generateBuilder tree
 
     [<Benchmark>]
