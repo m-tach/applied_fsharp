@@ -84,7 +84,7 @@ module ASTConverter =
                                 | Access(a) -> Node("Access", [accToNode a])
                                 | Addr(a) -> Node("Address", [accToNode a])
                                 | Apply(s, [])  -> Node("Operator", [Node(s, []);])
-                                | Apply(s, [e]) -> Node("Operator", [Node(s, []); Node("Argument", [expToNode e])])
+                                | Apply(s, [e]) -> Node("Operator", [Node(s, []); expToNode e])
                                 | Apply(s, e)   -> Node("Operator", [Node(s, []); Node("Arguments", List.map expToNode e)])
 
     and private accToNode acc = match acc with
