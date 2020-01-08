@@ -17,6 +17,8 @@ module PostScriptGen =
     let private MOVE_Y_BOTTOM      = 40.0
     [<Literal>]
     let private MOVE_Y_STEPSIZE    = 50.0
+    [<Literal>]
+    let private PIXELS_PER_CHARACTER = 7.0
 
     (*
         Shows what the constant values represent by showing how the
@@ -62,7 +64,7 @@ module PostScriptGen =
         | Node(_, subtrees) -> 1.0 + (List.max (List.map findTreeDepth subtrees))
     
     let private getLabelSize tree : float =
-        7.0 * (float(findLongestLabel tree))
+        PIXELS_PER_CHARACTER * (float(findLongestLabel tree))
 
     let private getTreeWidth tree : float =
         (Math.Abs (findLargestX tree) + Math.Abs (findSmallestX tree) + 1.0) * (getLabelSize tree)
