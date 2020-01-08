@@ -86,7 +86,7 @@ module ASTConverter =
                                 | Addr(a) -> Node("Address", [accToNode a])
                                 //Is it correct that this is a function call
                                 | Apply(s, [])  -> Node("Operator", [Node(s, []);])
-                                | Apply(s, [e]) -> Node("Operator", [Node(s, []); Node("Argument", [expToNode e])])
+                                | Apply(s, [e]) -> Node("Operator", [Node(s, []); expToNode e])
                                 | Apply(s, e)   -> Node("Operator", [Node(s, []); Node("Arguments", List.map expToNode e)])
 
     and private accToNode acc = match acc with
