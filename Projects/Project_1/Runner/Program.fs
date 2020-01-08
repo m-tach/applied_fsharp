@@ -110,6 +110,15 @@ let rec randomTree n (rnd:Random) = match n with
 let makeRandomTree n = randomTree (n - 1) (new Random(34234))
 
 
+let makeTreeWithWidth n  =
+    match n with
+    | 1 -> Node("Final", [])
+    | _ -> Node ("Parent", List.map (fun _ -> Node("Child", [])) [1..n])
+
+let rec makeTreeWithHeight n  =
+    match n with
+    | 1 -> Node("Final", [])
+    | _ -> Node ("Node", [makeTreeWithHeight(n-1)] )
 
 [<EntryPoint>]
 let main argv =
