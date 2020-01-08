@@ -60,7 +60,7 @@ module ASTConverter =
                                 | PTyp(t) -> Node("Pointer", [typToNode t])
                                 //don't understand what types and t are in this context. Do they define a function call?
                                 | FTyp(types, Some(t)) -> Node("Function", (List.map typToNode types) @ [typToNode t])
-                                | FTyp(types, None) -> Node("Function", (List.map typToNode types)(* @ [typToNode t]*))
+                                | FTyp(types, None) -> Node("Function", (List.map typToNode types))
 
     and private stmsToNodes stms = match stms with
                                    | [stm] -> stmToNode stm
@@ -70,7 +70,6 @@ module ASTConverter =
                                 | Ass(a, e) -> Node("Assignment", [accToNode a; expToNode e])
                                 | Return(Some(e)) -> Node("Return", [expToNode e])
                                 | Return(None) -> Node("Return", [])
-                                //What's an alt?
                                 | Alt(gc) -> Node("Alt", guardToNodeList gc)
                                 | Do(gc) -> Node("Do", guardToNodeList gc)
                                 | Block(decs, stms) -> Node("Block", [decsToNodes decs; stmsToNodes stms])
@@ -84,7 +83,6 @@ module ASTConverter =
                                 | Access(AVar(acc)) -> accToNode (AVar(acc))
                                 | Access(a) -> Node("Access", [accToNode a])
                                 | Addr(a) -> Node("Address", [accToNode a])
-                                //Is it correct that this is a function call
                                 | Apply(s, [])  -> Node("Operator", [Node(s, []);])
                                 | Apply(s, [e]) -> Node("Operator", [Node(s, []); Node("Argument", [expToNode e])])
                                 | Apply(s, e)   -> Node("Operator", [Node(s, []); Node("Arguments", List.map expToNode e)])
@@ -94,5 +92,4 @@ module ASTConverter =
                                 | AIndex(a, e) -> Node("Index", [accToNode a; expToNode e])
                                 | ADeref(e) -> Node("Deref", [expToNode e])
 
-    //no clue what this is for either
     and private guardToNodeList (GC(stuff)) = List.map(fun (x, y) -> Node("guarded", [expToNode x; stmsToNodes y])) stuff
