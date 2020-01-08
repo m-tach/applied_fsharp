@@ -3,6 +3,8 @@ open TreeDesign
 open PostScriptGen
 open ASTConverter
 
+let longLabelTree = Node ("Parent", [Node ("_THISISAVERYLONGNAME__THISISAVERYLONGNAME__THISISAVERYLONGNAME__THISISAVERYLONGNAME__THISISAVERYLONGNAME__THISISAVERYLONGNAME__THISISAVERYLONGNAME_",[]); Node ("_THISISAVERYLONGNAME__THISISAVERYLONGNAME__THISISAVERYLONGNAME__THISISAVERYLONGNAME__THISISAVERYLONGNAME__THISISAVERYLONGNAME__THISISAVERYLONGNAME_",[])]);
+
 let ex6 = P([
                 VarDec(ITyp, "x")
             ], [
@@ -86,6 +88,8 @@ let main argv =
     //let result = PostScriptGen.generate (TreeDesign.design randomTree)
     //let result = PostScriptGen.generate (TreeDesign.design (makeRandomTree 50))
     //let result = PostScriptGen.generate (TreeDesign.design leftStaircase)
-    let result = PostScriptGen.generate (TreeDesign.design rightStaircase)
+    //let result = PostScriptGen.generate (TreeDesign.design rightStaircase)
+    let result = PostScriptGen.generate (TreeDesign.design longLabelTree)
+
     PostScriptGen.psToPdfFile result
     0 // return an integer exit code
