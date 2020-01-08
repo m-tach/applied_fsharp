@@ -9,7 +9,6 @@ open System.Text
 module PostScriptGen =
 
     // Configs
-
     [<Literal>]
     let private MOVE_Y_START       = 8.0
     [<Literal>]
@@ -20,8 +19,10 @@ module PostScriptGen =
     let private MOVE_Y_STEPSIZE    = 50.0
 
     (*
+        All values are relative to the y value of the parent label
+
                   Parent Label
-                        |  <-MOVE_Y_START
+                        |      <-MOVE_Y_START
                         |
                         |
                         |
@@ -46,7 +47,7 @@ module PostScriptGen =
     let rec private findSmallestX (Node((_, x), subtree)) : float =
         match subtree with
         | [] -> x
-        | _ -> x + List.min (List.map findLargestX subtree)
+        | _ -> x + List.min (List.map findSmallestX subtree)
 
     let rec private findLongestLabel (Node((label, x), subtree)) : int =
         match subtree with
@@ -59,16 +60,16 @@ module PostScriptGen =
         | Node(_, subtrees) -> 1.0 + (List.max (List.map findTreeDepth subtrees))
     
     let private getScalingX tree : float =
-        30.0 * (float(findLongestLabel tree) / 5.0)
+        50.0 * (float(findLongestLabel tree) / 5.0)
 
     let private getTreeWidth tree : float =
         (Math.Abs (findLargestX tree) + Math.Abs (findSmallestX tree) + 1.0) * (getScalingX tree)
 
-    let private getRootX tree : float =
-        ((getTreeWidth tree) - (getScalingX tree) * 0.5) / 2.0
-
     let private getTreeHeight tree : float = 
         ((findTreeDepth tree)) * MOVE_Y_STEPSIZE
+
+    let private getRootX tree : float =
+        ( Math.Abs(findSmallestX tree) * (getScalingX tree) + (getScalingX tree) * 0.5)
 
     let private getRootY tree : float =
         (getTreeHeight tree) - (MOVE_Y_STEPSIZE / 2.0)
