@@ -26,7 +26,7 @@ let ex6 = P([
                 PrintLn(Access(AVar("x")))
             ])
 
-let fact = P([
+let factTree = P([
                 VarDec(ITyp, "res");
                 FunDec(Some(ITyp), "fact", [
                         VarDec(ITyp, "n");
@@ -38,19 +38,19 @@ let fact = P([
                             Ass(AVar("x"), Access(AVar("n"))); //line 5:     x:= n ;
                             Ass(AVar("y"), Access(AVar("1"))); //line 6:     y:= 1 ;                        
                             Do(GC([
-                            (Apply("!", [
-                                (Apply("=", [
-                                    Access(AVar("x")); 
-                                    N(0)
-                                ]))]), [
-                                        Ass(AVar("y"), Apply("*", [Access(AVar("x")); Access(AVar("y"))] ));    //line 7: y := x*y;
-                                        Ass(AVar("x"), Apply("-", [Access(AVar("x")); N(1)] ));    //line 7: x:=x-1                                                            
-                                ]));
+                                (Apply("!", [
+                                    (Apply("=", [
+                                        Access(AVar("x")); 
+                                        N(0)
+                                    ]))]), [
+                                            Ass(AVar("y"), Apply("*", [Access(AVar("x")); Access(AVar("y"))] ));    //line 7: y := x*y;
+                                            Ass(AVar("x"), Apply("-", [Access(AVar("x")); N(1)] ));    //line 7: x:=x-1                                                            
+                                    ])]));
                             Return(Some(Access(AVar("y")))); //line 8:     return y
-                        ]))                                            
-                    ]))], [
+                        ]                                           
+                    ))], [
                         //Statements
-                        Ass(AVar("res"), Apply("fact", [N 4]))//line 10:  res := fact(4);
+                        Ass(AVar("res"), Apply("fact", [N 4]));//line 10:  res := fact(4);
                         PrintLn(Access(AVar("res")))//line 11:            print res   
             ])
 
@@ -118,8 +118,9 @@ let main argv =
     //let result = PostScriptGen.generate (TreeDesign.design leftStaircase)
     //let result = PostScriptGen.generate (TreeDesign.design rightStaircase)
     //let result = PostScriptGen.generate (TreeDesign.design rightStaircase)
+    //let result = PostScriptGen.generate (TreeDesign.design longLabelTree)
 
-    let result = PostScriptGen.generate (TreeDesign.design longLabelTree)
+    let result = PostScriptGen.generate (TreeDesign.design (ASTConverter.programToTree factTree))
 
     PostScriptGen.psToPdfFile result
     0 // return an integer exit code
