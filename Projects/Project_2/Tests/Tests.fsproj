@@ -25,6 +25,10 @@
     </ProjectReference>
   </ItemGroup>
 
+  <Target Name="PreBuild" AfterTargets="PreBuildEvent">
+    <Exec Command="xcopy /Y /S $(ProjectDir)..\programs $(OutDir)programs" />
+  </Target>
+
   <ItemGroup>
     <Reference Include="Machine">
       <HintPath>..\libraries\Machine.dll</HintPath>
