@@ -41,3 +41,7 @@ type TestParse () =
     [<TestMethod>]
     member this.ParseEx6 () =
         (parseFromFile "programs/Ex6.gc") |> ignore;
+
+    [<TestMethod>]
+    member this.ParseSkip () =
+        (parseFromFile "programs/Skip.gc") |> ignore;
