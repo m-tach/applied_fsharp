@@ -1,4 +1,4 @@
-# 1 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Lexer.fsl"
+# 1 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Lexer.fsl"
  
 module Lexer
 open System
@@ -23,7 +23,7 @@ let keyword s =
     | "false"     -> BOOL(false)
     | _           -> NAME s  
 
-# 26 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Lexer.fs"
+# 26 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Lexer.fs"
 let trans : uint16[] array = 
     [| 
    (* State 0 *)
@@ -100,140 +100,140 @@ and tokenize  (lexbuf : Microsoft.FSharp.Text.Lexing.LexBuffer<_>) = _fslex_toke
 and _fslex_tokenize  _fslex_state lexbuf =
   match _fslex_tables.Interpret(_fslex_state,lexbuf) with
   | 0 -> ( 
-# 39 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Lexer.fsl"
+# 39 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Lexer.fsl"
                                  tokenize lexbuf 
-# 105 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Lexer.fs"
+# 105 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Lexer.fs"
           )
   | 1 -> ( 
-# 40 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Lexer.fsl"
+# 40 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Lexer.fsl"
                                  lexbuf.EndPos <- lexbuf.EndPos.NextLine; tokenize lexbuf 
-# 110 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Lexer.fs"
+# 110 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Lexer.fs"
           )
   | 2 -> ( 
-# 41 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Lexer.fsl"
+# 41 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Lexer.fsl"
                                  INT<| Int32.Parse(Encoding.UTF8.GetString(lexbuf.Lexeme)) 
-# 115 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Lexer.fs"
+# 115 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Lexer.fs"
           )
   | 3 -> ( 
-# 42 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Lexer.fsl"
+# 42 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Lexer.fsl"
                                  LP  
-# 120 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Lexer.fs"
+# 120 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Lexer.fs"
           )
   | 4 -> ( 
-# 43 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Lexer.fsl"
+# 43 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Lexer.fsl"
                                  RP  
-# 125 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Lexer.fs"
+# 125 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Lexer.fs"
           )
   | 5 -> ( 
-# 44 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Lexer.fsl"
+# 44 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Lexer.fsl"
                                  LSP 
-# 130 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Lexer.fs"
+# 130 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Lexer.fs"
           )
   | 6 -> ( 
-# 45 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Lexer.fsl"
+# 45 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Lexer.fsl"
                                  RSP 
-# 135 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Lexer.fs"
+# 135 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Lexer.fs"
           )
   | 7 -> ( 
-# 46 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Lexer.fsl"
+# 46 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Lexer.fsl"
                                  LCP 
-# 140 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Lexer.fs"
+# 140 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Lexer.fs"
           )
   | 8 -> ( 
-# 47 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Lexer.fsl"
+# 47 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Lexer.fsl"
                                  RCP 
-# 145 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Lexer.fs"
+# 145 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Lexer.fs"
           )
   | 9 -> ( 
-# 48 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Lexer.fsl"
+# 48 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Lexer.fsl"
                                  COMMA 
-# 150 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Lexer.fs"
+# 150 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Lexer.fs"
           )
   | 10 -> ( 
-# 49 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Lexer.fsl"
+# 49 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Lexer.fsl"
                                  SEMI  
-# 155 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Lexer.fs"
+# 155 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Lexer.fs"
           )
   | 11 -> ( 
-# 50 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Lexer.fsl"
+# 50 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Lexer.fsl"
                                  COLON 
-# 160 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Lexer.fs"
+# 160 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Lexer.fs"
           )
   | 12 -> ( 
-# 51 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Lexer.fsl"
+# 51 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Lexer.fsl"
                                  BAR 
-# 165 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Lexer.fs"
+# 165 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Lexer.fs"
           )
   | 13 -> ( 
-# 52 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Lexer.fsl"
+# 52 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Lexer.fsl"
                                  TO 
-# 170 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Lexer.fs"
+# 170 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Lexer.fs"
           )
   | 14 -> ( 
-# 53 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Lexer.fsl"
+# 53 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Lexer.fsl"
                                  ASG   
-# 175 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Lexer.fs"
+# 175 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Lexer.fs"
           )
   | 15 -> ( 
-# 54 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Lexer.fsl"
+# 54 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Lexer.fsl"
                                  NEG 
-# 180 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Lexer.fs"
+# 180 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Lexer.fs"
           )
   | 16 -> ( 
-# 55 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Lexer.fsl"
+# 55 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Lexer.fsl"
                                  AND 
-# 185 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Lexer.fs"
+# 185 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Lexer.fs"
           )
   | 17 -> ( 
-# 56 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Lexer.fsl"
+# 56 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Lexer.fsl"
                                  NEQ 
-# 190 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Lexer.fs"
+# 190 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Lexer.fs"
           )
   | 18 -> ( 
-# 57 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Lexer.fsl"
+# 57 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Lexer.fsl"
                                  LT 
-# 195 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Lexer.fs"
+# 195 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Lexer.fs"
           )
   | 19 -> ( 
-# 58 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Lexer.fsl"
+# 58 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Lexer.fsl"
                                  GT 
-# 200 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Lexer.fs"
+# 200 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Lexer.fs"
           )
   | 20 -> ( 
-# 59 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Lexer.fsl"
+# 59 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Lexer.fsl"
                                  LE 
-# 205 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Lexer.fs"
+# 205 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Lexer.fs"
           )
   | 21 -> ( 
-# 60 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Lexer.fsl"
+# 60 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Lexer.fsl"
                                  TIMES 
-# 210 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Lexer.fs"
+# 210 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Lexer.fs"
           )
   | 22 -> ( 
-# 61 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Lexer.fsl"
+# 61 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Lexer.fsl"
                                  MINUS 
-# 215 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Lexer.fs"
+# 215 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Lexer.fs"
           )
   | 23 -> ( 
-# 62 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Lexer.fsl"
+# 62 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Lexer.fsl"
                                  EQ 
-# 220 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Lexer.fs"
+# 220 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Lexer.fs"
           )
   | 24 -> ( 
-# 63 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Lexer.fsl"
+# 63 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Lexer.fsl"
                                  PLUS 
-# 225 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Lexer.fs"
+# 225 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Lexer.fs"
           )
   | 25 -> ( 
-# 64 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Lexer.fsl"
+# 64 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Lexer.fsl"
                                  keyword(Encoding.UTF8.GetString(lexbuf.Lexeme)) 
-# 230 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Lexer.fs"
+# 230 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Lexer.fs"
           )
   | 26 -> ( 
-# 65 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Lexer.fsl"
+# 65 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Lexer.fsl"
                                  EOF 
-# 235 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Lexer.fs"
+# 235 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Lexer.fs"
           )
   | _ -> failwith "tokenize"
 
-# 3000000 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Lexer.fs"
+# 3000000 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Lexer.fs"

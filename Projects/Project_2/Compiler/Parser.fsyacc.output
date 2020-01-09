@@ -1,4 +1,4 @@
-        Output file describing compiled parser placed in D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs and D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fsi
+        Output file describing compiled parser placed in C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs and C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fsi
 ------------------------
 states = 
 state 0:  items:    _startMain ->  . Main

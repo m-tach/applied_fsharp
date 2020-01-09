@@ -3,11 +3,11 @@ module Parser
 #nowarn "64";; // turn off warnings that type variables used in production annotations are instantiated to concrete type
 open Microsoft.FSharp.Text.Lexing
 open Microsoft.FSharp.Text.Parsing.ParseHelpers
-# 1 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 1 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
 
 open GuardedCommands.Frontend.AST
 
-# 10 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 10 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
 // This type is the type of tokens accepted by the parser
 type token = 
   | HIGH
@@ -348,7 +348,7 @@ let _fsyacc_reductionSymbolCounts = [|1us; 1us; 2us; 5us; 3us; 1us; 1us; 1us; 3u
 let _fsyacc_productionToNonTerminalTable = [|0us; 1us; 2us; 3us; 3us; 4us; 4us; 5us; 6us; 7us; 7us; 8us; 8us; 9us; 10us; 10us; 10us; 10us; 10us; 10us; 10us; 11us; 11us; 12us; 12us; 13us; 13us; 14us; 14us; 15us; 15us; 15us; 15us; 15us; 15us; 15us; 15us; 15us; 15us; 15us; 15us; 15us; 15us; 15us; |]
 let _fsyacc_immediateActions = [|65535us; 49152us; 65535us; 49152us; 65535us; 16386us; 65535us; 65535us; 65535us; 65535us; 16387us; 65535us; 16388us; 16389us; 16390us; 16391us; 65535us; 65535us; 65535us; 16392us; 65535us; 65535us; 16396us; 16397us; 65535us; 65535us; 65535us; 65535us; 65535us; 16400us; 16401us; 65535us; 65535us; 16402us; 65535us; 65535us; 16403us; 65535us; 65535us; 16404us; 16406us; 65535us; 65535us; 16408us; 16410us; 65535us; 65535us; 65535us; 65535us; 16412us; 16413us; 16414us; 16415us; 65535us; 65535us; 16416us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; 65535us; |]
 let _fsyacc_reductions ()  =    [| 
-# 351 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 351 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : Program)) in
             Microsoft.FSharp.Core.Operators.box
@@ -357,7 +357,7 @@ let _fsyacc_reductions ()  =    [|
                       raise (Microsoft.FSharp.Text.Parsing.Accept(Microsoft.FSharp.Core.Operators.box _1))
                    )
                  : '_startMain));
-# 360 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 360 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : Program)) in
             Microsoft.FSharp.Core.Operators.box
@@ -366,292 +366,292 @@ let _fsyacc_reductions ()  =    [|
                       raise (Microsoft.FSharp.Text.Parsing.Accept(Microsoft.FSharp.Core.Operators.box _1))
                    )
                  : '_startProg));
-# 369 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 369 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : Program)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 38 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 38 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                               _1 
                    )
-# 38 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 38 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : Program));
-# 380 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 380 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _2 = (let data = parseState.GetInput(2) in (Microsoft.FSharp.Core.Operators.unbox data : Dec list)) in
             let _4 = (let data = parseState.GetInput(4) in (Microsoft.FSharp.Core.Operators.unbox data : Stm list)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 41 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 41 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                               P(_2, _4) 
                    )
-# 41 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 41 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : Program));
-# 392 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 392 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _2 = (let data = parseState.GetInput(2) in (Microsoft.FSharp.Core.Operators.unbox data : Stm list)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 42 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 42 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                               P([], _2) 
                    )
-# 42 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 42 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : Program));
-# 403 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 403 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 45 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 45 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                              BTyp 
                    )
-# 45 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 45 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : Typ));
-# 413 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 413 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 46 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 46 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                              ITyp 
                    )
-# 46 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 46 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : Typ));
-# 423 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 423 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : Typ)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 49 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 49 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                              _1 
                    )
-# 49 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 49 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : Typ));
-# 434 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 434 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : string)) in
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : Typ)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 52 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 52 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                              VarDec(_3,_1) 
                    )
-# 52 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 52 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : Dec));
-# 446 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 446 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 55 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 55 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                              [] 
                    )
-# 55 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 55 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : Dec list));
-# 456 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 456 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : Dec list)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 56 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 56 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                              _1 
                    )
-# 56 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 56 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : Dec list));
-# 467 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 467 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : Dec)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 59 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 59 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                              [_1] 
                    )
-# 59 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 59 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : Dec list));
-# 478 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 478 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : Dec)) in
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : Dec list)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 60 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 60 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                              _1 :: _3 
                    )
-# 60 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 60 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : Dec list));
-# 490 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 490 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : string)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 63 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 63 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                              AVar _1 
                    )
-# 63 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 63 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : Access));
-# 501 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 501 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _2 = (let data = parseState.GetInput(2) in (Microsoft.FSharp.Core.Operators.unbox data : Exp)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 66 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 66 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                              PrintLn _2 
                    )
-# 66 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 66 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : Stm));
-# 512 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 512 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : Access)) in
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : Exp)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 67 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 67 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                              Ass(_1,_3)  
                    )
-# 67 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 67 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : Stm));
-# 524 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 524 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 68 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 68 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                              Do (GC []) 
                    )
-# 68 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 68 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : Stm));
-# 534 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 534 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 69 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 69 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                              Alt (GC []) 
                    )
-# 69 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 69 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : Stm));
-# 544 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 544 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _2 = (let data = parseState.GetInput(2) in (Microsoft.FSharp.Core.Operators.unbox data : Stm list)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 70 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 70 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                              Block([], _2) 
                    )
-# 70 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 70 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : Stm));
-# 555 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 555 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _2 = (let data = parseState.GetInput(2) in (Microsoft.FSharp.Core.Operators.unbox data : GuardedCommand)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 71 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 71 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                              Alt _2 
                    )
-# 71 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 71 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : Stm));
-# 566 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 566 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _2 = (let data = parseState.GetInput(2) in (Microsoft.FSharp.Core.Operators.unbox data : GuardedCommand)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 72 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 72 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                              Do _2  
                    )
-# 72 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 72 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : Stm));
-# 577 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 577 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 75 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 75 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                              [] 
                    )
-# 75 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 75 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : Stm list));
-# 587 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 587 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : Stm list)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 76 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 76 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                              _1 
                    )
-# 76 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 76 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : Stm list));
-# 598 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 598 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : Stm)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 79 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 79 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                              [_1] 
                    )
-# 79 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 79 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : Stm list));
-# 609 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 609 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : Stm)) in
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : Stm list)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 80 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 80 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                              _1 :: _3 
                    )
-# 80 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 80 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : Stm list));
-# 621 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 621 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 83 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 83 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                              GC [] 
                    )
-# 83 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 83 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : GuardedCommand));
-# 631 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 631 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : (Exp * Stm list) list)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 84 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 84 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                              GC _1 
                    )
-# 84 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 84 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : GuardedCommand));
-# 642 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 642 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : Exp)) in
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : Stm list)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 87 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 87 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                              [(_1,_3)]   
                    )
-# 87 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 87 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : (Exp * Stm list) list));
-# 654 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 654 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : Exp)) in
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : Stm list)) in
@@ -659,187 +659,187 @@ let _fsyacc_reductions ()  =    [|
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 88 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 88 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                          (_1,_3)::_5 
                    )
-# 88 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 88 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : (Exp * Stm list) list));
-# 667 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 667 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : Access)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 91 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 91 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                              Access _1 
                    )
-# 91 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 91 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : Exp));
-# 678 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 678 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : int)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 92 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 92 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                              N _1 
                    )
-# 92 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 92 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : Exp));
-# 689 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 689 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : bool)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 93 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 93 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                              B _1 
                    )
-# 93 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 93 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : Exp));
-# 700 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 700 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _2 = (let data = parseState.GetInput(2) in (Microsoft.FSharp.Core.Operators.unbox data : Exp)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 94 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 94 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                              _2 
                    )
-# 94 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 94 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : Exp));
-# 711 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 711 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _2 = (let data = parseState.GetInput(2) in (Microsoft.FSharp.Core.Operators.unbox data : Exp)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 95 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 95 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                              Apply("-", [_2])
                    )
-# 95 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 95 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : Exp));
-# 722 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 722 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _2 = (let data = parseState.GetInput(2) in (Microsoft.FSharp.Core.Operators.unbox data : Exp)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 96 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 96 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                              Apply("!", [_2])
                    )
-# 96 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 96 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : Exp));
-# 733 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 733 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : Exp)) in
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : Exp)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 97 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 97 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                              Apply("*", [_1; _3])
                    )
-# 97 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 97 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : Exp));
-# 745 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 745 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : Exp)) in
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : Exp)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 98 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 98 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                              Apply("+", [_1; _3])
                    )
-# 98 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 98 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : Exp));
-# 757 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 757 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : Exp)) in
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : Exp)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 99 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 99 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                              Apply("-", [_1; _3])
                    )
-# 99 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 99 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : Exp));
-# 769 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 769 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : Exp)) in
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : Exp)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 100 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 100 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                              Apply("&&", [_1; _3])
                    )
-# 100 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 100 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : Exp));
-# 781 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 781 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : Exp)) in
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : Exp)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 101 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 101 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                              Apply("=", [_1; _3])
                    )
-# 101 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 101 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : Exp));
-# 793 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 793 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : Exp)) in
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : Exp)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 102 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 102 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                              Apply("<=", [_1; _3])
                    )
-# 102 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 102 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : Exp));
-# 805 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 805 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : Exp)) in
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : Exp)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 103 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 103 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                              Apply(">", [_1; _3])
                    )
-# 103 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 103 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : Exp));
-# 817 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 817 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : Exp)) in
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : Exp)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 104 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 104 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                              Apply("<", [_1; _3])
                    )
-# 104 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 104 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : Exp));
-# 829 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 829 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
         (fun (parseState : Microsoft.FSharp.Text.Parsing.IParseState) ->
             let _1 = (let data = parseState.GetInput(1) in (Microsoft.FSharp.Core.Operators.unbox data : Exp)) in
             let _3 = (let data = parseState.GetInput(3) in (Microsoft.FSharp.Core.Operators.unbox data : Exp)) in
             Microsoft.FSharp.Core.Operators.box
                 (
                    (
-# 105 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 105 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                                                              Apply("<>", [_1; _3])
                    )
-# 105 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\/Parser.fsy"
+# 105 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\/Parser.fsy"
                  : Exp));
 |]
-# 842 "D:\Dropbox\Dropbox\DTU_Software_Teknologi\Kandidat\3_ugers_kurser\Applied_FSharp\Projects\Project_2\Compiler\Parser.fs"
+# 842 "C:\Users\User\Documents\DTU\Kandidat\Semester1\AppliedFunctionalProgramming\applied_fsharp\Projects\Project_2\Compiler\Parser.fs"
 let tables () : Microsoft.FSharp.Text.Parsing.Tables<_> = 
   { reductions= _fsyacc_reductions ();
     endOfInputTag = _fsyacc_endOfInputTag;
