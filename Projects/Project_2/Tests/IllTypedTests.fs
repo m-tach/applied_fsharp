@@ -104,6 +104,15 @@ type IllTypedTests() =
     print ! res
     end"
 
+    let illegalIF = "begin 
+    x: int; 
+    x:= 3; 
+    if x -> print x
+    | x=0 -> print 10
+    fi;
+    print x
+    end"
+
     [<TestMethod>]
     member this.VariableDeclarationException() =
         Assert.Throws<Exception> "no declaration for : res"  (fun () -> tcP (parseString missingDeclaration))
@@ -157,6 +166,12 @@ type IllTypedTests() =
     [<TestMethod>]
     member this.IllegalNEQException() = 
         Assert.Throws<Exception> "illegal/illtyped dyadic expression: <>" (fun () -> tcP (parseString illegalNEQ))
+
+    [<TestMethod>]
+    member this.IllegalIFException() = 
+        Assert.Throws<Exception> "Illegal use of integer in alternative stm" (fun () -> tcP (parseString illegalIF))
+
+
 
 
 
