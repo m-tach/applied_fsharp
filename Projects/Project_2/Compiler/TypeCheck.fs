@@ -56,7 +56,10 @@ module TypeCheck =
                          | PrintLn e -> ignore(tcE gtenv ltenv e)
                          | Ass(acc,e) -> if tcA gtenv ltenv acc = tcE gtenv ltenv e 
                                          then ()
-                                         else failwith "illtyped assignment"                                
+                                         else failwith "illtyped assignment" 
+                         | MAss(acc,e) -> let assignments = List.zip acc e
+                                          List.iter (fun (cacc, ce) -> tcS gtenv ltenv (Ass(cacc, ce))) assignments
+                                          ()
 
                          | Block([],stms) -> List.iter (tcS gtenv ltenv) stms
                          | _              -> failwith "tcS: this statement is not supported yet"
