@@ -50,3 +50,15 @@ type TestParse () =
     [<TestMethod>]
     member this.ParseSkip () =
         (parseFromFile "programs/Skip.gc") |> ignore;
+
+    [<TestMethod>]
+    member this.ParseFact () =
+        (parseFromFile "programs/fact.gc") |> ignore;
+
+    [<TestMethod>]
+    member this.ParseFactRec () =
+        (parseFromFile "programs/factRec.gc") |> ignore;
+
+    [<TestMethod>]
+    member this.ParseFactCBV () =
+        (parseFromFile "programs/factCBV.gc") |> ignore;
