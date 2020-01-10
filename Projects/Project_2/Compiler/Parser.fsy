@@ -8,10 +8,10 @@ open GuardedCommands.Frontend.AST
 %token <string> NAME
 %token ITYP BTYP
 %token LP LCP LSP RP RCP RSP
-%token IF FI DO OD BEGIN END 
+%token IF FI DO OD BEGIN END
 %token COMMA COLON SEMI BAR TO
 %token NEG PLUS MINUS TIMES AND EQ LE LT GT NEQ
-%token PRINT ASG SKIP ABORT
+%token PRINT ASG SKIP ABORT FUNC RETURN
 %token EOF
 %token HIGH
 
@@ -22,6 +22,7 @@ open GuardedCommands.Frontend.AST
 %left TIMES
 
 %start Main Prog 
+%type <Exp list> ExpList ExpL
 %type <Exp> Exp
 %type <Access> Access
 %type <(Exp * Stm list) list> GCList
@@ -49,7 +50,8 @@ Typ:
     BasicTyp                          { $1 }
 
 Dec: 
-    NAME COLON Typ                    { VarDec($3,$1) }
+     NAME COLON Typ                           { VarDec($3,$1) }
+   | FUNC NAME LP DecL RP COLON Typ EQ Stm    { FunDec(Some($7), $2, $4, $9) }  
 
 DecL: 
                                       { [] }
@@ -65,9 +67,11 @@ Access:
 Stm:
     PRINT Exp                         { PrintLn $2 }
   | Access ASG Exp                    { Ass($1,$3)  }
+  | RETURN Exp                        { Return(Some($2)) }
   | SKIP                              { Do (GC []) }
   | ABORT                             { Alt (GC []) } 
-  | LCP StmL  RCP                     { Block([], $2) } 
+  | LCP DecList SEMI StmL RCP         { Block($2, $4) }
+  | LCP StmL RCP                      { Block([], $2) } 
   | IF GuardedCommand FI              { Alt $2 }
   | DO GuardedCommand OD              { Do $2  }
 
@@ -85,7 +89,15 @@ GuardedCommand:
 
 GCList:
     Exp TO StmL                       { [($1,$3)]   }
-  | Exp TO StmL BAR GCList	   		  { ($1,$3)::$5 }
+  | Exp TO StmL BAR GCList	   		    { ($1,$3)::$5 }
+
+ExpL:
+                                      { [] } 
+  | ExpList                           { $1 }    
+
+ExpList:
+  | Exp                               { [$1] }
+  | Exp SEMI ExpList                  { $1 :: $3 } 
 
 Exp:
     Access                            { Access $1 }
@@ -103,4 +115,5 @@ Exp:
   | Exp GT Exp                        { Apply(">", [$1; $3])}
   | Exp LT Exp                        { Apply("<", [$1; $3])}
   | Exp NEQ Exp                       { Apply("<>", [$1; $3])}
+  | NAME LP ExpL RP                   { Apply($1, $3) }
 

@@ -7,6 +7,8 @@ type token =
   | ASG
   | SKIP
   | ABORT
+  | FUNC
+  | RETURN
   | NEG
   | PLUS
   | MINUS
@@ -47,6 +49,8 @@ type tokenId =
     | TOKEN_ASG
     | TOKEN_SKIP
     | TOKEN_ABORT
+    | TOKEN_FUNC
+    | TOKEN_RETURN
     | TOKEN_NEG
     | TOKEN_PLUS
     | TOKEN_MINUS
@@ -98,6 +102,8 @@ type nonTerminalId =
     | NONTERM_StmList
     | NONTERM_GuardedCommand
     | NONTERM_GCList
+    | NONTERM_ExpL
+    | NONTERM_ExpList
     | NONTERM_Exp
 /// This function maps tokens to integer indexes
 val tagOfToken: token -> int
