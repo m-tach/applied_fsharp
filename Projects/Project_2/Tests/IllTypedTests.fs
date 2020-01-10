@@ -113,6 +113,13 @@ type IllTypedTests() =
     print x
     end"
 
+
+    let illegalDO = "begin x:int, y:int ;
+    x:= 5 ; y := 1 ;
+    do ! x  ->  y := x*y; x:=x-1 od ;
+    print y
+    end"
+
     [<TestMethod>]
     member this.VariableDeclarationException() =
         Assert.Throws<Exception> "no declaration for : res"  (fun () -> tcP (parseString missingDeclaration))
@@ -170,6 +177,11 @@ type IllTypedTests() =
     [<TestMethod>]
     member this.IllegalIFException() = 
         Assert.Throws<Exception> "Illegal use of integer in alternative stm" (fun () -> tcP (parseString illegalIF))
+
+    [<TestMethod>]
+    member this.IllegalDOException() = 
+        Assert.Throws<Exception> "Illegal use of integer in alternative stm" (fun () -> tcP (parseString illegalDO))
+
 
 
 
