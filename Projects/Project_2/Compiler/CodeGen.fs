@@ -75,6 +75,8 @@ module CodeGeneration =
 
        | Ass(acc,e)       -> CA vEnv fEnv acc @ CE vEnv fEnv e @ [STI; INCSP -1]
 
+       | MAss(acc,e)      -> List.collect (fun(cacc, ce) -> CS vEnv fEnv (Ass(cacc, ce))) (List.zip acc e)
+
        | Block([],stms) ->   CSs vEnv fEnv stms
 
        | Alt(GC(stms))    -> let labend = newLabel()
