@@ -25,8 +25,36 @@
     </ProjectReference>
   </ItemGroup>
 
-  <Target Name="PreBuild" AfterTargets="PreBuildEvent">
-    <Exec Command="xcopy /Y /S $(ProjectDir)..\programs $(OutDir)programs" />
+<!--   <Target Name="PreBuild" AfterTargets="PreBuildEvent">
+    <Exec Command="xcopy /y /S $(ProjectDir)..\programs $(OutDir)programs" />
+  </Target> -->
+
+  <Target Name="CopyCustomContent" AfterTargets="AfterBuild">
+    <Copy SourceFiles="..\programs\A0.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\A1.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\A2.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\A3.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\A4.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\Ex0.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\Ex1.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\Ex2.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\Ex3.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\Ex4.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\Ex5.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\Ex6.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\Ex7.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\Exa1.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\fact.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\factCBV.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\factImpPTyp.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\factRec.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\par1.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\par2.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\partition.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\QuickSortV1.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\QuickSortV2.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\Skip.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\Swap.gc" DestinationFolder="$(OutDir)programs" />
   </Target>
 
   <ItemGroup>

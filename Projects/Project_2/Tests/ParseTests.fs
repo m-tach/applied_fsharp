@@ -42,6 +42,11 @@ type TestParse () =
     member this.ParseEx6 () =
         (parseFromFile "programs/Ex6.gc") |> ignore;
 
+    //TODO: not supported - test fails
+    [<TestMethod>]
+    member this.ParseEx7 () =
+        (parseFromFile "programs/Ex7.gc") |> ignore;
+
     [<TestMethod>]
     member this.ParseSkip () =
         (parseFromFile "programs/Skip.gc") |> ignore;
