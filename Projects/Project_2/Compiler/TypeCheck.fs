@@ -59,6 +59,10 @@ module TypeCheck =
                                          else failwith "illtyped assignment"                                
 
                          | Block([],stms) -> List.iter (tcS gtenv ltenv) stms
+                         | Alt(GC(stms))  -> List.iter (fun (cexp, cstms) -> (tcE gtenv ltenv cexp) |> ignore
+                                                                             List.iter (tcS gtenv ltenv) cstms) stms
+                         | Do(GC(stms))  -> List.iter (fun (cexp, cstms) -> (tcE gtenv ltenv cexp) |> ignore
+                                                                            List.iter (tcS gtenv ltenv) cstms) stms
                          | _              -> failwith "tcS: this statement is not supported yet"
 
    and tcGDec gtenv = function  
