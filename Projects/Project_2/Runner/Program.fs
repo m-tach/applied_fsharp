@@ -11,7 +11,7 @@ open CompilerUtil
 let main argv =
     // Parsing of Ex1.gc
 
-    let ex6Tree = parseFromFile "../programs/Ex6.gc"
+    let ex6Tree = parseFromFile "../programs/GC_Do.gc"
 
     // -- is typechecked as follows:
 

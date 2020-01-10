@@ -80,6 +80,10 @@ module CodeGeneration =
        | Alt(GC(stms))    -> let labend = newLabel()
                              List.foldBack (fun (cexp, cstms) state -> let lab = newLabel()
                                                                        CE vEnv fEnv cexp @ [IFZERO lab] @ CSs vEnv fEnv cstms @ [GOTO labend; Label lab] @ state) stms [Label labend]
+       
+       | Do(GC(stms))    -> let labstart = newLabel()
+                            List.fold (fun state (cexp, cstms) -> let lab = newLabel()
+                                                                  state @ CE vEnv fEnv cexp @ [IFZERO lab] @ CSs vEnv fEnv cstms @ [GOTO labstart; Label lab]) [Label labstart] stms
 
        | _                -> failwith "CS: this statement is not supported yet"
 
