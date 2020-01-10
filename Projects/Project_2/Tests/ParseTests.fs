@@ -31,40 +31,42 @@ type TestParse () =
 
     [<TestMethod>]
     member this.ParseEx0 () =
-        (parseFromFile "programs/Ex0.gc") |> ignore;
+        tcP (parseFromFile "programs/Ex0.gc") |> ignore;
 
     [<TestMethod>]
     member this.ParseEx1 () =
-        (parseFromFile "programs/Ex1.gc") |> ignore;
+        tcP (parseFromFile "programs/Ex1.gc") |> ignore;
 
     [<TestMethod>]
     member this.ParseEx2 () =
-        (parseFromFile "programs/Ex2.gc") |> ignore;
+        tcP (parseFromFile "programs/Ex2.gc") |> ignore;
 
     [<TestMethod>]
     member this.ParseEx3 () =
-        (parseFromFile "programs/Ex3.gc") |> ignore;
+        tcP (parseFromFile "programs/Ex3.gc") |> ignore;
 
     [<TestMethod>]
     member this.ParseEx4 () =
-        (parseFromFile "programs/Ex4.gc") |> ignore;
+        tcP (parseFromFile "programs/Ex4.gc") |> ignore;
 
     [<TestMethod>]
     member this.ParseEx5 () =
-        (parseFromFile "programs/Ex5.gc") |> ignore;
+        tcP (parseFromFile "programs/Ex5.gc") |> ignore;
 
     [<TestMethod>]
     member this.ParseEx6 () =
-        (parseFromFile "programs/Ex6.gc") |> ignore;
+        tcP (parseFromFile "programs/Ex6.gc") |> ignore;
 
     //TODO: not supported - test fails
     [<TestMethod>]
     member this.ParseEx7 () =
-        (parseFromFile "programs/Ex7.gc") |> ignore;
+        tcP (parseFromFile "programs/Ex7.gc") |> ignore;
 
     [<TestMethod>]
     member this.ParseSkip () =
-        (parseFromFile "programs/Skip.gc") |> ignore;
+        tcP (parseFromFile "programs/Skip.gc") |> ignore;
+
+
     // Testing that an exception is thrown when a variable is not declared before its used
     [<TestMethod>]
     member this.VariableDeclarationException () =
