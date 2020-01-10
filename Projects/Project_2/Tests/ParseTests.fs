@@ -11,23 +11,8 @@ open GuardedCommands.Backend.CodeGeneration
 open ParserUtil
 open CompilerUtil
 
-module Assert = 
-  let Throws<'a> f =
-    let mutable wasThrown = false
-    try
-      f()
-    with
-    | ex -> Assert.AreEqual(ex.GetType(), typedefof<'a>, (sprintf "Actual Exception: %A" ex)); wasThrown <- true
-
-    Assert.IsTrue(wasThrown, "No exception thrown")
-
-    
 [<TestClass>]
 type TestParse () =
-    let missingDeclaration = "begin 
-    res := 4;
-    print res + 2 
-    end"
 
     [<TestMethod>]
     member this.ParseEx0 () =
@@ -67,8 +52,3 @@ type TestParse () =
         tcP (parseFromFile "programs/Skip.gc") |> ignore;
 
 
-    // Testing that an exception is thrown when a variable is not declared before its used
-    [<TestMethod>]
-    member this.VariableDeclarationException () =
-        Assert.Throws<Exception>( fun() -> tcP (parseString missingDeclaration) )
-        
