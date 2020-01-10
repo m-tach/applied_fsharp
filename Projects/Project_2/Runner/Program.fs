@@ -9,48 +9,35 @@ open CompilerUtil
 
 [<EntryPoint>]
 let main argv =
-    let ex0Tree = parseFromFile "../programs/Ex0.gc"
-
-    let _ = tcP ex0Tree
-
-    let ex0Code = CP ex0Tree 
-
-    let _ = go ex0Tree
-
-    let _ = goTrace ex0Tree
-
-
     // Parsing of Ex1.gc
 
-    let ex1Tree = parseFromFile "../programs/Ex1.gc"
+    let ex6Tree = parseFromFile "../programs/Ex6.gc"
 
     // -- is typechecked as follows:
 
-    let _ = tcP ex1Tree
+    let _ = tcP ex6Tree
 
     // obtain symbolic code:
-    let ex1Code = CP ex1Tree 
+    let ex1Code = CP ex6Tree 
 
     // -- is executed with trace as follows:
-    let stack = goTrace ex1Tree
+    let stack = goTrace ex6Tree
 
     // -- is executed as follows (no trace):
-    let sameStack = go ex1Tree
+    let sameStack = go ex6Tree
 
     // "All in one" parse from file, type check, compile and run 
 
-    let _ = exec "../programs/Ex1.gc"
-
-    let _ = exec "../programs/Ex2.gc"
+    let _ = exec "../programs/Ex6.gc"
 
     // Test of programs covered by the fifth task using optimized compilation (Section 8.2):
-    List.iter execOpt ["../programs/Ex1.gc"; "../programs/Ex2.gc"]
+    //List.iter execOpt ["../programs/Ex1.gc"; "../programs/Ex2.gc"]
 
     // All programs relating to the basic version can be parsed:
-    let pts = List.map parseFromFile ["../programs/Ex1.gc"; "../programs/Ex2.gc";"../programs/Ex3.gc"; "../programs/Ex4.gc"; "../programs/Ex5.gc"; "../programs/Ex6.gc"; "../programs/Skip.gc"]
+    //let pts = List.map parseFromFile ["../programs/Ex1.gc"; "../programs/Ex2.gc";"../programs/Ex3.gc"; "../programs/Ex4.gc"; "../programs/Ex5.gc"; "../programs/Ex6.gc"; "../programs/Skip.gc"]
 
     // The parse tree for Ex3.gc
-    List.item 2 pts 
+    //List.item 2 pts 
 
     (*
     // Test of programs covered by the first task (Section 3.7):
