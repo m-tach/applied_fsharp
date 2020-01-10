@@ -16,49 +16,49 @@ type TestParse () =
 
     [<TestMethod>]
     member this.ParseEx0 () =
-        (parseFromFile "programs/Ex0.gc") |> ignore;
+        CP (parseFromFile "programs/Ex0.gc") |> ignore;
 
     [<TestMethod>]
     member this.ParseEx1 () =
-        (parseFromFile "programs/Ex1.gc") |> ignore;
+        CP (parseFromFile "programs/Ex1.gc") |> ignore;
 
     [<TestMethod>]
     member this.ParseEx2 () =
-        (parseFromFile "programs/Ex2.gc") |> ignore;
+        CP (parseFromFile "programs/Ex2.gc") |> ignore;
 
     [<TestMethod>]
     member this.ParseEx3 () =
-        (parseFromFile "programs/Ex3.gc") |> ignore;
+        CP (parseFromFile "programs/Ex3.gc") |> ignore;
 
     [<TestMethod>]
     member this.ParseEx4 () =
-        (parseFromFile "programs/Ex4.gc") |> ignore;
+        CP (parseFromFile "programs/Ex4.gc") |> ignore;
 
     [<TestMethod>]
     member this.ParseEx5 () =
-        (parseFromFile "programs/Ex5.gc") |> ignore;
+        CP (parseFromFile "programs/Ex5.gc") |> ignore;
 
     [<TestMethod>]
     member this.ParseEx6 () =
-        (parseFromFile "programs/Ex6.gc") |> ignore;
+        CP (parseFromFile "programs/Ex6.gc") |> ignore;
 
     //TODO: not supported - test fails
     [<TestMethod>]
     member this.ParseEx7 () =
-        (parseFromFile "programs/Ex7.gc") |> ignore;
+        CP (parseFromFile "programs/Ex7.gc") |> ignore;
 
     [<TestMethod>]
     member this.ParseSkip () =
-        (parseFromFile "programs/Skip.gc") |> ignore;
+        CP (parseFromFile "programs/Skip.gc") |> ignore;
 
     [<TestMethod>]
     member this.ParseFact () =
-        (parseFromFile "programs/fact.gc") |> ignore;
+        CP (parseFromFile "programs/fact.gc") |> ignore;
 
     [<TestMethod>]
     member this.ParseFactRec () =
-        (parseFromFile "programs/factRec.gc") |> ignore;
+        CP (parseFromFile "programs/factRec.gc") |> ignore;
 
     [<TestMethod>]
     member this.ParseFactCBV () =
-        (parseFromFile "programs/factCBV.gc") |> ignore;
+        CP (parseFromFile "programs/factCBV.gc") |> ignore;

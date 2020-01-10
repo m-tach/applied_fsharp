@@ -89,8 +89,8 @@ module CodeGeneration =
                              (CE vEnv fEnv e) @ [RET locals]
 
        | Block([],stms)          -> CSs vEnv fEnv stms
-       | Block(VarDec(t, s)::tail,stms)   -> let (vEnv2, code) = allocate LocVar (t, s) vEnv
-                                             code @ (CS vEnv2 fEnv (Block(tail, stms))) @ [INCSP -1]
+       | Block((VarDec(t, s))::tail,stms)   -> let (vEnv2, code) = allocate LocVar (t, s) vEnv
+                                               code @ (CS vEnv2 fEnv (Block(tail, stms))) @ [INCSP -1]
 
        | _                -> failwith "CS: this statement is not supported yet"
 
