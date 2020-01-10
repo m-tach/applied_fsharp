@@ -116,7 +116,7 @@ type IllTypedTests() =
 
     let illegalDO = "begin x:int, y:int ;
     x:= 5 ; y := 1 ;
-    do ! x  ->  y := x*y; x:=x-1 od ;
+    do  x  ->  y := x*y; x:=x-1 od ;
     print y
     end"
 

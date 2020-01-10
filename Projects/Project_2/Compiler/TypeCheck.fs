@@ -60,14 +60,12 @@ module TypeCheck =
                                          else failwith "illtyped assignment"                                
 
                          | Block([],stms) -> List.iter (tcS gtenv ltenv) stms
+
                          | Alt(GC(stms))  -> List.iter (fun (cexp, cstms) -> 
-                                 match (tcE gtenv ltenv cexp)  with 
-                                 | ITyp -> failwith "Illegal use of integer in alternative stm" 
-                                 | _ -> List.iter (tcS gtenv ltenv) cstms) stms
+                         tcGC gtenv ltenv cexp cstms) stms|> ignore
                                  
-                         | Do(GC(stms))  -> List.iter (fun (cexp, cstms) -> (tcE gtenv ltenv cexp) |> ignore
-                                                                            List.iter (tcS gtenv ltenv) cstms) stms
-                         | _              -> failwith "tcS: this statement is not supported yet"
+                         | Do(GC(stms))  -> List.iter (fun (cexp, cstms) -> tcGC gtenv ltenv cexp cstms) stms|> ignore
+
 
    and tcGDec gtenv = function  
                       | VarDec(t,s)               -> Map.add s t gtenv
@@ -76,6 +74,11 @@ module TypeCheck =
    and tcGDecs gtenv = function
                        | dec::decs -> tcGDecs (tcGDec gtenv dec) decs
                        | _         -> gtenv
+
+   /// tcGS checks if GuardedCommand has a valid condition type bool
+   and tcGC gtenv ltenv cexp cstms = match (tcE gtenv ltenv cexp)  with
+                                     | ITyp -> failwith "Illegal use of integer in alternative stm" 
+                                     | _ -> List.iter (tcS gtenv ltenv) cstms 
 
 
 /// tcP prog checks the well-typeness of a program prog
