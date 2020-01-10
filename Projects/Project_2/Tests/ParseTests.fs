@@ -16,49 +16,73 @@ type TestParse () =
 
     [<TestMethod>]
     member this.ParseEx0 () =
-        CP (parseFromFile "programs/Ex0.gc") |> ignore;
+        let ast = parseFromFile "programs/Ex0.gc"
+        tcP ast
+        CP ast
 
     [<TestMethod>]
     member this.ParseEx1 () =
-        CP (parseFromFile "programs/Ex1.gc") |> ignore;
+        let ast = parseFromFile "programs/Ex1.gc"
+        tcP ast
+        CP ast
 
     [<TestMethod>]
     member this.ParseEx2 () =
-        CP (parseFromFile "programs/Ex2.gc") |> ignore;
+        let ast = parseFromFile "programs/Ex2.gc"
+        tcP ast
+        CP ast
 
     [<TestMethod>]
     member this.ParseEx3 () =
-        CP (parseFromFile "programs/Ex3.gc") |> ignore;
+        let ast = parseFromFile "programs/Ex3.gc"
+        tcP ast
+        CP ast
 
     [<TestMethod>]
     member this.ParseEx4 () =
-        CP (parseFromFile "programs/Ex4.gc") |> ignore;
+        let ast = parseFromFile "programs/Ex4.gc"
+        tcP ast
+        CP ast
 
     [<TestMethod>]
     member this.ParseEx5 () =
-        CP (parseFromFile "programs/Ex5.gc") |> ignore;
+        let ast = parseFromFile "programs/Ex5.gc"
+        tcP ast
+        CP ast
 
     [<TestMethod>]
     member this.ParseEx6 () =
-        CP (parseFromFile "programs/Ex6.gc") |> ignore;
+        let ast = parseFromFile "programs/Ex6.gc"
+        tcP ast
+        CP ast
 
     //TODO: not supported - test fails
     [<TestMethod>]
     member this.ParseEx7 () =
-        CP (parseFromFile "programs/Ex7.gc") |> ignore;
+        let ast = parseFromFile "programs/Ex7.gc"
+        tcP ast
+        CP ast
 
     [<TestMethod>]
     member this.ParseSkip () =
-        CP (parseFromFile "programs/Skip.gc") |> ignore;
+        let ast = parseFromFile "programs/Skip.gc"
+        tcP ast
+        CP ast
 
     [<TestMethod>]
     member this.ParseFact () =
-        CP (parseFromFile "programs/fact.gc") |> ignore;
+        let ast = parseFromFile "programs/fact.gc"
+        tcP ast
+        CP ast
 
     [<TestMethod>]
     member this.ParseFactRec () =
-        CP (parseFromFile "programs/factRec.gc") |> ignore;
+        let ast = parseFromFile "programs/factRec.gc"
+        tcP ast
+        CP ast
 
     [<TestMethod>]
     member this.ParseFactCBV () =
-        CP (parseFromFile "programs/factCBV.gc") |> ignore;
+        let ast = parseFromFile "programs/factCBV.gc"
+        tcP ast
+        CP ast
