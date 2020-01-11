@@ -74,3 +74,29 @@ type TestTypeCheck () =
     member this.TypeCheckFactCBV () =
         let ast = parseFromFile "programs/factCBV.gc"
         tcP ast |> ignore
+
+    [<TestMethod>]
+    member this.TypeCheckNoReturnOutsideFunctions () =
+        let program = @"
+            begin
+            res : int;
+            res := 1;
+            return res
+            end"
+        let ast = parseString program
+        Assert.ThrowsException(fun _ -> tcP ast) |> ignore
+
+    [<TestMethod>]
+    member this.TypeCheckAllReturnsMustReturnFunctionType () =
+        let program = @"
+            begin
+            res : int,
+            function fact(n: int): int =
+            {  
+                return 1;
+                return true
+            } ;
+            res := fact(4)
+            end"
+        let ast = parseString program
+        Assert.ThrowsException(fun _ -> tcP ast) |> ignore    
