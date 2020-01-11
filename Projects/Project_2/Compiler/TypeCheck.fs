@@ -7,6 +7,16 @@ open GuardedCommands.Frontend.AST
 
 module TypeCheck = 
 
+   let rec getReturnStms stm = 
+      match stm with
+      | PrintLn(_)     -> []
+      | Ass(_)         -> []
+      | Return(_)      -> [stm]
+      | Alt(GC(eax))   -> List.collect(fun (_, stms) -> List.collect getReturnStms stms) eax
+      | Do(GC(eax))    -> List.collect(fun (_, stms) -> List.collect getReturnStms stms) eax
+      | Block(_, stms) -> List.collect getReturnStms stms
+      | Call(_)        -> []
+
 /// tcE gtenv ltenv e gives the type for expression e on the basis of type environments gtenv and ltenv
 /// for global and local variables 
    let rec tcE gtenv ltenv = function                            
@@ -19,6 +29,13 @@ module TypeCheck =
 
          | Apply(f,[e1;e2]) when List.exists (fun x ->  x=f) ["+";"-";"*"; "="; "&&"; "<>"; "<"; ">";"<="]        
                             -> tcDyadic gtenv ltenv f e1 e2   
+
+         | Apply(func, exps) when Map.containsKey func gtenv -> match Map.find func gtenv with
+                                                                | FTyp(typs, Some(retType)) -> if exps.Length <> typs.Length then failwith ("function " + func + " expected " + (exps.Length).ToString() + " arguments but only " + (typs.Length).ToString())
+                                                                                               let expTypes = List.map(fun x -> tcE gtenv ltenv x) exps
+                                                                                               if not (List.forall(fun (x, y) -> x = y) (List.zip expTypes typs)) then failwith "awdadw"
+                                                                                               retType
+                                                                | _ -> failwith "expected function but was not given a function"
 
          | _                -> failwith "tcE: not supported yet"
 
@@ -40,11 +57,11 @@ module TypeCheck =
 
 /// tcA gtenv ltenv e gives the type for access acc on the basis of type environments gtenv and ltenv
 /// for global and local variables 
-   and tcA gtenv ltenv = 
-         function 
+   and tcA gtenv ltenv ac = 
+         match ac with 
          | AVar x         -> match Map.tryFind x ltenv with
                              | None   -> match Map.tryFind x gtenv with
-                                         | None   -> failwith ("no declaration for : " + x)
+                                         | None   -> failwith ("no declaration for : " + ac.ToString())
                                          | Some t -> t
                              | Some t -> t            
          | AIndex(acc, e) -> failwith "tcA: array indexing not supported yes"
@@ -59,17 +76,37 @@ module TypeCheck =
                                          then ()
                                          else failwith "illtyped assignment"                                
 
-                         | Block([],stms) -> List.iter (tcS gtenv ltenv) stms
+                         | Block([],stms)    -> List.iter (tcS gtenv ltenv) stms
+                         | Block(decs, stms) -> List.iter (fun dec -> tcGDec gtenv dec |> ignore) decs
+                                                let ltenv2 = Map.ofList (List.map(fun (VarDec(t, s)) -> (s, t)) decs)
+                                                tcS gtenv ltenv2 (Block([], stms))
 
-                         | Alt(GC(stms))  -> List.iter (fun (cexp, cstms) -> 
-                         tcGC gtenv ltenv cexp cstms) stms|> ignore
+                         | Alt(GC(stms))   -> List.iter (fun (cexp, cstms) -> tcGC gtenv ltenv cexp cstms) stms
                                  
-                         | Do(GC(stms))  -> List.iter (fun (cexp, cstms) -> tcGC gtenv ltenv cexp cstms) stms|> ignore
+                         | Do(GC(stms))    -> List.iter (fun (cexp, cstms) -> tcGC gtenv ltenv cexp cstms) stms
+
+                         | Return(Some(e)) -> tcE gtenv ltenv e |> ignore
+                         | Return(_)       -> failwith "procedures are not supported yet"
+
+                         | Call(_)         -> failwith "procedures are not supported yet"
 
 
    and tcGDec gtenv = function  
                       | VarDec(t,s)               -> Map.add s t gtenv
-                      | FunDec(topt,f, decs, stm) -> failwith "type check: function/procedure declarations not yet supported"
+                      | FunDec(Some(retTyp),f, decs, stm) -> let returns = getReturnStms stm
+                                                             if List.exists(fun retStm -> match retStm with
+                                                                                          | Return(typOpt) -> match typOpt with
+                                                                                                              | Some(e) -> retTyp <> tcE gtenv (Map.empty) e
+                                                                                                              | _ -> failwith "expected return value but none was given"
+                                                                                          | _ -> failwith "impassible. Only here to make the compiler happy") returns
+                                                               then failwith "return type does not match functions expected return type"
+                                                             let ltenv = List.fold tcGDec (Map.empty) decs
+                                                             tcS gtenv ltenv stm
+                                                             Map.add f (FTyp(List.map(fun dec -> match dec with
+                                                                                                 | VarDec(t, _) -> t
+                                                                                                 | _ -> failwith "function arguments can only be variables"
+                                                               ) decs, Some(retTyp))) gtenv
+                      | FunDec(None, _, _, _) -> failwith "procedures are not supported yet"
 
    and tcGDecs gtenv = function
                        | dec::decs -> tcGDecs (tcGDec gtenv dec) decs
