@@ -5,13 +5,16 @@ open GuardedCommands.Backend.CodeGeneration
 
 open ParserUtil
 open CompilerUtil
+open Visualizer
 
 
 [<EntryPoint>]
 let main argv =
-    let ex0Tree = parseFromFile "../programs/Ex0.gc"
+    let ex0Tree = parseFromFile "../programs/Ex5.gc"
+    Visualizer.Visualize ex0Tree
 
-    let _ = tcP ex0Tree
+
+    (*let _ = tcP ex0Tree
 
     let ex0Code = CP ex0Tree 
 
@@ -51,7 +54,7 @@ let main argv =
 
     // The parse tree for Ex3.gc
     List.item 2 pts 
-
+    *)
     (*
     // Test of programs covered by the first task (Section 3.7):
     List.iter exec ["programs/Ex1.gc"; "programs/Ex2.gc";"programs/Ex3.gc"; "programs/Ex4.gc"; "programs/Ex5.gc"; "programs/Ex6.gc"; "programs/Skip.gc"]
