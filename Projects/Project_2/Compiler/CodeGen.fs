@@ -26,13 +26,15 @@ module CodeGeneration =
    let mergeParamWithEnv env pa = List.fold(fun (map, i) (t, s) -> varEnv(Map.add s (LocVar(i), t) map, i + 1)) env pa
 
 /// CE vEnv fEnv e gives the code for an expression e on the basis of a variable and a function environment
-   let rec CE (vEnv:varEnv) (fEnv:funEnv) = 
-       function
+   let rec CE (vEnv:varEnv) (fEnv:funEnv) expr = 
+       match expr with
        | N n          -> [CSTI n]
        | B b          -> [CSTI (if b then 1 else 0)]
        | Access acc   -> CA vEnv fEnv acc @ [LDI] 
 
-       | Apply("-", [e]) -> CE vEnv fEnv e @  [CSTI 0; SWAP; SUB]
+       | Apply("-", [e]) -> CE vEnv fEnv e @ [CSTI 0; SWAP; SUB]
+
+       | Apply("!", [e]) -> CE vEnv fEnv e @ [NOT]
 
        | Apply("&&",[b1;b2]) -> let labend   = newLabel()
                                 let labfalse = newLabel()
@@ -56,7 +58,7 @@ module CodeGeneration =
                                                        [INCSP (param.Length); CALL(param.Length, label)]
                                                        
 
-       | _            -> failwith "CE: not supported yet"
+       | _            -> failwith ("CE: not supported yet " + (expr.ToString()))
        
 
 /// CA vEnv fEnv acc gives the code for an access acc on the basis of a variable and a function environment
@@ -124,7 +126,9 @@ module CodeGeneration =
              | VarDec (typ, var) -> let (vEnv1, code1) = allocate GloVar (typ, var) vEnv
                                     let (vEnv2, fEnv2, code2) = addv decr vEnv1 fEnv
                                     (vEnv2, fEnv2, code1 @ code2)
-             | FunDec (typOpt, f, xs, body) -> let args = List.map(fun (VarDec(t, s)) -> (t, s)) xs
+             | FunDec (typOpt, f, xs, body) -> let args = List.map(fun dec -> match dec with
+                                                                              | VarDec(t, s) -> (t, s)
+                                                                              | _ -> failwith "function arguments can only be variables") xs
                                                let functionStart = newLabel()
                                                let fEnv2 = Map.add f (functionStart, typOpt, args) fEnv
                                                let vEnv2 = (fst (mergeParamWithEnv vEnv args), args.Length)
