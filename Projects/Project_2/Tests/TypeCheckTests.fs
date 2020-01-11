@@ -100,3 +100,22 @@ type TestTypeCheck () =
             end"
         let ast = parseString program
         Assert.ThrowsException(fun _ -> tcP ast) |> ignore    
+
+    [<TestMethod>]
+    member this.TypeCheckFunctionArgumentsAreOnlyVariables () =
+        let program = @"
+            begin
+            res : int,
+            function fact(n: int, function fact(n: int): int =
+            {  
+                return 1;
+                return true
+            }): int =
+            {  
+                return 1;
+                return true
+            } ;
+            res := fact(4)
+            end"
+        let ast = parseString program
+        Assert.ThrowsException(fun _ -> tcP ast) |> ignore    
