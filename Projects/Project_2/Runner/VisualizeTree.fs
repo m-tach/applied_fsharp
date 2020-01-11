@@ -244,7 +244,6 @@ module PostScriptGen =
 
 module Visualizer =
     let public Visualize prog =
-        printfn "awdawd %s" System.Environment.CurrentDirectory
         let ast = ASTConverter.programToTree prog
         let tree = TreeDesign.design ast
         let result = PostScriptGen.generate tree
