@@ -123,6 +123,7 @@ module TypeCheck =
 
 /// tcP prog checks the well-typeness of a program prog
    and tcP(P(decs, stms)) = let gtenv = tcGDecs Map.empty decs
+                            if (List.sumBy(fun x -> (getReturnStms gtenv Map.empty x).Length) stms) > 0 then failwith "can't return outside a function"
                             List.iter (tcS gtenv Map.empty) stms
 
   
