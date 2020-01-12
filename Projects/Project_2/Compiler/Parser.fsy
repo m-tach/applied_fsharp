@@ -51,6 +51,7 @@ ATyp:
 
 Typ:
     BasicTyp                          { $1 }
+  | ATyp                              { $1 }
 
 Dec: 
     NAME COLON Typ                    { VarDec($3,$1) }
