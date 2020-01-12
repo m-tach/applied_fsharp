@@ -7,9 +7,14 @@ open ParserUtil
 open CompilerUtil
 open Visualizer
 
+open Machine
+open VirtualMachine
+
 
 [<EntryPoint>]
 let main argv =
-    let ex0Tree = parseFromFile "../programs/Ex5.gc"
-    Visualizer.Visualize ex0Tree
+    let ex0Tree = parseFromFile "../programs/fact.gc"
+    let intrs = CP ex0Tree
+    VirtualMachine.run (Machine.code2ints intrs) |> ignore
+    //Visualizer.Visualize ex0Tree
     0 // return an integer exit code

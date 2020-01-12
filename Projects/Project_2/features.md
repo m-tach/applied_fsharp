@@ -12,6 +12,7 @@
         * --Checks that everything returns as the last thing within a function 
     * Codegen implemented
     * Supports recursion
+    * --Supports local functions
  * Return is now implemented
     * Checks that there is no returns outside of a function
 

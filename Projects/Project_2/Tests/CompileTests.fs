@@ -49,7 +49,6 @@ type TestCompile () =
         let ast = parseFromFile "programs/Ex6.gc"
         CP ast |> ignore
 
-    //TODO: not supported - test fails
     [<TestMethod>]
     member this.CompileEx7 () =
         let ast = parseFromFile "programs/Ex7.gc"

@@ -49,7 +49,6 @@ type TestTypeCheck () =
         let ast = parseFromFile "programs/Ex6.gc"
         tcP ast |> ignore
 
-    //TODO: not supported - test fails
     [<TestMethod>]
     member this.TypeCheckEx7 () =
         let ast = parseFromFile "programs/Ex7.gc"
