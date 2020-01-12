@@ -13,6 +13,30 @@ open CompilerUtil
 
 [<TestClass>]
 type ArrayTests() =
+    let temp = "begin
+    res : int;
+    res := 2;
+    print res
+    end"
+
+
+    //TODO: fails because functions are not implemented
     [<TestMethod>]
     member this.ParseA0 () =
-        tcP (parseFromFile "programs/A0.gc") |> ignore;
+        exec "programs/A0.gc" ;
+
+    [<TestMethod>]
+    member this.ParseA1 () =
+        exec "programs/A1.gc" ;
+
+    [<TestMethod>]
+    member this.ParseA2 () =
+        exec "programs/A2.gc" ;
+
+    [<TestMethod>]
+    member this.ParseA3 () =
+        exec "programs/A3.gc" ;
+
+    [<TestMethod>]
+    member this.ParseA4 () =
+        exec "programs/A4.gc" ;
