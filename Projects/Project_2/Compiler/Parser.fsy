@@ -45,6 +45,10 @@ BasicTyp:
     BTYP                              { BTyp }
   | ITYP                              { ITyp } 
 
+ATyp:
+    BasicTyp LSP RSP                  { ATyp($1,None) }
+  | BasicTyp LSP INT RSP              { ATyp($1,Some($3)) }
+
 Typ:
     BasicTyp                          { $1 }
 
