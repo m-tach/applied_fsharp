@@ -47,7 +47,11 @@ module TypeCheck =
                                          | None   -> failwith ("no declaration for : " + x)
                                          | Some t -> t
                              | Some t -> t            
-         | AIndex(acc, e) -> failwith "tcA: array indexing not supported yes"
+         | AIndex(acc, e) -> match tcE gtenv ltenv e with
+                              | ITyp -> match (tcA gtenv ltenv acc) with
+                                          | ATyp (t,_) -> t
+                              | _                      -> failwith "tcA: Array index has to be int"
+
          | ADeref e       -> failwith "tcA: pointer dereferencing not supported yes"
  
 

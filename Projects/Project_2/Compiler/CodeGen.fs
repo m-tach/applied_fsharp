@@ -52,7 +52,8 @@ module CodeGeneration =
    and CA vEnv fEnv = function | AVar x         -> match Map.find x (fst vEnv) with
                                                    | (GloVar addr,_) -> [CSTI addr]
                                                    | (LocVar addr,_) -> failwith "CA: Local variables not supported yet"
-                               | AIndex(acc, e) -> failwith "CA: array indexing not supported yet" 
+                               | AIndex(acc, e) -> 
+                                  CA vEnv fEnv acc @ [LDI] @ CE vEnv fEnv e @ [ADD]
                                | ADeref e       -> failwith "CA: pointer dereferencing not supported yet"
 
   
