@@ -71,7 +71,11 @@ module CodeGeneration =
     match typ with
     | ATyp (ATyp _, _) -> 
       raise (Failure "allocate: array of arrays not permitted")
-    | ATyp (t, Some i) -> 
+    | ATyp (BTyp, Some i) -> 
+      let newEnv = (Map.add x (kind (fdepth+i), typ) env, fdepth+i+1)
+      let code = [INCSP i; GETSP; CSTI (i-1); SUB] 
+      (newEnv, code)
+    | ATyp (ITyp, Some i) -> 
       let newEnv = (Map.add x (kind (fdepth+i), typ) env, fdepth+i+1)
       let code = [INCSP i; GETSP; CSTI (i-1); SUB] 
       (newEnv, code)
