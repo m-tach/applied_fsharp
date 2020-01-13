@@ -18,3 +18,10 @@
 
 ## Operators
  * Added support for `e - e`, `!e`
+
+## Pointers
+ * Address-of operator &
+    * Extended Lexer and Parser syntax
+    * Type checking implemented
+    * Codegen implemented
+    * Uses the same fundamentals as Access, so it works for all cases where Access works (variables, arrays, pointer derefs)
