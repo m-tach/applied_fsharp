@@ -24,7 +24,7 @@ module TypeCheck =
       | Apply(func, exps) when Map.containsKey func gtenv -> match Map.find func gtenv with
                                                              | FTyp(typs, Some(retType)) -> if exps.Length <> typs.Length then failwith ("function " + func + " expected " + (exps.Length).ToString() + " arguments but only " + (typs.Length).ToString() + " arguments were given")
                                                                                             let expTypes = List.map(fun x -> tcE gtenv ltenv x) exps
-                                                                                            if not (List.forall(fun (x, y) -> x = y) (List.zip expTypes typs)) then failwith "awdadw"
+                                                                                            if not (List.forall(fun (x, y) -> x = y) (List.zip expTypes typs)) then failwith ("tcE: The parameter type does not match the function definition")
                                                                                             retType
                                                              | _ -> failwith "expected function but was not given a function"
 
@@ -55,7 +55,11 @@ module TypeCheck =
                                          | None   -> failwith ("no declaration for : " + x)
                                          | Some t -> t
                              | Some t -> t            
-         | AIndex(acc, e) -> failwith "tcA: array indexing not supported yes"
+         | AIndex(acc, e) -> match tcE gtenv ltenv e with
+                              | ITyp -> match (tcA gtenv ltenv acc) with
+                                          | ATyp (t,_) -> t
+                              | _                      -> failwith "tcA: Array index has to be int"
+
          | ADeref e       -> failwith "tcA: pointer dereferencing not supported yes"
  
 

@@ -92,6 +92,7 @@ type nonTerminalId =
     | NONTERM_Main
     | NONTERM_Prog
     | NONTERM_BasicTyp
+    | NONTERM_ATyp
     | NONTERM_Typ
     | NONTERM_Dec
     | NONTERM_DecL
