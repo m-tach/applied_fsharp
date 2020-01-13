@@ -128,8 +128,8 @@ module CodeGeneration =
                                                                               | _ -> failwith "function arguments can only be variables") xs
                                                let functionStart = newLabel()
                                                let fEnv2 = Map.add f (functionStart, typOpt, args) fEnv
-                                               let vEnv2 = (fst (mergeParamWithEnv vEnv args), args.Length)
-                                               printfn "%s" (vEnv2.ToString())
+                                               let (vmap, _) = vEnv
+                                               let vEnv2 = (fst (List.fold(fun (map, i) (t, s) -> varEnv(Map.add s (LocVar(i), t) map, i + 1)) (vmap, 0) args), args.Length)
                                                let funcCode = (Label functionStart)::(CS vEnv2 fEnv2 body)
                                                let (vEnv3, fEnv3, funcCode2) = addv decr vEnv fEnv2
                                                let skipFuncDec = newLabel()

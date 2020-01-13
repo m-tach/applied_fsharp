@@ -8,7 +8,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <!-- <Compile Include="RunTests.fs" /> -->
+    <Compile Include="RunTests.fs" />
     <Compile Include="CompileTests.fs" />
     <Compile Include="TypeCheckTests.fs" />
     <Compile Include="IllTypedTests.fs" />
