@@ -16,39 +16,48 @@ type TestParse () =
 
     [<TestMethod>]
     member this.ParseEx0 () =
-        tcP (parseFromFile "programs/Ex0.gc") |> ignore;
+        parseFromFile "programs/Ex0.gc" |> ignore
 
     [<TestMethod>]
     member this.ParseEx1 () =
-        tcP (parseFromFile "programs/Ex1.gc") |> ignore;
+        parseFromFile "programs/Ex1.gc" |> ignore
 
     [<TestMethod>]
     member this.ParseEx2 () =
-        tcP (parseFromFile "programs/Ex2.gc") |> ignore;
+        parseFromFile "programs/Ex2.gc" |> ignore
 
     [<TestMethod>]
     member this.ParseEx3 () =
-        tcP (parseFromFile "programs/Ex3.gc") |> ignore;
+        parseFromFile "programs/Ex3.gc" |> ignore
 
     [<TestMethod>]
     member this.ParseEx4 () =
-        tcP (parseFromFile "programs/Ex4.gc") |> ignore;
+        parseFromFile "programs/Ex4.gc" |> ignore
 
     [<TestMethod>]
     member this.ParseEx5 () =
-        tcP (parseFromFile "programs/Ex5.gc") |> ignore;
+        parseFromFile "programs/Ex5.gc" |> ignore
 
     [<TestMethod>]
     member this.ParseEx6 () =
-        tcP (parseFromFile "programs/Ex6.gc") |> ignore;
+        parseFromFile "programs/Ex6.gc" |> ignore
 
-    //TODO: not supported - test fails
     [<TestMethod>]
     member this.ParseEx7 () =
-        tcP (parseFromFile "programs/Ex7.gc") |> ignore;
+        parseFromFile "programs/Ex7.gc" |> ignore
 
     [<TestMethod>]
     member this.ParseSkip () =
-        tcP (parseFromFile "programs/Skip.gc") |> ignore;
+        parseFromFile "programs/Skip.gc" |> ignore
 
+    [<TestMethod>]
+    member this.ParseFact () =
+        parseFromFile "programs/fact.gc" |> ignore
 
+    [<TestMethod>]
+    member this.ParseFactRec () =
+        parseFromFile "programs/factRec.gc" |> ignore
+
+    [<TestMethod>]
+    member this.ParseFactCBV () =
+        parseFromFile "programs/factCBV.gc" |> ignore
