@@ -1,0 +1,9 @@
+begin
+procedure printInc(x: int, y: int) =
+{
+    print x + y;
+    print x * y
+};
+printInc(3, 4);
+printInc(7, 9)
+end

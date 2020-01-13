@@ -1,0 +1,13 @@
+begin
+procedure PrintNormal(x: int, y: int) =
+{
+    print x;
+    print y
+},
+procedure printInc(n: int) =
+{
+    PrintNormal(n + 1, n * 3);
+    PrintNormal(n + 2, n * 7)
+};
+printInc(4)
+end
