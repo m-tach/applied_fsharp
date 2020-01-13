@@ -23,35 +23,45 @@ module CodeGeneration =
    type ParamDecs = (Typ * string) list
    type funEnv = Map<string, label * Typ option * ParamDecs>
 
+   let mergeParamWithEnv env pa = List.fold(fun (map, i) (t, s) -> varEnv(Map.add s (LocVar(i), t) map, i + 1)) env pa
+
 /// CE vEnv fEnv e gives the code for an expression e on the basis of a variable and a function environment
-   let rec CE vEnv fEnv = 
-       function
+   let rec CE (vEnv:varEnv) (fEnv:funEnv) expr = 
+       match expr with
        | N n          -> [CSTI n]
        | B b          -> [CSTI (if b then 1 else 0)]
        | Access acc   -> CA vEnv fEnv acc @ [LDI] 
 
-       | Apply("-", [e]) -> CE vEnv fEnv e @  [CSTI 0; SWAP; SUB]
+       | Apply("-", [e]) -> CE vEnv fEnv e @ [CSTI 0; SWAP; SUB]
+
+       | Apply("!", [e]) -> CE vEnv fEnv e @ [NOT]
 
        | Apply("&&",[b1;b2]) -> let labend   = newLabel()
                                 let labfalse = newLabel()
                                 CE vEnv fEnv b1 @ [IFZERO labfalse] @ CE vEnv fEnv b2
                                 @ [GOTO labend; Label labfalse; CSTI 0; Label labend]
 
-       | Apply(o,[e1;e2]) when List.exists (fun x -> o=x) ["+"; "*"; "="]
+       | Apply(o,[e1;e2]) when List.exists (fun x -> o=x) ["+"; "*"; "="; "-"]
                              -> let ins = match o with
                                           | "+"  -> [ADD]
                                           | "*"  -> [MUL]
                                           | "="  -> [EQ] 
+                                          | "-"  -> [SUB] 
                                           | _    -> failwith "CE: this case is not possible"
-                                CE vEnv fEnv e1 @ CE vEnv fEnv e2 @ ins 
+                                CE vEnv fEnv e1 @ CE vEnv fEnv e2 @ ins
+       
+       | Apply(f, args) when Map.containsKey f fEnv -> let (label, typ, param) = Map.find f fEnv
+                                                       (List.collect(fun x -> CE vEnv fEnv x) args) @ 
+                                                       [CALL(param.Length, label)]
+                                                       
 
-       | _            -> failwith "CE: not supported yet"
+       | _            -> failwith ("CE: not supported yet " + (expr.ToString()))
        
 
 /// CA vEnv fEnv acc gives the code for an access acc on the basis of a variable and a function environment
    and CA vEnv fEnv = function | AVar x         -> match Map.find x (fst vEnv) with
                                                    | (GloVar addr,_) -> [CSTI addr]
-                                                   | (LocVar addr,_) -> failwith "CA: Local variables not supported yet"
+                                                   | (LocVar addr,_) -> [CSTI addr; GETBP; ADD]
                                | AIndex(acc, e) -> failwith "CA: array indexing not supported yet" 
                                | ADeref e       -> failwith "CA: pointer dereferencing not supported yet"
 
@@ -70,14 +80,20 @@ module CodeGeneration =
 
                       
 /// CS vEnv fEnv s gives the code for a statement s on the basis of a variable and a function environment                          
-   let rec CS vEnv fEnv = function
+   let rec CS (vEnv:varEnv) fEnv = function
        | PrintLn e        -> CE vEnv fEnv e @ [PRINTI; INCSP -1] 
 
        | Ass(acc,e)       -> CA vEnv fEnv acc @ CE vEnv fEnv e @ [STI; INCSP -1]
 
-       | MAss(acc,e)      -> List.collect (fun(cacc, ce) -> CS vEnv fEnv (Ass(cacc, ce))) (List.zip acc e)
+       | Return(Some(e))  -> let (_, locals) = vEnv
+                             (CE vEnv fEnv e) @ [RET locals]
 
-       | Block([],stms) ->   CSs vEnv fEnv stms
+       | Block([],stms)          -> CSs vEnv fEnv stms
+       | Block((VarDec(t, s))::tail,stms)   -> let (vEnv2, code) = allocate LocVar (t, s) vEnv
+                                               code @ (CS vEnv2 fEnv (Block(tail, stms))) @ [INCSP -1]
+
+       | MAss(acc,e)      -> List.collect (fun(cacc, ce) -> CS vEnv fEnv (Ass(cacc, ce))) (List.zip acc e)                                             
+
 
        | Alt(GC(stms))    -> let labend = newLabel()
                              List.foldBack (fun (cexp, cstms) state -> let lab = newLabel()
@@ -95,10 +111,11 @@ module CodeGeneration =
 
 (* ------------------------------------------------------------------- *)
 
+
 (* Build environments for global variables and functions *)
 
    let makeGlobalEnvs decs = 
-       let rec addv decs vEnv fEnv = 
+       let rec addv decs (vEnv:varEnv) fEnv = 
            match decs with 
            | []         -> (vEnv, fEnv, [])
            | dec::decr  -> 
@@ -106,7 +123,26 @@ module CodeGeneration =
              | VarDec (typ, var) -> let (vEnv1, code1) = allocate GloVar (typ, var) vEnv
                                     let (vEnv2, fEnv2, code2) = addv decr vEnv1 fEnv
                                     (vEnv2, fEnv2, code1 @ code2)
-             | FunDec (tyOpt, f, xs, body) -> failwith "makeGlobalEnvs: function/procedure declarations not supported yet"
+             | FunDec (typOpt, f, xs, body) -> let args = List.map(fun dec -> match dec with
+                                                                              | VarDec(t, s) -> (t, s)
+                                                                              | _ -> failwith "function arguments can only be variables") xs
+                                               let functionStart = newLabel()
+                                               let fEnv2 = Map.add f (functionStart, typOpt, args) fEnv
+                                               let vEnv2 = (fst (mergeParamWithEnv vEnv args), args.Length)
+                                               printfn "%s" (vEnv2.ToString())
+                                               let funcCode = (Label functionStart)::(CS vEnv2 fEnv2 body)
+                                               let (vEnv3, fEnv3, funcCode2) = addv decr vEnv fEnv2
+                                               let skipFuncDec = newLabel()
+                                               
+                                               // function declarations are placed before the statements that should be run
+                                               // so a goto is used to skip over the function code. This is only used when
+                                               // the program starts.
+                                               //
+                                               // other declarations    GOTO    function code    label    rest of code
+                                               //                        |                         ^
+                                               //                        \-------------------------/
+
+                                               (vEnv3, fEnv3, [GOTO skipFuncDec] @ funcCode @ [Label skipFuncDec] @ funcCode2)
        addv decs (Map.empty, 0) Map.empty
 
 /// CP prog gives the code for a program prog

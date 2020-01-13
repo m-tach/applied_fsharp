@@ -9,18 +9,26 @@ module TypeCheck =
 
 /// tcE gtenv ltenv e gives the type for expression e on the basis of type environments gtenv and ltenv
 /// for global and local variables 
-   let rec tcE gtenv ltenv = function                            
-         | N _              -> ITyp   
-         | B _              -> BTyp   
-         | Access acc       -> tcA gtenv ltenv acc     
-                   
-         | Apply(f,[e]) when List.exists (fun x ->  x=f) ["-"; "!"]  
-                            -> tcMonadic gtenv ltenv f e        
+   let rec tcE gtenv ltenv  ex = 
+      match ex with                        
+      | N _              -> ITyp   
+      | B _              -> BTyp   
+      | Access acc       -> tcA gtenv ltenv acc     
+                
+      | Apply(f,[e]) when List.exists (fun x ->  x=f) ["-"; "!"]  
+                         -> tcMonadic gtenv ltenv f e        
 
-         | Apply(f,[e1;e2]) when List.exists (fun x ->  x=f) ["+";"-";"*"; "="; "&&"; "<>"; "<"; ">";"<="]        
-                            -> tcDyadic gtenv ltenv f e1 e2   
+      | Apply(f,[e1;e2]) when List.exists (fun x ->  x=f) ["+";"-";"*"; "="; "&&"; "<>"; "<"; ">";"<="]        
+                         -> tcDyadic gtenv ltenv f e1 e2   
 
-         | _                -> failwith "tcE: not supported yet"
+      | Apply(func, exps) when Map.containsKey func gtenv -> match Map.find func gtenv with
+                                                             | FTyp(typs, Some(retType)) -> if exps.Length <> typs.Length then failwith ("function " + func + " expected " + (exps.Length).ToString() + " arguments but only " + (typs.Length).ToString() + " arguments were given")
+                                                                                            let expTypes = List.map(fun x -> tcE gtenv ltenv x) exps
+                                                                                            if not (List.forall(fun (x, y) -> x = y) (List.zip expTypes typs)) then failwith "awdadw"
+                                                                                            retType
+                                                             | _ -> failwith "expected function but was not given a function"
+
+      | _                -> failwith ("tcE: not supported yet " + ex.ToString())
 
    and tcMonadic gtenv ltenv f e = match (f, tcE gtenv ltenv e) with
                                    | ("-", ITyp) -> ITyp
@@ -40,8 +48,8 @@ module TypeCheck =
 
 /// tcA gtenv ltenv e gives the type for access acc on the basis of type environments gtenv and ltenv
 /// for global and local variables 
-   and tcA gtenv ltenv = 
-         function 
+   and tcA gtenv ltenv ac = 
+         match ac with 
          | AVar x         -> match Map.tryFind x ltenv with
                              | None   -> match Map.tryFind x gtenv with
                                          | None   -> failwith ("no declaration for : " + x)
@@ -62,17 +70,47 @@ module TypeCheck =
                                           List.iter (fun (cacc, ce) -> tcS gtenv ltenv (Ass(cacc, ce))) assignments
                                           ()
 
-                         | Block([],stms) -> List.iter (tcS gtenv ltenv) stms
+                         | Block([],stms)    -> List.iter (tcS gtenv ltenv) stms
+                         | Block(decs, stms) -> List.iter (fun dec -> tcGDec gtenv dec |> ignore) decs
+                                                let ltenv2 = Map.ofList ((List.map(fun (VarDec(t, s)) -> (s, t)) decs) @ Map.toList ltenv)
+                                                tcS gtenv ltenv2 (Block([], stms))
 
-                         | Alt(GC(stms))  -> List.iter (fun (cexp, cstms) -> 
-                         tcGC gtenv ltenv cexp cstms) stms|> ignore
+                         | Alt(GC(stms))   -> List.iter (fun (cexp, cstms) -> tcGC gtenv ltenv cexp cstms) stms
                                  
-                         | Do(GC(stms))  -> List.iter (fun (cexp, cstms) -> tcGC gtenv ltenv cexp cstms) stms|> ignore
+                         | Do(GC(stms))    -> List.iter (fun (cexp, cstms) -> tcGC gtenv ltenv cexp cstms) stms
 
+                         | Return(Some(e)) -> tcE gtenv ltenv e |> ignore
+                         | Return(_)       -> failwith "procedures are not supported yet"
+
+                         | Call(_)         -> failwith "procedures are not supported yet"
+
+   and getReturnStms gtenv ltenv stm = 
+      match stm with
+      | PrintLn(_)        -> []
+      | Ass(_)            -> []
+      | Return(Some(e))   -> [tcE gtenv ltenv e]
+      | Return(_)         -> failwith "procedures are not supported yet"
+      | Alt(GC(eax))      -> List.collect(fun (_, stms) -> List.collect (getReturnStms gtenv ltenv) stms) eax
+      | Do(GC(eax))       -> List.collect(fun (_, stms) -> List.collect (getReturnStms gtenv ltenv) stms) eax
+      | Block(decs, stms) -> let gtenv2 = List.fold(fun map (x, y) -> Map.add x y map) gtenv (Map.toList ltenv)
+                             let ltenv2 = List.fold tcGDec ltenv decs
+                             List.collect (getReturnStms gtenv2 ltenv2) stms
+      | Call(_)           -> []
 
    and tcGDec gtenv = function  
                       | VarDec(t,s)               -> Map.add s t gtenv
-                      | FunDec(topt,f, decs, stm) -> failwith "type check: function/procedure declarations not yet supported"
+                      | FunDec(Some(expectedRetTyp),f, decs, stm) -> let ltenv = List.fold tcGDec (Map.empty) decs
+                                                                     let gtenv2 = Map.add f (FTyp(List.map(fun dec -> match dec with
+                                                                                                                      | VarDec(t, _) -> t
+                                                                                                                      | _ -> failwith "function arguments can only be variables"
+                                                                                   ) decs, Some(expectedRetTyp))) gtenv
+                                                                     let returnTypes = getReturnStms gtenv2 ltenv stm
+                                                                     if List.exists(fun actualRetTyp -> expectedRetTyp <> actualRetTyp) returnTypes
+                                                                       then failwith "return type does not match functions expected return type"
+                                                                     tcS gtenv2 ltenv stm
+                                                                     gtenv2
+                                                                     
+                      | FunDec(None, _, _, _) -> failwith "procedures are not supported yet"
 
    and tcGDecs gtenv = function
                        | dec::decs -> tcGDecs (tcGDec gtenv dec) decs
@@ -86,6 +124,7 @@ module TypeCheck =
 
 /// tcP prog checks the well-typeness of a program prog
    and tcP(P(decs, stms)) = let gtenv = tcGDecs Map.empty decs
+                            if (List.sumBy(fun x -> (getReturnStms gtenv Map.empty x).Length) stms) > 0 then failwith "can't return outside a function"
                             List.iter (tcS gtenv Map.empty) stms
 
   
