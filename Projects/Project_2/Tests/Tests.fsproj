@@ -13,6 +13,7 @@
     <Compile Include="TypeCheckTests.fs" />
     <Compile Include="IllTypedTests.fs" />
     <Compile Include="ParseTests.fs" />
+    <Compile Include="ArrayTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>

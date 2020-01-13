@@ -41,12 +41,19 @@ module CodeGeneration =
                                 CE vEnv fEnv b1 @ [IFZERO labfalse] @ CE vEnv fEnv b2
                                 @ [GOTO labend; Label labfalse; CSTI 0; Label labend]
 
-       | Apply(o,[e1;e2]) when List.exists (fun x -> o=x) ["+"; "*"; "="; "-"]
+       | Apply(o,[e1;e2]) when List.exists (fun x -> o=x) ["-"; "+"; "*"; "%"; "/"; "="; "<"; ">"; "<="; ">="; "<>"]
                              -> let ins = match o with
+                                          | "-" ->  [SUB]
                                           | "+"  -> [ADD]
                                           | "*"  -> [MUL]
-                                          | "="  -> [EQ] 
-                                          | "-"  -> [SUB] 
+                                          | "/"  -> [DIV]
+                                          | "%"  -> [MOD]
+                                          | "="  -> [EQ]
+                                          | "<>" -> [EQ; NOT]
+                                          | "<"  -> [LT]
+                                          | ">"  -> [SWAP; LT]
+                                          | "<=" -> [SWAP; LT; NOT]
+                                          | ">=" -> [LT; NOT] 
                                           | _    -> failwith "CE: this case is not possible"
                                 CE vEnv fEnv e1 @ CE vEnv fEnv e2 @ ins
        
@@ -62,7 +69,9 @@ module CodeGeneration =
    and CA vEnv fEnv = function | AVar x         -> match Map.find x (fst vEnv) with
                                                    | (GloVar addr,_) -> [CSTI addr]
                                                    | (LocVar addr,_) -> [CSTI addr; GETBP; ADD]
-                               | AIndex(acc, e) -> failwith "CA: array indexing not supported yet" 
+                               | AIndex(acc, e) -> 
+                                     CA vEnv fEnv acc @ CE vEnv fEnv e @ [ADD]
+
                                | ADeref e       -> failwith "CA: pointer dereferencing not supported yet"
 
   
@@ -72,7 +81,11 @@ module CodeGeneration =
     match typ with
     | ATyp (ATyp _, _) -> 
       raise (Failure "allocate: array of arrays not permitted")
-    | ATyp (t, Some i) -> failwith "allocate: array not supported yet"
+
+    | ATyp (t, Some i) when List.contains t [BTyp; ITyp] -> 
+      let newEnv = (Map.add x (kind (fdepth), typ) env, fdepth+i)
+      let code = [INCSP i] 
+      (newEnv, code)
     | _ -> 
       let newEnv = (Map.add x (kind fdepth, typ) env, fdepth+1)
       let code = [INCSP 1]
