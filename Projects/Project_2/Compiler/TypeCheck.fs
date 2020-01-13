@@ -72,7 +72,9 @@ module TypeCheck =
 
                          | Block([],stms)    -> List.iter (tcS gtenv ltenv) stms
                          | Block(decs, stms) -> List.iter (fun dec -> tcGDec gtenv dec |> ignore) decs
-                                                let ltenv2 = Map.ofList ((List.map(fun (VarDec(t, s)) -> (s, t)) decs) @ Map.toList ltenv)
+                                                let ltenv2 = Map.ofList ((List.map(fun dec -> match dec with
+                                                                                              | VarDec(t, s) -> (s, t)
+                                                                                              | _ -> failwith "local functions are not supported yet") decs) @ Map.toList ltenv)
                                                 tcS gtenv ltenv2 (Block([], stms))
 
                          | Alt(GC(stms))   -> List.iter (fun (cexp, cstms) -> tcGC gtenv ltenv cexp cstms) stms
