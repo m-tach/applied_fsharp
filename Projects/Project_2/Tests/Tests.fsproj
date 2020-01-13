@@ -37,6 +37,10 @@
     <Copy SourceFiles="..\programs\A2.gc" DestinationFolder="$(OutDir)programs" />
     <Copy SourceFiles="..\programs\A3.gc" DestinationFolder="$(OutDir)programs" />
     <Copy SourceFiles="..\programs\A4.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\basicProc1.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\basicProc2.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\basicProc3.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\basicProc4.gc" DestinationFolder="$(OutDir)programs" />
     <Copy SourceFiles="..\programs\Ex0.gc" DestinationFolder="$(OutDir)programs" />
     <Copy SourceFiles="..\programs\Ex1.gc" DestinationFolder="$(OutDir)programs" />
     <Copy SourceFiles="..\programs\Ex2.gc" DestinationFolder="$(OutDir)programs" />

@@ -1,0 +1,8 @@
+begin
+procedure printInc(n: int) =
+{
+    print n + 1;
+    return
+};
+printInc(3)
+end

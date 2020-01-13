@@ -16,6 +16,12 @@
  * Return is now implemented
     * Checks that there is no returns outside of a function
 
+## Procedures
+    * Parsing implemented
+    * Type checking implemented
+    * Codegen implemented
+    * Supports both implicit and explicit return statements
+
 ## Operators
  * Added support for `e - e`, `!e`
  * Added support for `*`; `%`; `/`; `=`; `<`; `>`; `<=`; `>=`; `<>`
