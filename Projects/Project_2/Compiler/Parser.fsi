@@ -98,7 +98,6 @@ type nonTerminalId =
     | NONTERM_DecList
     | NONTERM_Access
     | NONTERM_AccessList
-    | NONTERM_ExpList
     | NONTERM_Stm
     | NONTERM_StmL
     | NONTERM_StmList
