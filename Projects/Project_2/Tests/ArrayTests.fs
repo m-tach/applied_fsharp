@@ -19,8 +19,7 @@ type ArrayTests() =
     print res
     end"
 
-
-    //TODO: fails because functions are not implemented
+    //fails because bug in array code
     [<TestMethod>]
     member this.ParseA0 () =
         exec "programs/A0.gc" ;
@@ -29,6 +28,7 @@ type ArrayTests() =
     member this.ParseA1 () =
         exec "programs/A1.gc" ;
 
+    //fails because bug in array code
     [<TestMethod>]
     member this.ParseA2 () =
         exec "programs/A2.gc" ;
@@ -37,6 +37,7 @@ type ArrayTests() =
     member this.ParseA3 () =
         exec "programs/A3.gc" ;
 
+    //TODO: fails because procedures are not implemented
     [<TestMethod>]
     member this.ParseA4 () =
         exec "programs/A4.gc" ;
