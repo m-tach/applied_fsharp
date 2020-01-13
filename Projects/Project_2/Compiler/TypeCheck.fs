@@ -13,7 +13,8 @@ module TypeCheck =
       match ex with                        
       | N _              -> ITyp   
       | B _              -> BTyp   
-      | Access acc       -> tcA gtenv ltenv acc     
+      | Access acc       -> tcA gtenv ltenv acc    
+      | Addr acc         -> PTyp (tcA gtenv ltenv acc)
                 
       | Apply(f,[e]) when List.exists (fun x ->  x=f) ["-"; "!"]  
                          -> tcMonadic gtenv ltenv f e        
@@ -63,14 +64,16 @@ module TypeCheck =
                                           | ATyp (t,_) -> t
                               | _                      -> failwith "tcA: Array index has to be int"
 
-         | ADeref e       -> failwith "tcA: pointer dereferencing not supported yes"
+         | ADeref e       -> match tcE gtenv ltenv e with
+                             | PTyp t  -> t
+                             | _       -> failwith "not a pointer reference"
  
 
 /// tcS gtenv ltenv retOpt s checks the well-typeness of a statement s on the basis of type environments gtenv and ltenv
 /// for global and local variables and the possible type of return expressions 
    and tcS gtenv ltenv = function                           
                          | PrintLn e -> ignore(tcE gtenv ltenv e)
-                         | Ass(acc,e) -> if tcA gtenv ltenv acc = tcE gtenv ltenv e 
+                         | Ass(acc,e) -> if tcA gtenv ltenv acc = tcE gtenv ltenv e
                                          then ()
                                          else failwith "illtyped assignment" 
                          | MAss(acc,e) -> let assignments = List.zip acc e

@@ -9,6 +9,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="RunTests.fs" />
+    <Compile Include="PointerTests.fs" />
     <Compile Include="CompileTests.fs" />
     <Compile Include="TypeCheckTests.fs" />
     <Compile Include="IllTypedTests.fs" />
@@ -62,6 +63,8 @@
     <Copy SourceFiles="..\programs\QuickSortV2.gc" DestinationFolder="$(OutDir)programs" />
     <Copy SourceFiles="..\programs\Skip.gc" DestinationFolder="$(OutDir)programs" />
     <Copy SourceFiles="..\programs\Swap.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\Pointers1.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\Pointers2_Fail.gc" DestinationFolder="$(OutDir)programs" />
     <Copy SourceFiles="..\programs\MultiAssign1.gc" DestinationFolder="$(OutDir)programs" />
     <Copy SourceFiles="..\programs\MultiAssign2.gc" DestinationFolder="$(OutDir)programs" />
     <Copy SourceFiles="..\programs\MultiAssign3_Fail.gc" DestinationFolder="$(OutDir)programs" />
