@@ -24,7 +24,10 @@ module TypeCheck =
       | Apply(func, exps) when Map.containsKey func gtenv -> match Map.find func gtenv with
                                                              | FTyp(typs, Some(retType)) -> if exps.Length <> typs.Length then failwith ("function " + func + " expected " + (exps.Length).ToString() + " arguments but only " + (typs.Length).ToString() + " arguments were given")
                                                                                             let expTypes = List.map(fun x -> tcE gtenv ltenv x) exps
-                                                                                            if not (List.forall(fun (x, y) -> x = y) (List.zip expTypes typs)) then failwith ("tcE: The parameter type does not match the function definition")
+                                                                                            let normalizedExpTypes = List.map(fun x -> match x with
+                                                                                                                                       | ATyp(t, _) -> ATyp(t, None)
+                                                                                                                                       | _ -> x) expTypes
+                                                                                            if not (List.forall(fun (x, y) -> x = y) (List.zip normalizedExpTypes typs)) then failwith ("tcE: The parameter type does not match the function definition")
                                                                                             retType
                                                              | _ -> failwith "expected function but was not given a function"
 
