@@ -57,7 +57,9 @@ module TypeCheck =
                                          | Some t -> t
                              | Some t -> t            
          | AIndex(acc, e) -> failwith "tcA: array indexing not supported yes"
-         | ADeref e       -> failwith "tcA: pointer dereferencing not supported yes"
+         | ADeref e       -> match e with
+                             | Access a -> tcA gtenv ltenv a
+                             | _        -> failwith "illtyped pointer dereference"
  
 
 /// tcS gtenv ltenv retOpt s checks the well-typeness of a statement s on the basis of type environments gtenv and ltenv
@@ -90,6 +92,7 @@ module TypeCheck =
    and getReturnStms gtenv ltenv stm = 
       match stm with
       | PrintLn(_)        -> []
+      | MAss(_)           -> []
       | Ass(_)            -> []
       | Return(Some(e))   -> [tcE gtenv ltenv e]
       | Return(_)         -> failwith "procedures are not supported yet"

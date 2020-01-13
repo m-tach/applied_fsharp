@@ -3,5 +3,5 @@ begin
    b: bool;
    b,x := true,2; 
    print &b; 
-   print &x
+   print &x^
 end
