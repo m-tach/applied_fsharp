@@ -15,6 +15,31 @@ open CompilerUtil
 type TestCompile () =
 
     [<TestMethod>]
+    member this.CompileA0 () =
+        let ast = parseFromFile "programs/A0.gc"
+        CP ast |> ignore
+
+    [<TestMethod>]
+    member this.CompileA1 () =
+        let ast = parseFromFile "programs/A1.gc"
+        CP ast |> ignore
+
+    [<TestMethod>]
+    member this.CompileA2 () =
+        let ast = parseFromFile "programs/A2.gc"
+        CP ast |> ignore
+
+    [<TestMethod>]
+    member this.CompileA3 () =
+        let ast = parseFromFile "programs/A3.gc"
+        CP ast |> ignore
+
+    [<TestMethod>]
+    member this.CompileA4 () =
+        let ast = parseFromFile "programs/A4.gc"
+        CP ast |> ignore
+
+    [<TestMethod>]
     member this.CompileEx0 () =
         let ast = parseFromFile "programs/Ex0.gc"
         CP ast |> ignore
@@ -55,9 +80,9 @@ type TestCompile () =
         CP ast |> ignore
 
     [<TestMethod>]
-    member this.CompileSkip () =
-        let ast = parseFromFile "programs/Skip.gc"
-        CP ast |> ignore
+    member this.CompileExa1 () =
+        let ast = parseFromFile "programs/Exa1.gc"
+        CP ast |> ignore    
 
     [<TestMethod>]
     member this.CompileFact () =
@@ -73,6 +98,16 @@ type TestCompile () =
     member this.CompileFactCBV () =
         let ast = parseFromFile "programs/factCBV.gc"
         CP ast |> ignore
+
+    [<TestMethod>]
+    member this.CompileFactImPTyp () =
+        let ast = parseFromFile "programs/factImPTyp.gc"
+        CP ast |> ignore
+
+    [<TestMethod>]
+    member this.CompileGCDo () =
+        let ast = parseFromFile "programs/GC_Do.gc"
+        CP ast |> ignore        
 
     [<TestMethod>]
     member this.CompileProcedure1 () =
@@ -92,4 +127,39 @@ type TestCompile () =
     [<TestMethod>]
     member this.CompileProcedure4 () =
         let ast = parseFromFile "programs/basicProc4.gc"
-        CP ast |> ignore       
+        CP ast |> ignore  
+
+    [<TestMethod>]
+    member this.Compilepar1 () =
+        let ast = parseFromFile "programs/par1.gc"
+        CP ast |> ignore  
+
+    [<TestMethod>]
+    member this.Compilepar2 () =
+        let ast = parseFromFile "programs/par2.gc"
+        CP ast |> ignore   
+
+    [<TestMethod>]
+    member this.Compilepartition () =
+        let ast = parseFromFile "programs/partition.gc"
+        CP ast |> ignore     
+
+    [<TestMethod>]
+    member this.CompileQuickSortV1 () =
+        let ast = parseFromFile "programs/QuickSortV1.gc"
+        CP ast |> ignore  
+
+    [<TestMethod>]
+    member this.CompileQuickSortV2 () =
+        let ast = parseFromFile "programs/QuickSortV2.gc"
+        CP ast |> ignore   
+
+    [<TestMethod>]
+    member this.CompileSkip () =
+        let ast = parseFromFile "programs/skip.gc"
+        CP ast |> ignore  
+
+    [<TestMethod>]
+    member this.CompileSwap () =
+        let ast = parseFromFile "programs/swap.gc"
+        CP ast |> ignore                          

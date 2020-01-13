@@ -54,6 +54,7 @@
     <Copy SourceFiles="..\programs\factCBV.gc" DestinationFolder="$(OutDir)programs" />
     <Copy SourceFiles="..\programs\factImpPTyp.gc" DestinationFolder="$(OutDir)programs" />
     <Copy SourceFiles="..\programs\factRec.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\GC_Do.gc" DestinationFolder="$(OutDir)programs" />
     <Copy SourceFiles="..\programs\par1.gc" DestinationFolder="$(OutDir)programs" />
     <Copy SourceFiles="..\programs\par2.gc" DestinationFolder="$(OutDir)programs" />
     <Copy SourceFiles="..\programs\partition.gc" DestinationFolder="$(OutDir)programs" />

@@ -15,6 +15,26 @@ open CompilerUtil
 type TestParse () =
 
     [<TestMethod>]
+    member this.ParseA0 () =
+        parseFromFile "programs/A0.gc" |> ignore
+
+    [<TestMethod>]
+    member this.ParseA1 () =
+        parseFromFile "programs/A1.gc" |> ignore
+
+    [<TestMethod>]
+    member this.ParseA2 () =
+        parseFromFile "programs/A2.gc" |> ignore
+
+    [<TestMethod>]
+    member this.ParseA3 () =
+        parseFromFile "programs/A3.gc" |> ignore
+
+    [<TestMethod>]
+    member this.ParseA4 () =
+        parseFromFile "programs/A4.gc" |> ignore
+
+    [<TestMethod>]
     member this.ParseEx0 () =
         parseFromFile "programs/Ex0.gc" |> ignore
 
@@ -47,8 +67,8 @@ type TestParse () =
         parseFromFile "programs/Ex7.gc" |> ignore
 
     [<TestMethod>]
-    member this.ParseSkip () =
-        parseFromFile "programs/Skip.gc" |> ignore
+    member this.ParseExa1 () =
+        parseFromFile "programs/Exa1.gc" |> ignore    
 
     [<TestMethod>]
     member this.ParseFact () =
@@ -61,6 +81,14 @@ type TestParse () =
     [<TestMethod>]
     member this.ParseFactCBV () =
         parseFromFile "programs/factCBV.gc" |> ignore
+
+    [<TestMethod>]
+    member this.ParseFactImPTyp () =
+        parseFromFile "programs/factImPTyp.gc" |> ignore   
+
+    [<TestMethod>]
+    member this.ParseGCDo () =
+        parseFromFile "programs/GC_Do.gc" |> ignore      
 
     [<TestMethod>]
     member this.ParseProcedure1 () =
@@ -76,4 +104,32 @@ type TestParse () =
 
     [<TestMethod>]
     member this.ParseProcedure4 () =
-        parseFromFile "programs/basicProc4.gc" |> ignore      
+        parseFromFile "programs/basicProc4.gc" |> ignore     
+
+    [<TestMethod>]
+    member this.Parsepar1 () =
+        parseFromFile "programs/par1.gc" |> ignore  
+
+    [<TestMethod>]
+    member this.Parsepar2 () =
+        parseFromFile "programs/par2.gc" |> ignore    
+
+    [<TestMethod>]
+    member this.Parsepartition () =
+        parseFromFile "programs/partition.gc" |> ignore
+
+    [<TestMethod>]
+    member this.ParseQuickSortV1 () =
+        parseFromFile "programs/QuickSortV1.gc" |> ignore
+
+    [<TestMethod>]
+    member this.ParseQuickSortV2 () =
+        parseFromFile "programs/QuickSortV2.gc" |> ignore    
+
+    [<TestMethod>]
+    member this.ParseSkip () =
+        parseFromFile "programs/skip.gc" |> ignore  
+
+    [<TestMethod>]
+    member this.ParseSwap () =
+        parseFromFile "programs/swap.gc" |> ignore
