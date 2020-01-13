@@ -90,7 +90,7 @@ module CodeGeneration =
                              (CE vEnv fEnv e) @ [RET locals]
 
        | Return(_)        -> let (_, locals) = vEnv
-                             [CSTI 0; RET locals; INCSP -1]                  
+                             [CSTI 0; RET locals]                  
 
        | Block([],stms)          -> CSs vEnv fEnv stms
        | Block((VarDec(t, s))::tail,stms)   -> let (vEnv2, code) = allocate LocVar (t, s) vEnv
@@ -110,7 +110,7 @@ module CodeGeneration =
 
        | Call(f, args) when Map.containsKey f fEnv -> let (label, _, param) = Map.find f fEnv
                                                       (List.collect(fun x -> CE vEnv fEnv x) args) @ 
-                                                      [CALL(param.Length, label)]
+                                                      [CALL(param.Length, label); INCSP -1]
        | Call(_) -> failwith "expected a procedure but did not get one"
 
    and CSs vEnv fEnv stms = List.collect (CS vEnv fEnv) stms 
@@ -150,7 +150,7 @@ module CodeGeneration =
                                                //                        |                                            ^
                                                //                        \--------------------------------------------/
 
-                                               let implicitReturn = if typOpt.IsNone then [CSTI 0; RET xs.Length; INCSP -1] else []
+                                               let implicitReturn = if typOpt.IsNone then [CSTI 0; RET xs.Length] else []
                                                (vEnv3, fEnv3, [GOTO skipFuncDec] @ funcCode @ implicitReturn @ [Label skipFuncDec] @ funcCode2)
        addv decs (Map.empty, 0) Map.empty
 
