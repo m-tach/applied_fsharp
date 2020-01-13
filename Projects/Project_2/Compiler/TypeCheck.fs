@@ -61,7 +61,8 @@ module TypeCheck =
          | AIndex(acc, e) -> match tcE gtenv ltenv e with
                               | ITyp -> match (tcA gtenv ltenv acc) with
                                           | ATyp (t,_) -> t
-                              | _                      -> failwith "tcA: Array index has to be int"
+                                          | _ -> failwith "expected array but was not given an array"
+                              | _    -> failwith "tcA: Array index has to be an int"
 
          | ADeref e       -> failwith "tcA: pointer dereferencing not supported yes"
  
