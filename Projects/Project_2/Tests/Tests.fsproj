@@ -12,6 +12,7 @@
     <Compile Include="CompileTests.fs" />
     <Compile Include="TypeCheckTests.fs" />
     <Compile Include="IllTypedTests.fs" />
+    <Compile Include="MultiAssignTests.fs" />
     <Compile Include="ParseTests.fs" />
     <Compile Include="ArrayTests.fs" />
     <Compile Include="Program.fs" />
@@ -61,5 +62,10 @@
     <Copy SourceFiles="..\programs\QuickSortV2.gc" DestinationFolder="$(OutDir)programs" />
     <Copy SourceFiles="..\programs\Skip.gc" DestinationFolder="$(OutDir)programs" />
     <Copy SourceFiles="..\programs\Swap.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\MultiAssign1.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\MultiAssign2.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\MultiAssign3_Fail.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\MultiAssign4_Fail.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\MultiAssign5_Fail.gc" DestinationFolder="$(OutDir)programs" />
   </Target>
 </Project>

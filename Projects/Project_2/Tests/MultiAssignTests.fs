@@ -14,24 +14,52 @@ open CompilerUtil
 [<TestClass>]
 type MultiAssignParse () =
 
+    // Can we parse the MultiAssign file x,y,z := 1,2,3;
     [<TestMethod>]
     member this.ParseMultiAssign1 () =
         (parseFromFile "programs/MultiAssign1.gc") |> ignore;
 
+    // Can we parse the MultiAssign file b,x := true,2;
     [<TestMethod>]
     member this.ParseMultiAssign2 () =
         (parseFromFile "programs/MultiAssign2.gc") |> ignore;
 
+    // After doing x,y,z := 1,2,3, check that globals are 1,2,3 (x,y,z)
     [<TestMethod>]
     member this.GlobalsMultiAssign1 () =
         // Parsing of file.gc
         let maTree = parseFromFile "programs/MultiAssign1.gc"
         let stack = goTrace maTree
-        assert List.forall2 (fun(a, b) -> a == b) stack [1; 2; 3]
+        assert List.forall2 (=) (Array.toList stack) [1; 2; 3]
 
+    // After doing b,x := true,2, check that globals are 2,1 (x,b)
     [<TestMethod>]
     member this.GlobalsMultiAssign2 () =
         // Parsing of file.gc
         let maTree = parseFromFile "programs/MultiAssign2.gc"
         let stack = goTrace maTree
-        assert List.forall2 (fun(a, b) -> a == b) stack [2; 1]
+        assert List.forall2 (=) (Array.toList stack) [2; 1]
+    
+    // Check against too many values. Assignment left/right side must have same amount of variables & values.
+    [<TestMethod>]
+    member this.MultiAssignTooManyValues () =
+        Assert.ThrowsException(fun () -> // Parsing of file.gc
+                                         let maTree = parseFromFile "programs/MultiAssign3_Fail.gc"
+                                         go maTree
+        )
+    
+    // Check against invalid syntax. This is caught in the parser.
+    [<TestMethod>]
+    member this.MultiAssignInvalidSyntaxTokens () =
+        Assert.ThrowsException(fun () -> // Parsing of file.gc
+                                         let maTree = parseFromFile "programs/MultiAssign4_Fail.gc"
+                                         go maTree
+        )
+    
+    // Check against invalid types. This is caught in the type checker.
+    [<TestMethod>]
+    member this.MultiAssignWrongTypes () =
+        Assert.ThrowsException(fun () -> // Parsing of file.gc
+                                         let maTree = parseFromFile "programs/MultiAssign5_Fail.gc"
+                                         go maTree
+        )
