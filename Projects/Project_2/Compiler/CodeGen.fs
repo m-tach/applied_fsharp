@@ -70,7 +70,7 @@ module CodeGeneration =
                                                    | (GloVar addr,_) -> [CSTI addr]
                                                    | (LocVar addr,_) -> [CSTI addr; GETBP; ADD]
                                | AIndex(acc, e) -> 
-                                     CA vEnv fEnv acc @ [LDI] @ CE vEnv fEnv e @ [ADD]
+                                     CA vEnv fEnv acc @ CE vEnv fEnv e @ [ADD]
 
                                | ADeref e       -> failwith "CA: pointer dereferencing not supported yet"
 
@@ -82,12 +82,12 @@ module CodeGeneration =
     | ATyp (ATyp _, _) -> 
       raise (Failure "allocate: array of arrays not permitted")
     | ATyp (BTyp, Some i) -> 
-      let newEnv = (Map.add x (kind (fdepth+i), typ) env, fdepth+i+1)
-      let code = [INCSP i; GETSP; CSTI (i-1); SUB] 
+      let newEnv = (Map.add x (kind (fdepth), typ) env, fdepth+i)
+      let code = [INCSP i] 
       (newEnv, code)
     | ATyp (ITyp, Some i) -> 
-      let newEnv = (Map.add x (kind (fdepth+i), typ) env, fdepth+i+1)
-      let code = [INCSP i; GETSP; CSTI (i-1); SUB] 
+      let newEnv = (Map.add x (kind (fdepth), typ) env, fdepth+i)
+      let code = [INCSP i] 
       (newEnv, code)
     | _ -> 
       let newEnv = (Map.add x (kind fdepth, typ) env, fdepth+1)
