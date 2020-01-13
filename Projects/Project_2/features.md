@@ -18,3 +18,7 @@
 
 ## Operators
  * Added support for `e - e`, `!e`
+ * Added support for `*`; `%`; `/`; `=`; `<`; `>`; `<=`; `>=`; `<>`
+
+## Arrays
+//TODO
