@@ -92,6 +92,9 @@ module CodeGeneration =
        | Block((VarDec(t, s))::tail,stms)   -> let (vEnv2, code) = allocate LocVar (t, s) vEnv
                                                code @ (CS vEnv2 fEnv (Block(tail, stms))) @ [INCSP -1]
 
+       | MAss(acc,e)      -> List.collect (fun(cacc, ce) -> CS vEnv fEnv (Ass(cacc, ce))) (List.zip acc e)                                             
+
+
        | Alt(GC(stms))    -> let labend = newLabel()
                              List.foldBack (fun (cexp, cstms) state -> let lab = newLabel()
                                                                        CE vEnv fEnv cexp @ [IFZERO lab] @ CSs vEnv fEnv cstms @ [GOTO labend; Label lab] @ state) stms [Label labend]
