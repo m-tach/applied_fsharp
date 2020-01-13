@@ -64,7 +64,7 @@ module CodeGeneration =
                                                    | (GloVar addr,_) -> [CSTI addr]
                                                    | (LocVar addr,_) -> [CSTI addr; GETBP; ADD]
                                | AIndex(acc, e) -> failwith "CA: array indexing not supported yet" 
-                               | ADeref e       -> failwith "CA: pointer dereferencing not supported yet"
+                               | ADeref e       -> CE vEnv fEnv e
 
   
 (* Bind declared variable in env and generate code to allocate it: *)   

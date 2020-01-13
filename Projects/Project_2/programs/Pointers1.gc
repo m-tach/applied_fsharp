@@ -1,7 +1,8 @@
 begin 
-   x: int, 
-   b: bool;
-   b,x := true,2; 
-   print &b; 
-   print &x^
+   b: bool,
+   x: int,
+   function p(y: ^int): int = { print y^; return 3 };
+   x := 2;
+   x:= p(&x);
+   print x
 end

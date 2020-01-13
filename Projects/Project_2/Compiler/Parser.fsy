@@ -47,7 +47,8 @@ BasicTyp:
   | ITYP                              { ITyp } 
 
 Typ:
-    BasicTyp                          { $1 }
+   | BasicTyp                         { $1 }
+   | PDEREF BasicTyp                  { PTyp $2 }
 
 Dec: 
      NAME COLON Typ                           { VarDec($3,$1) }
@@ -63,7 +64,7 @@ DecList:
 
 Access:
    | NAME                             { AVar $1 }
-   | Access PDEREF                    { ADeref(Exp.Access $1) }
+   | Exp PDEREF                       { ADeref $1 }
 
 AccessList:
    | NAME COMMA NAME                  { [AVar $1; AVar $3] }
