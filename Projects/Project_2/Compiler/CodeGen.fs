@@ -80,7 +80,8 @@ module CodeGeneration =
 
                       
 /// CS vEnv fEnv s gives the code for a statement s on the basis of a variable and a function environment                          
-   let rec CS (vEnv:varEnv) fEnv = function
+   let rec CS (vEnv:varEnv) fEnv st = 
+       match st with
        | PrintLn e        -> CE vEnv fEnv e @ [PRINTI; INCSP -1] 
 
        | Ass(acc,e)       -> CA vEnv fEnv acc @ CE vEnv fEnv e @ [STI; INCSP -1]
@@ -88,9 +89,13 @@ module CodeGeneration =
        | Return(Some(e))  -> let (_, locals) = vEnv
                              (CE vEnv fEnv e) @ [RET locals]
 
+       | Return(_)        -> let (_, locals) = vEnv
+                             [CSTI 0; RET locals; INCSP -1]                  
+
        | Block([],stms)          -> CSs vEnv fEnv stms
        | Block((VarDec(t, s))::tail,stms)   -> let (vEnv2, code) = allocate LocVar (t, s) vEnv
                                                code @ (CS vEnv2 fEnv (Block(tail, stms))) @ [INCSP -1]
+       | Block(_) -> failwith "local functions are not supported"                                             
 
        | MAss(acc,e)      -> List.collect (fun(cacc, ce) -> CS vEnv fEnv (Ass(cacc, ce))) (List.zip acc e)                                             
 
@@ -103,7 +108,10 @@ module CodeGeneration =
                             List.fold (fun state (cexp, cstms) -> let lab = newLabel()
                                                                   state @ CE vEnv fEnv cexp @ [IFZERO lab] @ CSs vEnv fEnv cstms @ [GOTO labstart; Label lab]) [Label labstart] stms
 
-       | _                -> failwith "CS: this statement is not supported yet"
+       | Call(f, args) when Map.containsKey f fEnv -> let (label, _, param) = Map.find f fEnv
+                                                      (List.collect(fun x -> CE vEnv fEnv x) args) @ 
+                                                      [CALL(param.Length, label)]
+       | Call(_) -> failwith "expected a procedure but did not get one"
 
    and CSs vEnv fEnv stms = List.collect (CS vEnv fEnv) stms 
 
@@ -138,11 +146,12 @@ module CodeGeneration =
                                                // so a goto is used to skip over the function code. This is only used when
                                                // the program starts.
                                                //
-                                               // other declarations    GOTO    function code    label    rest of code
-                                               //                        |                         ^
-                                               //                        \-------------------------/
+                                               // other declarations    GOTO    function code    implicit return    label    rest of code
+                                               //                        |                                            ^
+                                               //                        \--------------------------------------------/
 
-                                               (vEnv3, fEnv3, [GOTO skipFuncDec] @ funcCode @ [Label skipFuncDec] @ funcCode2)
+                                               let implicitReturn = if typOpt.IsNone then [CSTI 0; RET xs.Length; INCSP -1] else []
+                                               (vEnv3, fEnv3, [GOTO skipFuncDec] @ funcCode @ implicitReturn @ [Label skipFuncDec] @ funcCode2)
        addv decs (Map.empty, 0) Map.empty
 
 /// CP prog gives the code for a program prog

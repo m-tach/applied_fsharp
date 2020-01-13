@@ -61,3 +61,11 @@ type TestParse () =
     [<TestMethod>]
     member this.ParseFactCBV () =
         parseFromFile "programs/factCBV.gc" |> ignore
+
+    [<TestMethod>]
+    member this.ParseProcedure1 () =
+        parseFromFile "programs/basicProc1.gc" |> ignore
+
+    [<TestMethod>]
+    member this.ParseProcedure2 () =
+        parseFromFile "programs/basicProc2.gc" |> ignore    

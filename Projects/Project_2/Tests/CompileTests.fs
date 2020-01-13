@@ -73,3 +73,13 @@ type TestCompile () =
     member this.CompileFactCBV () =
         let ast = parseFromFile "programs/factCBV.gc"
         CP ast |> ignore
+
+    [<TestMethod>]
+    member this.CompileProcedure1 () =
+        let ast = parseFromFile "programs/basicProc1.gc"
+        CP ast |> ignore
+
+    [<TestMethod>]
+    member this.CompileProcedure2 () =
+        let ast = parseFromFile "programs/basicProc2.gc"
+        CP ast |> ignore    

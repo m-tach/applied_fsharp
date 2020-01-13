@@ -147,4 +147,14 @@ type TestTypeCheck () =
             res := fact(4)
             end"
         let ast = parseString program
-        Assert.ThrowsException(fun _ -> tcP ast) |> ignore  
+        Assert.ThrowsException(fun _ -> tcP ast) |> ignore
+
+    [<TestMethod>]
+    member this.TypeCheckProcedure1 () =
+        let ast = parseFromFile "programs/basicProc1.gc"
+        tcP ast |> ignore
+
+    [<TestMethod>]
+    member this.TypeCheckProcedure2 () =
+        let ast = parseFromFile "programs/basicProc2.gc"
+        tcP ast |> ignore

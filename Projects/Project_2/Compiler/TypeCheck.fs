@@ -97,7 +97,7 @@ module TypeCheck =
       | MAss(_)           -> []
       | Ass(_)            -> []
       | Return(Some(e))   -> [Some(tcE gtenv ltenv e)]
-      | Return(_)         -> failwith "procedures are not supported yet"
+      | Return(_)         -> [None]
       | Alt(GC(eax))      -> List.collect(fun (_, stms) -> List.collect (getReturnStms gtenv ltenv) stms) eax
       | Do(GC(eax))       -> List.collect(fun (_, stms) -> List.collect (getReturnStms gtenv ltenv) stms) eax
       | Block(decs, stms) -> let gtenv2 = List.fold(fun map (x, y) -> Map.add x y map) gtenv (Map.toList ltenv)
