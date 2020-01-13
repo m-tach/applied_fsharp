@@ -56,6 +56,8 @@ rule tokenize =
   | ":="        { ASG   }
   | "!"         { NEG }
   | "&&"        { AND }
+  | "&"         { ADDRESSOF }
+  | "^"         { PDEREF }
   | "<>"        { NEQ }
   | "<"         { LT }
   | ">"         { GT }
