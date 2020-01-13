@@ -117,4 +117,34 @@ type TestTypeCheck () =
             res := fact(4)
             end"
         let ast = parseString program
-        Assert.ThrowsException(fun _ -> tcP ast) |> ignore    
+        Assert.ThrowsException(fun _ -> tcP ast) |> ignore
+
+    [<TestMethod>]
+    member this.TypeCheckAllReturnsWithinAFunctionReturnsAType () =
+        let program = @"
+            begin
+            res : int,
+            function fact(n: int): int =
+            {  
+                return 1;
+                return
+            } ;
+            res := fact(4)
+            end"
+        let ast = parseString program
+        Assert.ThrowsException(fun _ -> tcP ast) |> ignore  
+
+    [<TestMethod>]
+    member this.TypeCheckAllReturnsWithinAProcedureDoesNotReturnAType () =
+        let program = @"
+            begin
+            res : int,
+            procedure fact(n: int) =
+            {  
+                return 1;
+                return
+            } ;
+            res := fact(4)
+            end"
+        let ast = parseString program
+        Assert.ThrowsException(fun _ -> tcP ast) |> ignore  
