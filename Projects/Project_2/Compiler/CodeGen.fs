@@ -111,9 +111,6 @@ module CodeGeneration =
 
 (* ------------------------------------------------------------------- *)
 
-//type ParamDecs = (Typ * string) list
-//type funEnv = Map<string, label * Typ option * ParamDecs>
-//type varEnv = Map<string, Var*Typ> * int
 
 (* Build environments for global variables and functions *)
 

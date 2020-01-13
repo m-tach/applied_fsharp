@@ -7,8 +7,6 @@ open GuardedCommands.Frontend.AST
 
 module TypeCheck = 
 
-   
-
 /// tcE gtenv ltenv e gives the type for expression e on the basis of type environments gtenv and ltenv
 /// for global and local variables 
    let rec tcE gtenv ltenv  ex = 
@@ -24,7 +22,7 @@ module TypeCheck =
                          -> tcDyadic gtenv ltenv f e1 e2   
 
       | Apply(func, exps) when Map.containsKey func gtenv -> match Map.find func gtenv with
-                                                             | FTyp(typs, Some(retType)) -> if exps.Length <> typs.Length then failwith ("function " + func + " expected " + (exps.Length).ToString() + " arguments but only " + (typs.Length).ToString())
+                                                             | FTyp(typs, Some(retType)) -> if exps.Length <> typs.Length then failwith ("function " + func + " expected " + (exps.Length).ToString() + " arguments but only " + (typs.Length).ToString() + " arguments were given")
                                                                                             let expTypes = List.map(fun x -> tcE gtenv ltenv x) exps
                                                                                             if not (List.forall(fun (x, y) -> x = y) (List.zip expTypes typs)) then failwith "awdadw"
                                                                                             retType
