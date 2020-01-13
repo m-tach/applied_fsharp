@@ -30,6 +30,8 @@ module CodeGeneration =
        | B b          -> [CSTI (if b then 1 else 0)]
        | Access acc   -> CA vEnv fEnv acc @ [LDI] 
 
+       | Addr acc     -> CA vEnv fEnv acc
+
        | Apply("-", [e]) -> CE vEnv fEnv e @  [CSTI 0; SWAP; SUB]
 
        | Apply("&&",[b1;b2]) -> let labend   = newLabel()

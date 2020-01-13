@@ -17,6 +17,7 @@ type token =
   | LT
   | GT
   | NEQ
+  | ADDRESSOF
   | COMMA
   | COLON
   | SEMI
@@ -57,6 +58,7 @@ type tokenId =
     | TOKEN_LT
     | TOKEN_GT
     | TOKEN_NEQ
+    | TOKEN_ADDRESSOF
     | TOKEN_COMMA
     | TOKEN_COLON
     | TOKEN_SEMI

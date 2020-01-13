@@ -10,13 +10,13 @@ open GuardedCommands.Frontend.AST
 %token LP LCP LSP RP RCP RSP
 %token IF FI DO OD BEGIN END 
 %token COMMA COLON SEMI BAR TO
-%token NEG PLUS MINUS TIMES AND EQ LE LT GT NEQ
+%token NEG PLUS MINUS TIMES AND EQ LE LT GT NEQ ADDRESSOF
 %token PRINT ASG SKIP ABORT
 %token EOF
 %token HIGH
 
 %left AND
-%nonassoc NEG
+%nonassoc NEG ADDRESSOF
 %left EQ LE LT GT NEQ
 %left PLUS MINUS 
 %left TIMES
@@ -98,6 +98,7 @@ GCList:
 
 Exp:
     Access                            { Access $1 }
+  | ADDRESSOF Access                  { Addr $2 }
   | INT                               { N $1 }
   | BOOL                              { B $1 }       
   | LP Exp RP                         { $2 } 

@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="MultiAssign.fs" />
+    <Compile Include="PointerRunner.fs" />
   </ItemGroup>
 
   <ItemGroup>

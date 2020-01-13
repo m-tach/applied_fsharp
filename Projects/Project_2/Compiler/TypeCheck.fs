@@ -12,7 +12,8 @@ module TypeCheck =
    let rec tcE gtenv ltenv = function                            
          | N _              -> ITyp   
          | B _              -> BTyp   
-         | Access acc       -> tcA gtenv ltenv acc     
+         | Access acc       -> tcA gtenv ltenv acc    
+         | Addr acc         -> tcA gtenv ltenv acc 
                    
          | Apply(f,[e]) when List.exists (fun x ->  x=f) ["-"]  
                             -> tcMonadic gtenv ltenv f e        
