@@ -69,3 +69,11 @@ type TestParse () =
     [<TestMethod>]
     member this.ParseProcedure2 () =
         parseFromFile "programs/basicProc2.gc" |> ignore    
+
+    [<TestMethod>]
+    member this.ParseProcedure3 () =
+        parseFromFile "programs/basicProc3.gc" |> ignore
+
+    [<TestMethod>]
+    member this.ParseProcedure4 () =
+        parseFromFile "programs/basicProc4.gc" |> ignore      

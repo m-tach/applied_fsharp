@@ -112,3 +112,17 @@ type TestRun () =
         let intInstrs = Machine.code2ints intrs
         VirtualMachine.run intInstrs |> ignore
 
+    [<TestMethod>]
+    member this.RunProcedure3 () =
+        let ast = parseFromFile "programs/basicProc3.gc"
+        let intrs = CP ast
+        let intInstrs = Machine.code2ints intrs
+        VirtualMachine.run intInstrs |> ignore
+
+    [<TestMethod>]
+    member this.RunProcedure4 () =
+        let ast = parseFromFile "programs/basicProc4.gc"
+        let intrs = CP ast
+        let intInstrs = Machine.code2ints intrs
+        VirtualMachine.runTrace intInstrs |> ignore        
+

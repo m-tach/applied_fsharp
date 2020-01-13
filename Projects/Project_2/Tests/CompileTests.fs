@@ -82,4 +82,14 @@ type TestCompile () =
     [<TestMethod>]
     member this.CompileProcedure2 () =
         let ast = parseFromFile "programs/basicProc2.gc"
-        CP ast |> ignore    
+        CP ast |> ignore  
+
+    [<TestMethod>]
+    member this.CompileProcedure3 () =
+        let ast = parseFromFile "programs/basicProc3.gc"
+        CP ast |> ignore
+
+    [<TestMethod>]
+    member this.CompileProcedure4 () =
+        let ast = parseFromFile "programs/basicProc4.gc"
+        CP ast |> ignore       

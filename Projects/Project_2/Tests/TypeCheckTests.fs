@@ -158,3 +158,13 @@ type TestTypeCheck () =
     member this.TypeCheckProcedure2 () =
         let ast = parseFromFile "programs/basicProc2.gc"
         tcP ast |> ignore
+
+    [<TestMethod>]
+    member this.TypeCheckProcedure3 () =
+        let ast = parseFromFile "programs/basicProc3.gc"
+        tcP ast |> ignore
+
+    [<TestMethod>]
+    member this.TypeCheckProcedure4 () =
+        let ast = parseFromFile "programs/basicProc4.gc"
+        tcP ast |> ignore    
