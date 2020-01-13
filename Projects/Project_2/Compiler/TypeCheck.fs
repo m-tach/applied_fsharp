@@ -64,7 +64,9 @@ module TypeCheck =
                                           | ATyp (t,_) -> t
                               | _                      -> failwith "tcA: Array index has to be int"
 
-         | ADeref e       -> tcE gtenv ltenv e
+         | ADeref e       -> match tcE gtenv ltenv e with
+                             | PTyp t  -> t
+                             | _       -> failwith "not a pointer reference"
  
 
 /// tcS gtenv ltenv retOpt s checks the well-typeness of a statement s on the basis of type environments gtenv and ltenv

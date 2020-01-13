@@ -1,6 +1,6 @@
 begin 
    y: int,
-   x: int,
+   x: bool,
    function p(y: ^int): int = { print y^; y^ := 5; return 3 };
    x := 2;
    y:= p(&x);
