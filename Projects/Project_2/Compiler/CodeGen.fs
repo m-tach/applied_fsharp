@@ -51,11 +51,8 @@ module CodeGeneration =
                                 CE vEnv fEnv e1 @ CE vEnv fEnv e2 @ ins
        
        | Apply(f, args) when Map.containsKey f fEnv -> let (label, typ, param) = Map.find f fEnv
-                                                       let onlyGlobalVars = Map.filter(fun _ (x, _) -> match x with
-                                                                                                       | GloVar(_) -> true
-                                                                                                       | _ -> false) (fst vEnv)
                                                        (List.collect(fun x -> CE vEnv fEnv x) args) @ 
-                                                       [INCSP (param.Length); CALL(param.Length, label)]
+                                                       [CALL(param.Length, label)]
                                                        
 
        | _            -> failwith ("CE: not supported yet " + (expr.ToString()))
@@ -132,9 +129,20 @@ module CodeGeneration =
                                                let functionStart = newLabel()
                                                let fEnv2 = Map.add f (functionStart, typOpt, args) fEnv
                                                let vEnv2 = (fst (mergeParamWithEnv vEnv args), args.Length)
+                                               printfn "%s" (vEnv2.ToString())
                                                let funcCode = (Label functionStart)::(CS vEnv2 fEnv2 body)
                                                let (vEnv3, fEnv3, funcCode2) = addv decr vEnv fEnv2
-                                               (vEnv3, fEnv3, funcCode @ funcCode2)
+                                               let skipFuncDec = newLabel()
+                                               
+                                               // function declarations are placed before the statements that should be run
+                                               // so a goto is used to skip over the function code. This is only used when
+                                               // the program starts.
+                                               //
+                                               // other declarations    GOTO    function code    label    rest of code
+                                               //                        |                         ^
+                                               //                        \-------------------------/
+
+                                               (vEnv3, fEnv3, [GOTO skipFuncDec] @ funcCode @ [Label skipFuncDec] @ funcCode2)
        addv decs (Map.empty, 0) Map.empty
 
 /// CP prog gives the code for a program prog
