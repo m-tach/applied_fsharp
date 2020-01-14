@@ -9,6 +9,7 @@ type token =
   | ABORT
   | FUNC
   | RETURN
+  | PROC
   | NEG
   | PLUS
   | MINUS
@@ -19,6 +20,8 @@ type token =
   | LT
   | GT
   | NEQ
+  | ADDRESSOF
+  | PDEREF
   | LENGTH
   | COMMA
   | COLON
@@ -52,6 +55,7 @@ type tokenId =
     | TOKEN_ABORT
     | TOKEN_FUNC
     | TOKEN_RETURN
+    | TOKEN_PROC
     | TOKEN_NEG
     | TOKEN_PLUS
     | TOKEN_MINUS
@@ -62,6 +66,8 @@ type tokenId =
     | TOKEN_LT
     | TOKEN_GT
     | TOKEN_NEQ
+    | TOKEN_ADDRESSOF
+    | TOKEN_PDEREF
     | TOKEN_LENGTH
     | TOKEN_COMMA
     | TOKEN_COLON
