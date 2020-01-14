@@ -111,6 +111,10 @@ module CodeGeneration =
                              [CSTI 0; RET locals]                  
 
        | Block([],stms)          -> CSs vEnv fEnv stms
+       | Block((VarDec(ATyp(t, Some len), s))::tail,stms)   -> let (_, _, isInFunc) = vEnv
+                                                               let allocType = if isInFunc then LocVar else GloVar
+                                                               let (vEnv2, code) = allocate allocType (t, s) vEnv
+                                                               code @ (CS vEnv2 fEnv (Block(tail, stms))) @ [INCSP -(len + 1)]    
        | Block((VarDec(t, s))::tail,stms)   -> let (_, _, isInFunc) = vEnv
                                                let allocType = if isInFunc then LocVar else GloVar
                                                let (vEnv2, code) = allocate allocType (t, s) vEnv
