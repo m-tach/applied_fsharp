@@ -37,7 +37,7 @@ module CodeGeneration =
 
        | Apply("!", [e]) -> CE vEnv fEnv e @ [NOT]
         //return the first position of the array - its size
-       | Apply("len", [e]) -> CE vEnv fEnv e
+       | Apply("len", ([Access(var)])) -> CA vEnv fEnv var @ [CSTI 1; SUB; LDI]
 
        | Apply("&&",[b1;b2]) -> let labend   = newLabel()
                                 let labfalse = newLabel()
@@ -72,9 +72,9 @@ module CodeGeneration =
    and CA vEnv fEnv = function | AVar x         -> match Map.find x (fst vEnv) with
                                                    | (GloVar addr,_) -> [CSTI addr]
                                                    | (LocVar addr,_) -> [CSTI addr; GETBP; ADD]
-                               | AIndex(acc, e) -> 
-                                    // when Access-ing an array index, offset by 1 position (1st position holds array size) 
-                                     CA vEnv fEnv acc @ [CSTI 1; ADD] @ CE vEnv fEnv e @ [ADD]
+                               | AIndex(acc, e) ->                                    
+                                     let result = CA vEnv fEnv acc @ CE vEnv fEnv e @ [ADD]
+                                     result
 
                                | ADeref e       -> CE vEnv fEnv e
 
@@ -87,7 +87,7 @@ module CodeGeneration =
       raise (Failure "allocate: array of arrays not permitted")
 
     | ATyp (t, Some i) when List.contains t [BTyp; ITyp] -> 
-      let newEnv = (Map.add x (kind (fdepth), typ) env, fdepth+i)
+      let newEnv = (Map.add x (kind (fdepth+1), typ) env, fdepth+i+1)
       let code = [CSTI i; INCSP i ] 
       (newEnv, code)
     | _ -> 
