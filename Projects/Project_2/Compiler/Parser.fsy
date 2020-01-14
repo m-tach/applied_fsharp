@@ -16,10 +16,12 @@ open GuardedCommands.Frontend.AST
 %token HIGH
 
 %left AND
-%nonassoc NEG ADDRESSOF PDEREF LENGTH
+%nonassoc NEG LENGTH
 %left EQ LE LT GT NEQ
 %left PLUS MINUS 
 %left TIMES
+%nonassoc ADDRESSOF
+%nonassoc PDEREF
 
 %start Main Prog 
 %type <Exp list> ExpList ExpL
@@ -45,6 +47,7 @@ Prog:
 BasicTyp:
     BTYP                              { BTyp }
   | ITYP                              { ITyp } 
+  | PDEREF BasicTyp                   { PTyp $2 }
 
 ATyp:
     BasicTyp LSP RSP                  { ATyp($1,None) }
@@ -53,7 +56,6 @@ ATyp:
 Typ:
    | BasicTyp                         { $1 }
    | ATyp                             { $1 }
-   | PDEREF BasicTyp                  { PTyp $2 }
 
 Dec: 
      NAME COLON Typ                           { VarDec($3,$1) }
