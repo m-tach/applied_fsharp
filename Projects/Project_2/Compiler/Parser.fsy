@@ -116,8 +116,8 @@ ExpList:
   | Exp COMMA ExpList                  { $1 :: $3 } 
 
 Exp:
-    Access                            { Access $1 }
-  | ADDRESSOF Access                  { Addr $2 }
+    ADDRESSOF Access                  { Addr $2 }
+  | Access                            { Access $1 }
   | INT                               { N $1 }
   | BOOL                              { B $1 }       
   | LP Exp RP                         { $2 } 
