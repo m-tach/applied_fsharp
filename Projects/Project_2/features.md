@@ -17,13 +17,13 @@
     * Checks that there is no returns outside of a function
 
 ## Procedures
-    * Parsing implemented
-    * Type checking implemented
-    * Codegen implemented
-    * Supports both implicit and explicit return statements
+ * Parsing implemented
+ * Type checking implemented
+ * Codegen implemented
+ * Supports both implicit and explicit return statements
 
 ## Operators
- * Added support for `*`; `%`; `/`; `=`; `<`; `>`; `<=`; `>=`; `<>`
+ * Added support for `E * E`, `E % E`, `E / E`, `E = E`, `E < E`, `E > E`, `E <= E`, `E >= E`, `E <> E`, `E - E`, `!E`
 
 ## Pointers
  * Address-of operator &
@@ -37,6 +37,7 @@
            * Since we're using PTyp<Typ>, type checking for function/procedure arguments should also work properly
     * Codegen implemented
            * Array handling not yet added
+    * [ ] Write code so you can't derenference a variable before setting it
 
 ## Arrays
-//TODO
+ * [ ] Write explanation of features

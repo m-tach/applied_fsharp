@@ -15,6 +15,31 @@ open CompilerUtil
 type TestTypeCheck () =
 
     [<TestMethod>]
+    member this.TypeCheckA0 () =
+        let ast = parseFromFile "programs/A0.gc"
+        tcP ast |> ignore
+
+    [<TestMethod>]
+    member this.TypeCheckA1 () =
+        let ast = parseFromFile "programs/A1.gc"
+        tcP ast |> ignore
+
+    [<TestMethod>]
+    member this.TypeCheckA2 () =
+        let ast = parseFromFile "programs/A2.gc"
+        tcP ast |> ignore
+
+    [<TestMethod>]
+    member this.TypeCheckA3 () =
+        let ast = parseFromFile "programs/A3.gc"
+        tcP ast |> ignore
+
+    [<TestMethod>]
+    member this.TypeCheckA4 () =
+        let ast = parseFromFile "programs/A4.gc"
+        tcP ast |> ignore
+
+    [<TestMethod>]
     member this.TypeCheckEx0 () =
         let ast = parseFromFile "programs/Ex0.gc"
         tcP ast |> ignore
@@ -55,9 +80,9 @@ type TestTypeCheck () =
         tcP ast |> ignore
 
     [<TestMethod>]
-    member this.TypeCheckSkip () =
-        let ast = parseFromFile "programs/Skip.gc"
-        tcP ast |> ignore
+    member this.TypeCheckExa1 () =
+        let ast = parseFromFile "programs/Exa1.gc"
+        tcP ast |> ignore    
 
     [<TestMethod>]
     member this.TypeCheckFact () =
@@ -73,6 +98,16 @@ type TestTypeCheck () =
     member this.TypeCheckFactCBV () =
         let ast = parseFromFile "programs/factCBV.gc"
         tcP ast |> ignore
+
+    [<TestMethod>]
+    member this.TypeCheckFactImPTyp () =
+        let ast = parseFromFile "programs/factImpPTyp.gc"
+        tcP ast |> ignore
+
+    [<TestMethod>]
+    member this.TypeCheckGCDo () =
+        let ast = parseFromFile "programs/GC_Do.gc"
+        tcP ast |> ignore       
 
     [<TestMethod>]
     member this.TypeCheckNoReturnOutsideFunctions () =
@@ -168,3 +203,58 @@ type TestTypeCheck () =
     member this.TypeCheckProcedure4 () =
         let ast = parseFromFile "programs/basicProc4.gc"
         tcP ast |> ignore    
+
+    [<TestMethod>]
+    member this.TypeCheckpar1 () =
+        let ast = parseFromFile "programs/par1.gc"
+        tcP ast |> ignore  
+
+    [<TestMethod>]
+    member this.TypeCheckpar2 () =
+        let ast = parseFromFile "programs/par2.gc"
+        tcP ast |> ignore      
+
+    [<TestMethod>]
+    member this.TypeCheckpartition () =
+        let ast = parseFromFile "programs/partition.gc"
+        tcP ast |> ignore     
+
+    [<TestMethod>]
+    member this.TypeCheckQuickSortV1 () =
+        let ast = parseFromFile "programs/QuickSortV1.gc"
+        tcP ast |> ignore  
+
+    [<TestMethod>]
+    member this.TypeCheckQuickSortV2 () =
+        let ast = parseFromFile "programs/QuickSortV2.gc"
+        tcP ast |> ignore         
+        
+    [<TestMethod>]
+    member this.TypeCheckSkip () =
+        let ast = parseFromFile "programs/skip.gc"
+        tcP ast |> ignore   
+
+    [<TestMethod>]
+    member this.TypeCheckSwap () =
+        let ast = parseFromFile "programs/swap.gc"
+        tcP ast |> ignore
+
+    [<TestMethod>]
+    member this.TypeCheckPointers1 () =
+        let ast = parseFromFile "programs/pointers3.gc"
+        tcP ast |> ignore
+
+    [<TestMethod>]
+    member this.TypeCheckPointers2 () =
+        let ast = parseFromFile "programs/pointers4.gc"
+        tcP ast |> ignore
+
+    [<TestMethod>]
+    member this.TypeCheckPointers3 () =
+        let ast = parseFromFile "programs/pointers5.gc"
+        tcP ast |> ignore
+
+    [<TestMethod>]
+    member this.TypeCheckPointers4 () =
+        let ast = parseFromFile "programs/pointers6.gc"
+        tcP ast |> ignore                

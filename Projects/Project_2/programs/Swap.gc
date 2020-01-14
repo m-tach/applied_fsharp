@@ -1,7 +1,17 @@
 begin
    procedure swap(a: int[], i: int, j: int) =
-     { tmp: int; tmp := a[i]; a[i] := a[j]; a[j] := tmp},
-   procedure printA(a: int[], len:int) = {i: int;  i:= 0; do ! i=len -> print a[i]; i:= i+1 od},
+   { 
+     tmp: int; 
+     tmp := a[i]; 
+     a[i] := a[j]; 
+     a[j] := tmp
+   },
+   procedure printA(a: int[], len:int) = 
+   {
+     i: int;  
+     i:= 0; 
+     do ! i=len -> print a[i]; i:= i+1 od
+   },
    a: int[3];
 
    a[0]:= 0; a[1]:=1; a[2]:=2;

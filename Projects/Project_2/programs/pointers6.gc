@@ -1,0 +1,9 @@
+begin
+x: int,
+y: ^int,
+z: ^^int;
+x := 7;
+y := &x;
+z := &y;
+print z^^
+end

@@ -1,0 +1,8 @@
+begin
+y: ^int,
+z: int,
+procedure fish(x: ^int) = x^ := 7;
+y := &z;
+fish(y);
+print z
+end
