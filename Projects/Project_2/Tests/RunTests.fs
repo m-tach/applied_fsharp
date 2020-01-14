@@ -15,6 +15,41 @@ open CompilerUtil
 type TestRun () =
 
     [<TestMethod>]
+    member this.RunA0 () =
+        let ast = parseFromFile "programs/A0.gc"
+        let intrs = CP ast
+        let intInstrs = Machine.code2ints intrs
+        VirtualMachine.run intInstrs |> ignore
+
+    [<TestMethod>]
+    member this.RunA1 () =
+        let ast = parseFromFile "programs/A1.gc"
+        let intrs = CP ast
+        let intInstrs = Machine.code2ints intrs
+        VirtualMachine.run intInstrs |> ignore
+
+    [<TestMethod>]
+    member this.RunA2 () =
+        let ast = parseFromFile "programs/A2.gc"
+        let intrs = CP ast
+        let intInstrs = Machine.code2ints intrs
+        VirtualMachine.run intInstrs |> ignore
+
+    [<TestMethod>]
+    member this.RunA3 () =
+        let ast = parseFromFile "programs/A3.gc"
+        let intrs = CP ast
+        let intInstrs = Machine.code2ints intrs
+        VirtualMachine.run intInstrs |> ignore
+
+    [<TestMethod>]
+    member this.RunA4 () =
+        let ast = parseFromFile "programs/A4.gc"
+        let intrs = CP ast
+        let intInstrs = Machine.code2ints intrs
+        VirtualMachine.run intInstrs |> ignore
+
+    [<TestMethod>]
     member this.RunEx0 () =
         let ast = parseFromFile "programs/Ex0.gc"
         let intrs = CP ast
@@ -71,8 +106,8 @@ type TestRun () =
         VirtualMachine.run intInstrs |> ignore
 
     [<TestMethod>]
-    member this.RunSkip () =
-        let ast = parseFromFile "programs/Skip.gc"
+    member this.RunExa1 () =
+        let ast = parseFromFile "programs/Exa1.gc"
         let intrs = CP ast
         let intInstrs = Machine.code2ints intrs
         VirtualMachine.run intInstrs |> ignore
@@ -97,6 +132,20 @@ type TestRun () =
         let intrs = CP ast
         let intInstrs = Machine.code2ints intrs
         VirtualMachine.run intInstrs |> ignore
+
+    [<TestMethod>]
+    member this.RunFactImPTyp () =
+        let ast = parseFromFile "programs/factImpPTyp.gc"
+        let intrs = CP ast
+        let intInstrs = Machine.code2ints intrs
+        VirtualMachine.run intInstrs |> ignore
+
+    [<TestMethod>]
+    member this.RunFactGCDo () =
+        let ast = parseFromFile "programs/GC_Do.gc"
+        let intrs = CP ast
+        let intInstrs = Machine.code2ints intrs
+        VirtualMachine.run intInstrs |> ignore        
 
     [<TestMethod>]
     member this.RunProcedure1 () =
@@ -124,5 +173,82 @@ type TestRun () =
         let ast = parseFromFile "programs/basicProc4.gc"
         let intrs = CP ast
         let intInstrs = Machine.code2ints intrs
+        VirtualMachine.runTrace intInstrs |> ignore     
+
+    [<TestMethod>]
+    member this.Runpar1 () =
+        let ast = parseFromFile "programs/par1.gc"
+        let intrs = CP ast
+        let intInstrs = Machine.code2ints intrs
+        VirtualMachine.runTrace intInstrs |> ignore 
+
+    [<TestMethod>]
+    member this.Runpar2 () =
+        let ast = parseFromFile "programs/par2.gc"
+        let intrs = CP ast
+        let intInstrs = Machine.code2ints intrs
+        VirtualMachine.runTrace intInstrs |> ignore      
+
+    [<TestMethod>]
+    member this.Runpartition () =
+        let ast = parseFromFile "programs/partition.gc"
+        let intrs = CP ast
+        let intInstrs = Machine.code2ints intrs
+        VirtualMachine.runTrace intInstrs |> ignore       
+
+    //[<TestMethod>]
+    member this.RunQuickSortV1 () =
+        let ast = parseFromFile "programs/QuickSortV1.gc"
+        let intrs = CP ast
+        let intInstrs = Machine.code2ints intrs
+        VirtualMachine.runTrace intInstrs |> ignore 
+
+    //[<TestMethod>]
+    member this.RunQuickSortV2 () =
+        let ast = parseFromFile "programs/QuickSortV2.gc"
+        let intrs = CP ast
+        let intInstrs = Machine.code2ints intrs
+        VirtualMachine.runTrace intInstrs |> ignore 
+
+    //[<TestMethod>]
+    member this.RunSkip () =
+        let ast = parseFromFile "programs/skip.gc"
+        let intrs = CP ast
+        let intInstrs = Machine.code2ints intrs
+        VirtualMachine.runTrace intInstrs |> ignore 
+
+    //[<TestMethod>]
+    member this.RunSwap () =
+        let ast = parseFromFile "programs/swap.gc"
+        let intrs = CP ast
+        let intInstrs = Machine.code2ints intrs
         VirtualMachine.runTrace intInstrs |> ignore        
+
+    [<TestMethod>]
+    member this.RunPointers1 () =
+        let ast = parseFromFile "programs/pointers3.gc"
+        let intrs = CP ast
+        let intInstrs = Machine.code2ints intrs
+        VirtualMachine.run intInstrs |> ignore
+
+    [<TestMethod>]
+    member this.RunPointers2 () =
+        let ast = parseFromFile "programs/pointers4.gc"
+        let intrs = CP ast
+        let intInstrs = Machine.code2ints intrs
+        VirtualMachine.run intInstrs |> ignore
+
+    [<TestMethod>]
+    member this.RunPointers3 () =
+        let ast = parseFromFile "programs/pointers5.gc"
+        let intrs = CP ast
+        let intInstrs = Machine.code2ints intrs
+        VirtualMachine.run intInstrs |> ignore
+
+    [<TestMethod>]
+    member this.RunPointers4 () =
+        let ast = parseFromFile "programs/pointers6.gc"
+        let intrs = CP ast
+        let intInstrs = Machine.code2ints intrs
+        VirtualMachine.run intInstrs |> ignore             
 

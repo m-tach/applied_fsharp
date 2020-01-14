@@ -28,7 +28,7 @@ module TypeCheck =
                                                                                             let normalizedExpTypes = List.map(fun x -> match x with
                                                                                                                                        | ATyp(t, _) -> ATyp(t, None)
                                                                                                                                        | _ -> x) expTypes
-                                                                                            if not (List.forall(fun (x, y) -> x = y) (List.zip normalizedExpTypes typs)) then failwith ("tcE: The parameter type does not match the function definition")
+                                                                                            if not (List.forall(fun (x, y) -> x = y) (List.zip normalizedExpTypes typs)) then failwith (String.Format("Function has the type {0} but was given {1}", typs, normalizedExpTypes))
                                                                                             retType
                                                              | _ -> failwith "expected function but was not given a function"
 
@@ -77,7 +77,8 @@ module TypeCheck =
                          | Ass(acc,e) -> if tcA gtenv ltenv acc = tcE gtenv ltenv e
                                          then ()
                                          else failwith "illtyped assignment" 
-                         | MAss(acc,e) -> let assignments = List.zip acc e
+                         | MAss(acc,e) -> if acc.Length <> e.Length then failwith (String.Format("Trying to multi assign {0} variables with {1} values", acc.Length, e.Length))
+                                          let assignments = List.zip acc e
                                           List.iter (fun (cacc, ce) -> tcS gtenv ltenv (Ass(cacc, ce))) assignments
                                           ()
 
@@ -98,7 +99,10 @@ module TypeCheck =
                          | Call(func, exps) when Map.containsKey func gtenv  -> match Map.find func gtenv with
                                                                                 | FTyp(typs, None) -> if exps.Length <> typs.Length then failwith ("function " + func + " expected " + (exps.Length).ToString() + " arguments but only " + (typs.Length).ToString() + " arguments were given")
                                                                                                       let expTypes = List.map(fun x -> tcE gtenv ltenv x) exps
-                                                                                                      if not (List.forall(fun (x, y) -> x = y) (List.zip expTypes typs)) then failwith "awdadw"
+                                                                                                      let normalizedExpTypes = List.map(fun x -> match x with
+                                                                                                                                                 | ATyp(t, _) -> ATyp(t, None)
+                                                                                                                                                 | _ -> x) expTypes
+                                                                                                      if not (List.forall(fun (x, y) -> x = y) (List.zip normalizedExpTypes typs)) then failwith (String.Format("Function has the type {0} but was given {1}", typs, normalizedExpTypes))
                                                                                 | _ -> failwith "expected a procedure but a procedure was not given"
                          | Call(func, exps) -> failwith ("The procedure " + func + " is not declared")                     
 
