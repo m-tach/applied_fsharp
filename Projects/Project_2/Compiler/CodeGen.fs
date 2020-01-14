@@ -35,6 +35,8 @@ module CodeGeneration =
        | Apply("-", [e]) -> CE vEnv fEnv e @ [CSTI 0; SWAP; SUB]
 
        | Apply("!", [e]) -> CE vEnv fEnv e @ [NOT]
+        //return the first position of the array - its size
+       | Apply("len", [e]) -> CE vEnv fEnv e
 
        | Apply("&&",[b1;b2]) -> let labend   = newLabel()
                                 let labfalse = newLabel()
@@ -70,7 +72,8 @@ module CodeGeneration =
                                                    | (GloVar addr,_) -> [CSTI addr]
                                                    | (LocVar addr,_) -> [CSTI addr; GETBP; ADD]
                                | AIndex(acc, e) -> 
-                                     CA vEnv fEnv acc @ CE vEnv fEnv e @ [ADD]
+                                    // when Access-ing an array index, offset by 1 position (1st position holds array size) 
+                                     CA vEnv fEnv acc @ [CSTI 1; ADD] @ CE vEnv fEnv e @ [ADD]
 
                                | ADeref e       -> failwith "CA: pointer dereferencing not supported yet"
 
@@ -84,7 +87,7 @@ module CodeGeneration =
 
     | ATyp (t, Some i) when List.contains t [BTyp; ITyp] -> 
       let newEnv = (Map.add x (kind (fdepth), typ) env, fdepth+i)
-      let code = [INCSP i] 
+      let code = [CSTI i; INCSP i ] 
       (newEnv, code)
     | _ -> 
       let newEnv = (Map.add x (kind fdepth, typ) env, fdepth+1)

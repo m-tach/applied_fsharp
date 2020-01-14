@@ -19,6 +19,7 @@ type token =
   | LT
   | GT
   | NEQ
+  | LENGTH
   | COMMA
   | COLON
   | SEMI
@@ -61,6 +62,7 @@ type tokenId =
     | TOKEN_LT
     | TOKEN_GT
     | TOKEN_NEQ
+    | TOKEN_LENGTH
     | TOKEN_COMMA
     | TOKEN_COLON
     | TOKEN_SEMI

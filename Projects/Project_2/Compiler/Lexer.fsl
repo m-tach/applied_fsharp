@@ -22,6 +22,7 @@ let keyword s =
     | "false"     -> BOOL(false)
     | "function"  -> FUNC
     | "return"    -> RETURN
+    | "len"   -> LENGTH
     | _           -> NAME s  
 }
 

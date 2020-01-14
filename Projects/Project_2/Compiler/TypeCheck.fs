@@ -15,7 +15,7 @@ module TypeCheck =
       | B _              -> BTyp   
       | Access acc       -> tcA gtenv ltenv acc     
                 
-      | Apply(f,[e]) when List.exists (fun x ->  x=f) ["-"; "!"]  
+      | Apply(f,[e]) when List.exists (fun x ->  x=f) ["-"; "!"; "len"]  
                          -> tcMonadic gtenv ltenv f e        
 
       | Apply(f,[e1;e2]) when List.exists (fun x ->  x=f) ["+";"-";"*"; "="; "&&"; "<>"; "<"; ">";"<="]        
@@ -33,6 +33,7 @@ module TypeCheck =
    and tcMonadic gtenv ltenv f e = match (f, tcE gtenv ltenv e) with
                                    | ("-", ITyp) -> ITyp
                                    | ("!", BTyp) -> BTyp
+                                   | ("len", _) -> ITyp
                                    | _           -> failwith("illegal/illtyped monadic expression: " + f)
    
    and tcDyadic gtenv ltenv f e1 e2 = match (f, tcE gtenv ltenv e1, tcE gtenv ltenv e2) with
