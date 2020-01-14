@@ -35,7 +35,7 @@ module CodeGeneration =
        | Apply("-", [e]) -> CE vEnv fEnv e @ [CSTI 0; SWAP; SUB]
 
        | Apply("!", [e]) -> CE vEnv fEnv e @ [NOT]
-        //return the first position of the array - its size
+
        | Apply("len", ([Access(var)])) -> CA vEnv fEnv var @ [CSTI 1; SUB; LDI]
 
        | Apply("&&",[b1;b2]) -> let labend   = newLabel()
