@@ -24,8 +24,6 @@ module CodeGeneration =
    type ParamDecs = (Typ * string) list
    type funEnv = Map<string, label * Typ option * ParamDecs>
 
-   let mergeParamWithEnv env pa = List.fold(fun (map, i, isFunc) (t, s) -> varEnv(Map.add s (LocVar(i), t) map, i + 1, isFunc)) env pa
-
 /// CE vEnv fEnv e gives the code for an expression e on the basis of a variable and a function environment
    let rec CE (vEnv:varEnv) (fEnv:funEnv) expr = 
        match expr with
