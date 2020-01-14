@@ -14,16 +14,17 @@ module CodeGeneration =
      | LocVar of int                   (* address relative to bottom of frame *)
 
 (* The variable environment keeps track of global and local variables, and 
-   keeps track of next available offset for local variables *)
+   keeps track of next available offset for local variables 
+   and whether this context is in a function*)
 
-   type varEnv = Map<string, Var*Typ> * int
+   type varEnv = Map<string, Var*Typ> * int * bool
 
 (* The function environment maps function name to label and parameter decs *)
 
    type ParamDecs = (Typ * string) list
    type funEnv = Map<string, label * Typ option * ParamDecs>
 
-   let mergeParamWithEnv env pa = List.fold(fun (map, i) (t, s) -> varEnv(Map.add s (LocVar(i), t) map, i + 1)) env pa
+   let mergeParamWithEnv env pa = List.fold(fun (map, i, isFunc) (t, s) -> varEnv(Map.add s (LocVar(i), t) map, i + 1, isFunc)) env pa
 
 /// CE vEnv fEnv e gives the code for an expression e on the basis of a variable and a function environment
    let rec CE (vEnv:varEnv) (fEnv:funEnv) expr = 
@@ -69,7 +70,8 @@ module CodeGeneration =
        
 
 /// CA vEnv fEnv acc gives the code for an access acc on the basis of a variable and a function environment
-   and CA vEnv fEnv = function | AVar x         -> match Map.find x (fst vEnv) with
+   and CA vEnv fEnv = function | AVar x         -> let (map, _, _) = vEnv
+                                                   match Map.find x map with
                                                    | (GloVar addr,_) -> [CSTI addr]
                                                    | (LocVar addr,_) -> [CSTI addr; GETBP; ADD]
                                | AIndex(acc, e) ->                                    
@@ -81,17 +83,17 @@ module CodeGeneration =
   
 (* Bind declared variable in env and generate code to allocate it: *)   
    let allocate (kind : int -> Var) (typ, x) (vEnv : varEnv)  =
-    let (env, fdepth) = vEnv 
+    let (env, fdepth, isInFunc) = vEnv 
     match typ with
     | ATyp (ATyp _, _) -> 
       raise (Failure "allocate: array of arrays not permitted")
 
     | ATyp (t, Some i) when List.contains t [BTyp; ITyp] -> 
-      let newEnv = (Map.add x (kind (fdepth+1), typ) env, fdepth+i+1)
+      let newEnv = (Map.add x (kind (fdepth+1), typ) env, fdepth+i+1, isInFunc)
       let code = [CSTI i; INCSP i ] 
       (newEnv, code)
     | _ -> 
-      let newEnv = (Map.add x (kind fdepth, typ) env, fdepth+1)
+      let newEnv = (Map.add x (kind fdepth, typ) env, fdepth+1, isInFunc)
       let code = [INCSP 1]
       (newEnv, code)
 
@@ -103,14 +105,16 @@ module CodeGeneration =
 
        | Ass(acc,e)       -> CA vEnv fEnv acc @ CE vEnv fEnv e @ [STI; INCSP -1]
 
-       | Return(Some(e))  -> let (_, locals) = vEnv
+       | Return(Some(e))  -> let (_, locals, _) = vEnv
                              (CE vEnv fEnv e) @ [RET locals]
 
-       | Return(_)        -> let (_, locals) = vEnv
+       | Return(_)        -> let (_, locals, _) = vEnv
                              [CSTI 0; RET locals]                  
 
        | Block([],stms)          -> CSs vEnv fEnv stms
-       | Block((VarDec(t, s))::tail,stms)   -> let (vEnv2, code) = allocate LocVar (t, s) vEnv
+       | Block((VarDec(t, s))::tail,stms)   -> let (_, _, isInFunc) = vEnv
+                                               let allocType = if isInFunc then LocVar else GloVar
+                                               let (vEnv2, code) = allocate allocType (t, s) vEnv
                                                code @ (CS vEnv2 fEnv (Block(tail, stms))) @ [INCSP -1]
        | Block(_) -> failwith "local functions are not supported"                                             
 
@@ -139,7 +143,7 @@ module CodeGeneration =
 
 (* Build environments for global variables and functions *)
 
-   let makeGlobalEnvs decs = 
+   let makeGlobalEnvs decs: (varEnv * funEnv * instr list) = 
        let rec addv decs (vEnv:varEnv) fEnv = 
            match decs with 
            | []         -> (vEnv, fEnv, [])
@@ -153,8 +157,8 @@ module CodeGeneration =
                                                                               | _ -> failwith "function arguments can only be variables") xs
                                                let functionStart = newLabel()
                                                let fEnv2 = Map.add f (functionStart, typOpt, args) fEnv
-                                               let (vmap, _) = vEnv
-                                               let vEnv2 = (fst (List.fold(fun (map, i) (t, s) -> varEnv(Map.add s (LocVar(i), t) map, i + 1)) (vmap, 0) args), args.Length)
+                                               let (vmap, _, _) = vEnv
+                                               let vEnv2 = (fst (List.fold(fun (map, i) (t, s) -> (Map.add s (LocVar(i), t) map, i + 1)) (vmap, 0) args), args.Length, true)
                                                let funcCode = (Label functionStart)::(CS vEnv2 fEnv2 body)
                                                let (vEnv3, fEnv3, funcCode2) = addv decr vEnv fEnv2
                                                let skipFuncDec = newLabel()
@@ -169,13 +173,13 @@ module CodeGeneration =
 
                                                let implicitReturn = if typOpt.IsNone then [CSTI 0; RET xs.Length] else []
                                                (vEnv3, fEnv3, [GOTO skipFuncDec] @ funcCode @ implicitReturn @ [Label skipFuncDec] @ funcCode2)
-       addv decs (Map.empty, 0) Map.empty
+       addv decs (Map.empty, 0, false) Map.empty
 
 /// CP prog gives the code for a program prog
    let CP (P(decs,stms)) = 
        let _ = resetLabels ()
-       let ((gvM,_) as gvEnv, fEnv, initCode) = makeGlobalEnvs decs
-       initCode @ CSs gvEnv fEnv stms @ [STOP]     
+       let ((map, i, _), fEnv, initCode) = makeGlobalEnvs decs
+       initCode @ CSs (map, i, false) fEnv stms @ [STOP]     
 
 
 
