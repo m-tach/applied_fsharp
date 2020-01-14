@@ -135,7 +135,7 @@ type TestRun () =
 
     [<TestMethod>]
     member this.RunFactImPTyp () =
-        let ast = parseFromFile "programs/factImPTyp.gc"
+        let ast = parseFromFile "programs/factImpPTyp.gc"
         let intrs = CP ast
         let intInstrs = Machine.code2ints intrs
         VirtualMachine.run intInstrs |> ignore

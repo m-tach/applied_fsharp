@@ -101,7 +101,7 @@ type TestTypeCheck () =
 
     [<TestMethod>]
     member this.TypeCheckFactImPTyp () =
-        let ast = parseFromFile "programs/factImPTyp.gc"
+        let ast = parseFromFile "programs/factImpPTyp.gc"
         tcP ast |> ignore
 
     [<TestMethod>]

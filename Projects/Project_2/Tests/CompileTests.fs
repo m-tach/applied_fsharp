@@ -101,7 +101,7 @@ type TestCompile () =
 
     [<TestMethod>]
     member this.CompileFactImPTyp () =
-        let ast = parseFromFile "programs/factImPTyp.gc"
+        let ast = parseFromFile "programs/factImpPTyp.gc"
         CP ast |> ignore
 
     [<TestMethod>]

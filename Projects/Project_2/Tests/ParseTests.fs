@@ -84,7 +84,7 @@ type TestParse () =
 
     [<TestMethod>]
     member this.ParseFactImPTyp () =
-        parseFromFile "programs/factImPTyp.gc" |> ignore   
+        parseFromFile "programs/factImpPTyp.gc" |> ignore   
 
     [<TestMethod>]
     member this.ParseGCDo () =
