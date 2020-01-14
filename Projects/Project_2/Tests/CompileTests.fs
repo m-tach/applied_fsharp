@@ -162,4 +162,24 @@ type TestCompile () =
     [<TestMethod>]
     member this.CompileSwap () =
         let ast = parseFromFile "programs/swap.gc"
-        CP ast |> ignore                          
+        CP ast |> ignore        
+
+    [<TestMethod>]
+    member this.CompilePointers1 () =
+        let ast = parseFromFile "programs/pointers3.gc"
+        CP ast |> ignore
+
+    [<TestMethod>]
+    member this.CompilePointers2 () =
+        let ast = parseFromFile "programs/pointers4.gc"
+        CP ast |> ignore
+
+    [<TestMethod>]
+    member this.CompilePointers3 () =
+        let ast = parseFromFile "programs/pointers5.gc"
+        CP ast |> ignore
+
+    [<TestMethod>]
+    member this.CompilePointers4 () =
+        let ast = parseFromFile "programs/pointers6.gc"
+        CP ast |> ignore                        

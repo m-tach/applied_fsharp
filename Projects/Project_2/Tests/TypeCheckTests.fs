@@ -237,4 +237,24 @@ type TestTypeCheck () =
     [<TestMethod>]
     member this.TypeCheckSwap () =
         let ast = parseFromFile "programs/swap.gc"
-        tcP ast |> ignore               
+        tcP ast |> ignore
+
+    [<TestMethod>]
+    member this.TypeCheckPointers1 () =
+        let ast = parseFromFile "programs/pointers3.gc"
+        tcP ast |> ignore
+
+    [<TestMethod>]
+    member this.TypeCheckPointers2 () =
+        let ast = parseFromFile "programs/pointers4.gc"
+        tcP ast |> ignore
+
+    [<TestMethod>]
+    member this.TypeCheckPointers3 () =
+        let ast = parseFromFile "programs/pointers5.gc"
+        tcP ast |> ignore
+
+    [<TestMethod>]
+    member this.TypeCheckPointers4 () =
+        let ast = parseFromFile "programs/pointers6.gc"
+        tcP ast |> ignore                

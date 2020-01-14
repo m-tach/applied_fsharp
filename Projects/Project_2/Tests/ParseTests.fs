@@ -133,3 +133,19 @@ type TestParse () =
     [<TestMethod>]
     member this.ParseSwap () =
         parseFromFile "programs/swap.gc" |> ignore
+
+    [<TestMethod>]
+    member this.ParsePointer1 () =
+        parseFromFile "programs/pointers3.gc" |> ignore
+
+    [<TestMethod>]
+    member this.ParsePointer2 () =
+        parseFromFile "programs/pointers4.gc" |> ignore
+
+    [<TestMethod>]
+    member this.ParsePointer3 () =
+        parseFromFile "programs/pointers5.gc" |> ignore
+
+    [<TestMethod>]
+    member this.ParsePointer4 () =
+        parseFromFile "programs/pointers6.gc" |> ignore        

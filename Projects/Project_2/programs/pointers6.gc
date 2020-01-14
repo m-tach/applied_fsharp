@@ -1,0 +1,7 @@
+begin
+x: int,
+y: ^int;
+x := &x;
+y := x;
+print x^
+end

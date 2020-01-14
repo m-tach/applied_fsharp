@@ -66,6 +66,10 @@
     <Copy SourceFiles="..\programs\Swap.gc" DestinationFolder="$(OutDir)programs" />
     <Copy SourceFiles="..\programs\Pointers1.gc" DestinationFolder="$(OutDir)programs" />
     <Copy SourceFiles="..\programs\Pointers2_Fail.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\pointers3.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\pointers4.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\pointers5.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\pointers6.gc" DestinationFolder="$(OutDir)programs" />
     <Copy SourceFiles="..\programs\MultiAssign1.gc" DestinationFolder="$(OutDir)programs" />
     <Copy SourceFiles="..\programs\MultiAssign2.gc" DestinationFolder="$(OutDir)programs" />
     <Copy SourceFiles="..\programs\MultiAssign3_Fail.gc" DestinationFolder="$(OutDir)programs" />
