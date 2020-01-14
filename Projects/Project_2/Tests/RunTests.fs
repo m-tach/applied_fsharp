@@ -210,14 +210,14 @@ type TestRun () =
         let intInstrs = Machine.code2ints intrs
         VirtualMachine.runTrace intInstrs |> ignore 
 
-    //[<TestMethod>]
+    [<TestMethod>]
     member this.RunSkip () =
         let ast = parseFromFile "programs/skip.gc"
         let intrs = CP ast
         let intInstrs = Machine.code2ints intrs
         VirtualMachine.runTrace intInstrs |> ignore 
 
-    //[<TestMethod>]
+    [<TestMethod>]
     member this.RunSwap () =
         let ast = parseFromFile "programs/swap.gc"
         let intrs = CP ast
