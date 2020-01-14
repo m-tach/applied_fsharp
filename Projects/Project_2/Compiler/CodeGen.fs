@@ -75,8 +75,7 @@ module CodeGeneration =
                                                    | (GloVar addr,_) -> [CSTI addr]
                                                    | (LocVar addr,_) -> [CSTI addr; GETBP; ADD]
                                | AIndex(acc, e) ->                                    
-                                     let result = CA vEnv fEnv acc @ CE vEnv fEnv e @ [ADD]
-                                     result
+                                     CA vEnv fEnv acc @ CE vEnv fEnv e @ [ADD]
 
                                | ADeref e       -> CE vEnv fEnv e
 
