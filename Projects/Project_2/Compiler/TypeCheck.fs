@@ -77,7 +77,8 @@ module TypeCheck =
                          | Ass(acc,e) -> if tcA gtenv ltenv acc = tcE gtenv ltenv e
                                          then ()
                                          else failwith "illtyped assignment" 
-                         | MAss(acc,e) -> let assignments = List.zip acc e
+                         | MAss(acc,e) -> if acc.Length <> e.Length then failwith (String.Format("Trying to multi assign {0} variables with {1} values", acc.Length, e.Length))
+                                          let assignments = List.zip acc e
                                           List.iter (fun (cacc, ce) -> tcS gtenv ltenv (Ass(cacc, ce))) assignments
                                           ()
 
