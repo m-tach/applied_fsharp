@@ -16,9 +16,27 @@
  * Return is now implemented
     * Checks that there is no returns outside of a function
 
+## Procedures
+    * Parsing implemented
+    * Type checking implemented
+    * Codegen implemented
+    * Supports both implicit and explicit return statements
+
 ## Operators
- * Added support for `e - e`, `!e`
  * Added support for `*`; `%`; `/`; `=`; `<`; `>`; `<=`; `>=`; `<>`
+
+## Pointers
+ * Address-of operator &
+    * Extended Lexer and Parser syntax (&x is Addr, has type PTyp)
+    * Type checking implemented (PTyp with the basic type)
+    * Codegen implemented
+    * Uses the same fundamentals as Access, so it works for all cases where Access works (variables, arrays, pointer derefs)
+ * Pointer dereferencing ^
+    * Extended Lexer and Parser syntax
+    * Type checking implemented (PTyp with the basic type)
+           * Since we're using PTyp<Typ>, type checking for function/procedure arguments should also work properly
+    * Codegen implemented
+           * Array handling not yet added
 
 ## Arrays
 //TODO

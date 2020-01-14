@@ -13,7 +13,8 @@ module TypeCheck =
       match ex with                        
       | N _              -> ITyp   
       | B _              -> BTyp   
-      | Access acc       -> tcA gtenv ltenv acc     
+      | Access acc       -> tcA gtenv ltenv acc    
+      | Addr acc         -> PTyp (tcA gtenv ltenv acc)
                 
       | Apply(f,[e]) when List.exists (fun x ->  x=f) ["-"; "!"; "len"]  
                          -> tcMonadic gtenv ltenv f e        
@@ -24,7 +25,10 @@ module TypeCheck =
       | Apply(func, exps) when Map.containsKey func gtenv -> match Map.find func gtenv with
                                                              | FTyp(typs, Some(retType)) -> if exps.Length <> typs.Length then failwith ("function " + func + " expected " + (exps.Length).ToString() + " arguments but only " + (typs.Length).ToString() + " arguments were given")
                                                                                             let expTypes = List.map(fun x -> tcE gtenv ltenv x) exps
-                                                                                            if not (List.forall(fun (x, y) -> x = y) (List.zip expTypes typs)) then failwith ("tcE: The parameter type does not match the function definition")
+                                                                                            let normalizedExpTypes = List.map(fun x -> match x with
+                                                                                                                                       | ATyp(t, _) -> ATyp(t, None)
+                                                                                                                                       | _ -> x) expTypes
+                                                                                            if not (List.forall(fun (x, y) -> x = y) (List.zip normalizedExpTypes typs)) then failwith ("tcE: The parameter type does not match the function definition")
                                                                                             retType
                                                              | _ -> failwith "expected function but was not given a function"
 
@@ -59,16 +63,19 @@ module TypeCheck =
          | AIndex(acc, e) -> match tcE gtenv ltenv e with
                               | ITyp -> match (tcA gtenv ltenv acc) with
                                           | ATyp (t,_) -> t
-                              | _                      -> failwith "tcA: Array index has to be int"
+                                          | _ -> failwith "expected array but was not given an array"
+                              | _    -> failwith "tcA: Array index has to be an int"
 
-         | ADeref e       -> failwith "tcA: pointer dereferencing not supported yes"
+         | ADeref e       -> match tcE gtenv ltenv e with
+                             | PTyp t  -> t
+                             | _       -> failwith "not a pointer reference"
  
 
 /// tcS gtenv ltenv retOpt s checks the well-typeness of a statement s on the basis of type environments gtenv and ltenv
 /// for global and local variables and the possible type of return expressions 
    and tcS gtenv ltenv = function                           
                          | PrintLn e -> ignore(tcE gtenv ltenv e)
-                         | Ass(acc,e) -> if tcA gtenv ltenv acc = tcE gtenv ltenv e 
+                         | Ass(acc,e) -> if tcA gtenv ltenv acc = tcE gtenv ltenv e
                                          then ()
                                          else failwith "illtyped assignment" 
                          | MAss(acc,e) -> let assignments = List.zip acc e
@@ -87,16 +94,22 @@ module TypeCheck =
                          | Do(GC(stms))    -> List.iter (fun (cexp, cstms) -> tcGC gtenv ltenv cexp cstms) stms
 
                          | Return(Some(e)) -> tcE gtenv ltenv e |> ignore
-                         | Return(_)       -> failwith "procedures are not supported yet"
+                         | Return(_)       -> ()
 
-                         | Call(_)         -> failwith "procedures are not supported yet"
+                         | Call(func, exps) when Map.containsKey func gtenv  -> match Map.find func gtenv with
+                                                                                | FTyp(typs, None) -> if exps.Length <> typs.Length then failwith ("function " + func + " expected " + (exps.Length).ToString() + " arguments but only " + (typs.Length).ToString() + " arguments were given")
+                                                                                                      let expTypes = List.map(fun x -> tcE gtenv ltenv x) exps
+                                                                                                      if not (List.forall(fun (x, y) -> x = y) (List.zip expTypes typs)) then failwith "awdadw"
+                                                                                | _ -> failwith "expected a procedure but a procedure was not given"
+                         | Call(func, exps) -> failwith ("The procedure " + func + " is not declared")                     
 
    and getReturnStms gtenv ltenv stm = 
       match stm with
       | PrintLn(_)        -> []
+      | MAss(_)           -> []
       | Ass(_)            -> []
-      | Return(Some(e))   -> [tcE gtenv ltenv e]
-      | Return(_)         -> failwith "procedures are not supported yet"
+      | Return(Some(e))   -> [Some(tcE gtenv ltenv e)]
+      | Return(_)         -> [None]
       | Alt(GC(eax))      -> List.collect(fun (_, stms) -> List.collect (getReturnStms gtenv ltenv) stms) eax
       | Do(GC(eax))       -> List.collect(fun (_, stms) -> List.collect (getReturnStms gtenv ltenv) stms) eax
       | Block(decs, stms) -> let gtenv2 = List.fold(fun map (x, y) -> Map.add x y map) gtenv (Map.toList ltenv)
@@ -106,18 +119,20 @@ module TypeCheck =
 
    and tcGDec gtenv = function  
                       | VarDec(t,s)               -> Map.add s t gtenv
-                      | FunDec(Some(expectedRetTyp),f, decs, stm) -> let ltenv = List.fold tcGDec (Map.empty) decs
-                                                                     let gtenv2 = Map.add f (FTyp(List.map(fun dec -> match dec with
-                                                                                                                      | VarDec(t, _) -> t
-                                                                                                                      | _ -> failwith "function arguments can only be variables"
-                                                                                   ) decs, Some(expectedRetTyp))) gtenv
-                                                                     let returnTypes = getReturnStms gtenv2 ltenv stm
-                                                                     if List.exists(fun actualRetTyp -> expectedRetTyp <> actualRetTyp) returnTypes
-                                                                       then failwith "return type does not match functions expected return type"
-                                                                     tcS gtenv2 ltenv stm
-                                                                     gtenv2
-                                                                     
-                      | FunDec(None, _, _, _) -> failwith "procedures are not supported yet"
+                      | FunDec(retTypOpt,f, decs, stm) -> let ltenv = List.fold tcGDec (Map.empty) decs
+                                                          let gtenv2 = Map.add f (FTyp(List.map(fun dec -> match dec with
+                                                                                                           | VarDec(t, _) -> t
+                                                                                                           | _ -> failwith "function arguments can only be variables"
+                                                                        ) decs, retTypOpt)) gtenv
+                                                          let returnTypes = getReturnStms gtenv2 ltenv stm
+                                                          if List.exists(fun actualRetTypOpt -> match actualRetTypOpt with
+                                                                                                | Some(typ) when retTypOpt.IsSome -> retTypOpt.Value <> typ
+                                                                                                | Some(_) -> failwith "procedure contain a return which returns a type"
+                                                                                                | None when retTypOpt.IsNone -> false
+                                                                                                | None -> failwith "function contains a return that doesn't return anything") returnTypes
+                                                            then failwith "return type does not match functions expected return type"
+                                                          tcS gtenv2 ltenv stm
+                                                          gtenv2
 
    and tcGDecs gtenv = function
                        | dec::decs -> tcGDecs (tcGDec gtenv dec) decs

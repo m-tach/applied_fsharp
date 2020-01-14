@@ -1,0 +1,11 @@
+begin
+function Add(x: int, y: int) : int =
+{
+    return x + y
+},
+procedure printInc(n: int) =
+{
+    print Add(n, n * 3)
+};
+printInc(Add(3, 5))
+end

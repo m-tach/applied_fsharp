@@ -21,6 +21,7 @@ let keyword s =
     | "true"      -> BOOL(true) 
     | "false"     -> BOOL(false)
     | "function"  -> FUNC
+    | "procedure" -> PROC
     | "return"    -> RETURN
     | "len"   -> LENGTH
     | _           -> NAME s  
@@ -56,6 +57,8 @@ rule tokenize =
   | ":="        { ASG   }
   | "!"         { NEG }
   | "&&"        { AND }
+  | "&"         { ADDRESSOF }
+  | "^"         { PDEREF }
   | "<>"        { NEQ }
   | "<"         { LT }
   | ">"         { GT }

@@ -1,0 +1,9 @@
+
+
+begin 
+   x: int, 
+   b: bool;
+   b,x := 5,2; 
+   print x; 
+   print b
+end
