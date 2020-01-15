@@ -102,6 +102,7 @@ module CodeGenerationOpt =
        match e with
        | N n          -> addCST n k
        | B b          -> addCST (if b then 1 else 0) k
+       | C c          -> addCST c k
        | Access acc  -> CA acc vEnv fEnv (LDI :: k) 
 
        | Apply("-",[e]) -> CE e vEnv fEnv (addCST 0 (SWAP:: SUB :: k))

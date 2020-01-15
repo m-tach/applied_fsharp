@@ -3,6 +3,7 @@
 // This file is obtained by an adaption of the file MicroC/Comp.fs by Peter Sestoft
 open System
 open Machine
+open GuardedCommands.Frontend.TypeCheck
 
 open GuardedCommands.Frontend.AST
 module CodeGeneration =
@@ -29,6 +30,7 @@ module CodeGeneration =
        match expr with
        | N n          -> [CSTI n]
        | B b          -> [CSTI (if b then 1 else 0)]
+       | C c          -> [CSTI (int(c))]
        | Access acc   -> CA vEnv fEnv acc @ [LDI] 
        | Addr acc     -> CA vEnv fEnv acc
 
@@ -92,11 +94,16 @@ module CodeGeneration =
       let code = [INCSP 1]
       (newEnv, code)
 
-                      
+   // Unpack varEnv and map it to (VarName -> VarType)
+   let parseVarTypes (vars, _, _) = Map.map(fun _ v -> snd v) vars
+   
 /// CS vEnv fEnv s gives the code for a statement s on the basis of a variable and a function environment                          
    let rec CS (vEnv:varEnv) fEnv st = 
        match st with
-       | PrintLn e        -> CE vEnv fEnv e @ [PRINTI; INCSP -1] 
+       | PrintLn e        -> let tcVars = parseVarTypes vEnv
+                             match tcE tcVars tcVars e with
+                             | CTyp _ -> CE vEnv fEnv e @ [PRINTC; INCSP -1]
+                             | _      -> CE vEnv fEnv e @ [PRINTI; INCSP -1] 
 
        | Ass(acc,e)       -> CA vEnv fEnv acc @ CE vEnv fEnv e @ [STI; INCSP -1]
 

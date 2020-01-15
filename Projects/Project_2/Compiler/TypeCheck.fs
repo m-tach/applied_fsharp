@@ -12,7 +12,8 @@ module TypeCheck =
    let rec tcE gtenv ltenv  ex = 
       match ex with                        
       | N _              -> ITyp   
-      | B _              -> BTyp   
+      | B _              -> BTyp  
+      | C _              -> CTyp 
       | Access acc       -> tcA gtenv ltenv acc    
       | Addr acc         -> PTyp (tcA gtenv ltenv acc)
                 

@@ -6,10 +6,11 @@ open GuardedCommands.Frontend.AST
 %token <bool> BOOL
 %token <string> STRING
 %token <string> NAME
+%token <char> CHAR
 %token ITYP BTYP CTYP
 %token LP LCP LSP RP RCP RSP
 %token IF FI DO OD BEGIN END
-%token COMMA COLON SEMI BAR TO
+%token COMMA COLON SEMI BAR TO APOS
 %token NEG PLUS MINUS TIMES AND EQ LE LT GT NEQ ADDRESSOF PDEREF
 %token PRINT ASG SKIP ABORT FUNC RETURN PROC
 %token EOF
@@ -122,7 +123,8 @@ Exp:
     Access                            { Access $1 }
   | ADDRESSOF Access                  { Addr $2 }
   | INT                               { N $1 }
-  | BOOL                              { B $1 }       
+  | BOOL                              { B $1 }     
+  | CHAR                              { C $1 }
   | LP Exp RP                         { $2 } 
   | MINUS Exp                         { Apply("-", [$2])}
   | NEG Exp                           { Apply("!", [$2])}

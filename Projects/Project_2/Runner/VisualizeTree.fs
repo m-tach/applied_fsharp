@@ -65,6 +65,7 @@ module ASTConverter =
     and private typToNode typ = match typ with 
                                 | ITyp -> Node("int", [])
                                 | BTyp -> Node("bool", [])
+                                | CTyp -> Node("char", [])
                                 | ATyp(t, Some(x)) -> Node("Array", [typToNode(t); Node(String.Format("Size: {0}", x), [])])
                                 | ATyp(t, None) -> Node("Array", [typToNode(t); Node(String.Format("Size: {0}", "Unknown"), [])])
                                 | PTyp(t) -> Node("Pointer", [typToNode t])
@@ -90,6 +91,7 @@ module ASTConverter =
     and private expToNode exp = match exp with
                                 | N(n) -> Node(n.ToString(), [])
                                 | B(b) -> Node(b.ToString(), [])
+                                | C(c) -> Node(c.ToString(), [])
                                 | Access(AVar(acc)) -> accToNode (AVar(acc))
                                 | Access(a) -> Node("Access", [accToNode a])
                                 | Addr(a) -> Node("Address", [accToNode a])

@@ -1,4 +1,5 @@
 begin
   c : char;
+  c := 'a';
   print c
 end

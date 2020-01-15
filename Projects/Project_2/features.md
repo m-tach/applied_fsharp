@@ -41,3 +41,10 @@
 
 ## Arrays
  * [ ] Write explanation of features
+
+## Strings
+ * Chars
+    * Char declaration type implemented and type-checked
+    * Char value type implemented and type-checked
+    * PRINT handles type-checking against int/bool and chars, and uses PRINTC if it's a char
+    * Chars are defined using 'x' (where x is a single symbol)

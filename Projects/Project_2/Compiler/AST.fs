@@ -13,6 +13,7 @@ module AST =
    type Exp =                            
          | N  of int                   (* Integer constant            *)
          | B of bool                   (* Boolean constant            *)
+         | C of char                   (* Char constant               *)
          | Access of Access            (* x    or  ^p    or  a[e]     *)
          | Addr of Access              (* &x   or  &p^   or  &a[e]    *)
          | Apply of string * Exp list  (* Function application        *)
