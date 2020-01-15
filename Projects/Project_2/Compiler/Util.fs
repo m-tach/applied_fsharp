@@ -60,6 +60,9 @@ module CompilerUtil =
 /// goOpt p compile and runs an abstract syntax for a program showing a program trace  
    let goTrace p = runTrace(code2ints(CodeGeneration.CP p))
 
+/// goBenchmark p compile and runs an abstract syntax for a program returning amount of executed instructions and execution time 
+   let goBenchmark p = runBenchmark(code2ints(CodeGeneration.CP p))
+
 /// exec filename parses, type checks, compiles and runs a program in a file
    let exec filename =  printfn "\nParse, typecheck, compilation and execution of %s:" filename 
                         let prog = parseFromFile filename
@@ -77,6 +80,12 @@ module CompilerUtil =
                              let prog = parseFromFile filename
                              tcP prog
                              goTrace prog
+/// execBenchmark filename parses, type checks, compiles and runs a program, returning the amount of executed instructions and the runtime in ms
+   let execBenchmark filename = printfn "\nParse, typecheck, compilation and execution of %s:" filename 
+                                let prog = parseFromFile filename
+                                tcP prog
+                                goBenchmark prog
+
 (*
    let exec str  = let prog = parseString str
                    Frontend.TypeCheck.tcP prog;
