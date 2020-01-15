@@ -1,25 +1,20 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
   </PropertyGroup>
-
   <ItemGroup>
     <Compile Include="AST.fs" />
     <Compile Include="Parser.fs" />
     <Compile Include="Lexer.fs" />
     <Compile Include="TypeCheck.fs" />
     <Compile Include="CodeGen.fs" />
+    <Compile Include="Optimizer.fs" />
     <Compile Include="CodeGenOpt.fs" />
     <Compile Include="Util.fs" />
   </ItemGroup>
-
-  <Target Name="PreBuild" AfterTargets="PreBuildEvent">
-    <Exec Command="$(ProjectDir)/packages/FsLexYacc.7.0.6/build/fslex.exe $(ProjectDir)/Lexer.fsl" />
-    <Exec Command="$(ProjectDir)/packages/FsLexYacc.7.0.6/build/fsyacc.exe -v  --module Parser $(ProjectDir)/Parser.fsy" />
-  </Target>
-
   <ItemGroup>
+    <PackageReference Include="FsLexYacc" Version="7.0.6" />
+    <PackageReference Include="FsLexYacc.Runtime" Version="7.0.6" />
     <Reference Include="Machine">
       <HintPath>..\libraries\Machine.dll</HintPath>
     </Reference>
@@ -30,10 +25,8 @@
       <HintPath>..\libraries\FsLexYacc.Runtime.dll</HintPath>
     </Reference>
   </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="FsLexYacc" Version="7.0.6" />
-    <PackageReference Include="FsLexYacc.Runtime" Version="7.0.6" />
-  </ItemGroup>
-
+  <Target Name="PreBuild" AfterTargets="PreBuildEvent">
+    <Exec Command="$(ProjectDir)/packages/FsLexYacc.7.0.6/build/fslex.exe $(ProjectDir)/Lexer.fsl" />
+    <Exec Command="$(ProjectDir)/packages/FsLexYacc.7.0.6/build/fsyacc.exe -v  --module Parser $(ProjectDir)/Parser.fsy" />
+  </Target>
 </Project>
