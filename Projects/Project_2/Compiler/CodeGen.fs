@@ -30,7 +30,7 @@ module CodeGeneration =
        match expr with
        | N n          -> [CSTI n]
        | B b          -> [CSTI (if b then 1 else 0)]
-       | C c          -> [CSTI (int(c))]
+       | C c          -> List.map (fun c -> (CSTI (int c))) (Seq.toList c)
        | Access acc   -> CA vEnv fEnv acc @ [LDI] 
        | Addr acc     -> CA vEnv fEnv acc
 
@@ -85,7 +85,7 @@ module CodeGeneration =
     | ATyp (ATyp _, _) -> 
       raise (Failure "allocate: array of arrays not permitted")
 
-    | ATyp (t, Some i) when List.contains t [BTyp; ITyp] -> 
+    | ATyp (t, Some i) when List.contains t [BTyp; ITyp; CTyp] -> 
       let newEnv = (Map.add x (kind (fdepth), typ) env, fdepth+i, isInFunc)
       let code = [INCSP i] 
       (newEnv, code)
@@ -102,10 +102,27 @@ module CodeGeneration =
        match st with
        | PrintLn e        -> let tcVars = parseVarTypes vEnv
                              match tcE tcVars tcVars e with
-                             | CTyp _ -> CE vEnv fEnv e @ [PRINTC; INCSP -1]
-                             | _      -> CE vEnv fEnv e @ [PRINTI; INCSP -1] 
+                             | ATyp(CTyp, len) -> match e with
+                                                  | Access acc -> let addr = CA vEnv fEnv acc
+                                                                  List.fold (fun s c -> s @ addr @ [CSTI c; ADD; LDI; PRINTC]) [] [1 .. 5]
+                                                  | _          -> failwith "Impossible case: Array cannot be without a variable"
+                             | CTyp _          -> let str = CE vEnv fEnv e
+                                                  List.fold (fun s c -> match c with
+                                                                        | CSTI _ -> s @ [c; PRINTC; INCSP -1]
+                                                                        | _      -> s @ [c]) [] str
+                             | _               -> CE vEnv fEnv e @ [PRINTI; INCSP -1] 
 
-       | Ass(acc,e)       -> CA vEnv fEnv acc @ CE vEnv fEnv e @ [STI; INCSP -1]
+       | Ass(acc,e)       -> let tcVars = parseVarTypes vEnv
+                             match tcE tcVars tcVars e with
+                             | CTyp -> let str = CE vEnv fEnv e
+                                       match tcA tcVars tcVars acc with
+                                       | ATyp(CTyp, _) -> let addr = CA vEnv fEnv acc
+                                                          snd (List.fold (fun (i, s) c -> match c with
+                                                                                          | CSTI _ -> (i + 1, s @ addr @ [CSTI i; ADD; c; STI; INCSP -1])
+                                                                                          | _      -> failwith "Invalid syntax for string assignment."
+                                                                    ) (0, []) str)
+                                       | _             -> failwith "Strings can only be assigned to char arrays."
+                             | _    -> CA vEnv fEnv acc @ CE vEnv fEnv e @ [STI; INCSP -1]
 
        | Return(Some(e))  -> let (_, locals, _) = vEnv
                              (CE vEnv fEnv e) @ [RET locals]

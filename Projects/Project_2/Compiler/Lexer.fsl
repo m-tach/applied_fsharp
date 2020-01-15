@@ -69,6 +69,7 @@ rule tokenize =
   | "-"         { MINUS }
   | "="         { EQ }
   | "+"         { PLUS }   
-  | CharConst   { CHAR(Char.Parse(Encoding.UTF8.GetString(lexbuf.Lexeme).Substring(1,1))) }
+  | CharConst   { STRING(Encoding.UTF8.GetString(lexbuf.Lexeme).Substring(1,1)) }
+  | StringConst { STRING(Encoding.UTF8.GetString(lexbuf.Lexeme).Substring(1,Encoding.UTF8.GetString(lexbuf.Lexeme).Length-2)) }
   | identifier  { keyword(Encoding.UTF8.GetString(lexbuf.Lexeme)) }
   | eof         { EOF }

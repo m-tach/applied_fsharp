@@ -14,5 +14,6 @@ let main argv =
     let intrs = CP ex0Tree
     let intInstrs = Machine.code2ints intrs
     VirtualMachine.runTrace intInstrs |> ignore
+    go ex0Tree
     //Visualizer.Visualize ex0Tree
     0 // return an integer exit code
