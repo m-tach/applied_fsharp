@@ -237,9 +237,11 @@ module Optimizer =
         //Ifzero
         | Ifzero(a, Csti 0) -> Goto a
         | Ifzero(_, Csti _) -> Nothing
+        | Ifzero(a, Not(b)) -> Ifnzro(a, b)
         //Ifnzro
         | Ifnzro(_, Csti 0) -> Nothing
         | Ifnzro(a, Csti _) -> Goto a
+        | Ifnzro(a, Not(b)) -> Ifzero(a, b)
         | _ -> recursed    
 
     let rec private optimizeInstrList instrs =
