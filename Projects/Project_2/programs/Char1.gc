@@ -1,0 +1,4 @@
+begin
+  c : char;
+  print c
+end

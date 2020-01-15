@@ -6,7 +6,7 @@ open GuardedCommands.Frontend.AST
 %token <bool> BOOL
 %token <string> STRING
 %token <string> NAME
-%token ITYP BTYP
+%token ITYP BTYP CTYP
 %token LP LCP LSP RP RCP RSP
 %token IF FI DO OD BEGIN END
 %token COMMA COLON SEMI BAR TO
@@ -47,6 +47,7 @@ Prog:
 BasicTyp:
     BTYP                              { BTyp }
   | ITYP                              { ITyp } 
+  | CTYP                              { CTyp }
   | PDEREF BasicTyp                   { PTyp $2 }
 
 ATyp:

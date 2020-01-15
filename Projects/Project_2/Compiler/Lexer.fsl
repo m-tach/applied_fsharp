@@ -9,6 +9,7 @@ let keyword s =
     match s with
     | "bool"      -> BTYP
     | "int"       -> ITYP
+    | "char"      -> CTYP
     | "print"     -> PRINT 
     | "skip"      -> SKIP
     | "abort"     -> ABORT

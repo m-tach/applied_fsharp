@@ -10,7 +10,7 @@ open Visualizer
 
 [<EntryPoint>]
 let main argv =
-    let ex0Tree = parseFromFile "../programs/fact.gc"
+    let ex0Tree = parseFromFile "../programs/Char1.gc"
     let intrs = CP ex0Tree
     let intInstrs = Machine.code2ints intrs
     VirtualMachine.runTrace intInstrs |> ignore
