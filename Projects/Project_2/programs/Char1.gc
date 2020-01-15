@@ -2,5 +2,5 @@ begin
   c : char[5];
   c := "hello";
   print "hello";
-  print c
+  print c[1]
 end
