@@ -36,6 +36,8 @@ module CodeGeneration =
 
        | Apply("!", [e]) -> CE vEnv fEnv e @ [NOT]
 
+       | Apply("len", ([Access(var)])) -> CA vEnv fEnv var @ [CSTI 1; SUB; LDI]
+
        | Apply("&&",[b1;b2]) -> let labend   = newLabel()
                                 let labfalse = newLabel()
                                 CE vEnv fEnv b1 @ [IFZERO labfalse] @ CE vEnv fEnv b2
@@ -70,7 +72,7 @@ module CodeGeneration =
                                                    match Map.find x map with
                                                    | (GloVar addr,_) -> [CSTI addr]
                                                    | (LocVar addr,_) -> [CSTI addr; GETBP; ADD]
-                               | AIndex(acc, e) -> 
+                               | AIndex(acc, e) ->                                    
                                      CA vEnv fEnv acc @ CE vEnv fEnv e @ [ADD]
 
                                | ADeref e       -> CE vEnv fEnv e
@@ -84,8 +86,8 @@ module CodeGeneration =
       raise (Failure "allocate: array of arrays not permitted")
 
     | ATyp (t, Some i) when List.contains t [BTyp; ITyp] -> 
-      let newEnv = (Map.add x (kind (fdepth), typ) env, fdepth+i, isInFunc)
-      let code = [INCSP i] 
+      let newEnv = (Map.add x (kind (fdepth+1), typ) env, fdepth+i+1, isInFunc)
+      let code = [CSTI i; INCSP i ] 
       (newEnv, code)
     | _ -> 
       let newEnv = (Map.add x (kind fdepth, typ) env, fdepth+1, isInFunc)
@@ -107,6 +109,10 @@ module CodeGeneration =
                              [CSTI 0; RET locals]                  
 
        | Block([],stms)          -> CSs vEnv fEnv stms
+       | Block((VarDec(ATyp(t, Some len), s))::tail,stms)   -> let (_, _, isInFunc) = vEnv
+                                                               let allocType = if isInFunc then LocVar else GloVar
+                                                               let (vEnv2, code) = allocate allocType (t, s) vEnv
+                                                               code @ (CS vEnv2 fEnv (Block(tail, stms))) @ [INCSP -(len + 1)]    
        | Block((VarDec(t, s))::tail,stms)   -> let (_, _, isInFunc) = vEnv
                                                let allocType = if isInFunc then LocVar else GloVar
                                                let (vEnv2, code) = allocate allocType (t, s) vEnv

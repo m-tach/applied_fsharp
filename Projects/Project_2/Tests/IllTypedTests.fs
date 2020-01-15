@@ -120,6 +120,19 @@ type IllTypedTests() =
     print y
     end"
 
+    let illegalLEN = "begin
+    a : int[3], c: int,
+    function f(): int = {b: int[2]; b[1] := 7; return b[1]},
+    function g(c: int[]): int = {c[0] := 25; print c[0]; return -1};
+    print 3;
+    a[0] := 2;
+    print a[0];
+    print f();
+    print g(a);
+    print len a
+    print len c
+    end"
+
     [<TestMethod>]
     member this.VariableDeclarationException() =
         Assert.Throws<Exception> "no declaration for : res"  (fun () -> tcP (parseString missingDeclaration))
@@ -182,6 +195,9 @@ type IllTypedTests() =
     member this.IllegalDOException() = 
         Assert.Throws<Exception> "Illegal use of integer in alternative stm" (fun () -> tcP (parseString illegalDO))
 
+    [<TestMethod>]
+    member this.IllegalLENException() = 
+        Assert.Throws<Exception> "parser termination" (fun () -> tcP (parseString illegalLEN))
 
 
 

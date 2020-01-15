@@ -6,11 +6,11 @@ begin
      a[i] := a[j]; 
      a[j] := tmp
    },
-   procedure printA(a: int[], len:int) = 
+   procedure printA(a: int[], b:int) = 
    {
      i: int;  
      i:= 0; 
-     do ! i=len -> print a[i]; i:= i+1 od
+     do ! i=b -> print a[i]; i:= i+1 od
    },
    a: int[3];
 

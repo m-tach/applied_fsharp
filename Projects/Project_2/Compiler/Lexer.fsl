@@ -23,6 +23,7 @@ let keyword s =
     | "function"  -> FUNC
     | "procedure" -> PROC
     | "return"    -> RETURN
+    | "len"   -> LENGTH
     | _           -> NAME s  
 }
 
