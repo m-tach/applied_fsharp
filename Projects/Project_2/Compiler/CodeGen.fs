@@ -32,7 +32,7 @@ module CodeGeneration =
        | Access acc   -> CA vEnv fEnv acc @ [LDI] 
        | Addr acc     -> CA vEnv fEnv acc
 
-       | Apply("-", [e]) -> CE vEnv fEnv e @ [CSTI 0; SWAP; SUB]
+       | Apply("-", [e]) -> [CSTI 0] @ CE vEnv fEnv e @ [SUB]
 
        | Apply("!", [e]) -> CE vEnv fEnv e @ [NOT]
 
@@ -42,20 +42,19 @@ module CodeGeneration =
                                 @ [GOTO labend; Label labfalse; CSTI 0; Label labend]
 
        | Apply(o,[e1;e2]) when List.exists (fun x -> o=x) ["-"; "+"; "*"; "%"; "/"; "="; "<"; ">"; "<="; ">="; "<>"]
-                             -> let ins = match o with
-                                          | "-" ->  [SUB]
-                                          | "+"  -> [ADD]
-                                          | "*"  -> [MUL]
-                                          | "/"  -> [DIV]
-                                          | "%"  -> [MOD]
-                                          | "="  -> [EQ]
-                                          | "<>" -> [EQ; NOT]
-                                          | "<"  -> [LT]
-                                          | ">"  -> [SWAP; LT]
-                                          | "<=" -> [SWAP; LT; NOT]
-                                          | ">=" -> [LT; NOT] 
-                                          | _    -> failwith "CE: this case is not possible"
-                                CE vEnv fEnv e1 @ CE vEnv fEnv e2 @ ins
+                             -> match o with
+                                | "-" ->  CE vEnv fEnv e1 @ CE vEnv fEnv e2 @ [SUB]
+                                | "+"  -> CE vEnv fEnv e1 @ CE vEnv fEnv e2 @ [ADD]
+                                | "*"  -> CE vEnv fEnv e1 @ CE vEnv fEnv e2 @ [MUL]
+                                | "/"  -> CE vEnv fEnv e1 @ CE vEnv fEnv e2 @ [DIV]
+                                | "%"  -> CE vEnv fEnv e1 @ CE vEnv fEnv e2 @ [MOD]
+                                | "="  -> CE vEnv fEnv e1 @ CE vEnv fEnv e2 @ [EQ]
+                                | "<>" -> CE vEnv fEnv e1 @ CE vEnv fEnv e2 @ [EQ; NOT]
+                                | "<"  -> CE vEnv fEnv e1 @ CE vEnv fEnv e2 @ [LT]
+                                | ">"  -> CE vEnv fEnv e2 @ CE vEnv fEnv e1 @ [LT]
+                                | "<=" -> CE vEnv fEnv e2 @ CE vEnv fEnv e1 @ [LT; NOT]
+                                | ">=" -> CE vEnv fEnv e1 @ CE vEnv fEnv e2 @ [LT; NOT] 
+                                | _    -> failwith "CE: this case is not possible"
        
        | Apply(f, args) when Map.containsKey f fEnv -> let (label, typ, param) = Map.find f fEnv
                                                        (List.collect(fun x -> CE vEnv fEnv x) args) @ 

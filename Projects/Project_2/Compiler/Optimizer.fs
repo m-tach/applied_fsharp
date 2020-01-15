@@ -1,6 +1,5 @@
 namespace GuardedCommands.Backend
-// Michael R. Hansen 05-01-2016, 04-01-2018
-// This file is obtained by an adaption of the file MicroC/Comp.fs by Peter Sestoft
+
 open System
 open Machine
 
@@ -15,7 +14,6 @@ module Optimizer =
                   | Lt  of InstrExp * InstrExp
                   | Not of InstrExp
                   | Dup of InstrExp
-                  | Swap of InstrExp * InstrExp
                   | Ldi of InstrExp
                   | Sti of InstrExp * InstrExp
                   | Getbp
@@ -32,6 +30,7 @@ module Optimizer =
                   | Ldargs
                   | Stop
                   | Lab of label
+                  | Nothing
 
     let private instrsToInstrsExp allintrs = 
         let rec inter intrs =
@@ -62,9 +61,7 @@ module Optimizer =
                             (Not(e1), rest2)    
             | DUP::rest1 -> let (e1, rest2) = inter rest1
                             (Dup(e1), rest2)  
-            | SWAP::rest1  -> let (e1, rest2) = inter rest1
-                              let (e2, rest3) = inter rest2
-                              (Swap(e1, e2), rest3)   
+            | SWAP::rest1  -> failwith "optmizer can't handle swap instructions"
             | LDI::rest1 -> let (e1, rest2) = inter rest1
                             (Ldi(e1), rest2)     
             | STI::rest1  -> let (e1, rest2) = inter rest1
@@ -103,6 +100,37 @@ module Optimizer =
         let (fstexp, rest) = inter (List.rev allintrs)
         createExps ([fstexp], rest)
 
+    let rec instrExpsToInstrs instrExps =
+        let rec instrExpToInstrs instrExp =
+            match instrExp with
+            | Csti a -> [CSTI a]
+            | Add(a, b) -> (List.collect instrExpToInstrs [a; b]) @ [ADD]
+            | Sub(a, b) -> (List.collect instrExpToInstrs [a; b]) @ [ADD]
+            | Mul(a, b) -> (List.collect instrExpToInstrs [a; b]) @ [ADD] 
+            | Div(a, b) -> (List.collect instrExpToInstrs [a; b]) @ [ADD] 
+            | Mod(a, b) -> (List.collect instrExpToInstrs [a; b]) @ [ADD] 
+            | Eq(a, b)  -> (List.collect instrExpToInstrs [a; b]) @ [ADD] 
+            | Lt(a, b)  -> (List.collect instrExpToInstrs [a; b]) @ [ADD]
+            | Not a -> (instrExpToInstrs a) @ [NOT]
+            | Dup a -> (instrExpToInstrs a) @ [DUP]
+            | Ldi(a) -> (instrExpToInstrs a) @ [LDI]
+            | Sti(a, b)  -> (List.collect instrExpToInstrs [a; b]) @ [STI]
+            | Getbp -> []
+            | Getsp -> []
+            | Incsp a -> [INCSP a]
+            | Goto a -> [GOTO a]
+            | Ifzero(a, b) -> (instrExpToInstrs b) @ [IFZERO a]
+            | Ifnzro(a, b) -> (instrExpToInstrs b) @ [IFNZRO a]
+            | Call(a, b, c) -> (List.collect instrExpToInstrs c) @ [CALL(a, b)]
+            | Tcall(a, b, c, d) -> (List.collect instrExpToInstrs d) @ [TCALL(a, b, c)]
+            | Ret(a, b) -> (instrExpToInstrs b) @ [RET a]
+            | Printi a -> (instrExpToInstrs a) @ [PRINTI]
+            | Printc a -> (instrExpToInstrs a) @ [PRINTC]
+            | Ldargs -> [LDARGS]
+            | Stop -> [STOP]
+            | _ -> []
+        List.collect instrExpToInstrs instrExps
+
 
     let rec private removeUntilLabel instrs =
         match instrs with
@@ -126,6 +154,7 @@ module Optimizer =
             | Goto(_) -> true
             | Ldargs(_) -> true
             | Stop(_) -> true
+            | Nothing(_) -> true
             | _ -> false
         let recursed = if reachedBottom then intrExp else optimizeInstrExp intrExp        
         match recursed with
@@ -157,25 +186,33 @@ module Optimizer =
         | Not(Csti 0) -> Csti 1
         | Not(Csti 1) -> Csti 0
         | Not(Not(a)) -> a
-        //Swap
-        //
-        | CSTI a :: CSTI b :: SWAP :: rest -> CSTI b :: CSTI a :: optimizeInstrs rest
-        
-        
-        
-        | CSTI a :: DIV :: rest -> optimizeInstrs rest
-        | CSTI a :: MOD :: rest -> optimizeInstrs rest
-        | [] -> []
-        | a :: rest -> a :: optimizeInstrs rest
+        //Ifzero
+        | Ifzero(a, Csti 0) -> Goto a
+        | Ifzero(a, Csti _) -> Nothing
+        //Ifnzro
+        | Ifnzro(a, Csti 0) -> Nothing
+        | Ifnzro(a, Csti _) -> Goto a
+        | _ -> recursed    
 
     let rec private optimizeInstrList instrs =
         match instrs with
         //Dup
         | DUP :: INCSP a :: rest when a < 0 -> INCSP (a - 1) :: optimizeInstrList rest
         | DUP :: RET a :: rest when a < 0 -> RET (a - 1) :: optimizeInstrList rest
-        //Swap
-        | 
+        //Incsp
+        | INCSP a :: INCSP b :: rest -> INCSP (a + b) :: optimizeInstrList rest
+        | GOTO a :: Label b :: rest when a = b -> optimizeInstrList rest
+        | CALL(m, a):: RET n :: rest -> RET n :: TCALL(m, n, a) :: optimizeInstrList rest
+        | a :: rest -> a :: optimizeInstrList rest
+        | [] -> []
 
-    let optimize instrs = let noDeadCode = deadInstrElimination instrs    
-                          let exps = instrsToInstrsExp noDeadCode
+    let rec optimize instrs = 
+        let firstOptiInstrs = optimizeInstrList instrs
+        let noDeadCode = deadInstrElimination firstOptiInstrs
+        let exps = instrsToInstrsExp noDeadCode
+        let optiExps = List.map optimizeInstrExp exps
+        let optiInstrs = instrExpsToInstrs optiExps
+        if instrs.Length <> optiInstrs.Length
+        then optimize optiInstrs
+        else optiInstrs
 
