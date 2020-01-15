@@ -132,6 +132,36 @@ module Optimizer =
             | _ -> []        
         List.collect(fun x -> List.rev (instrExpToInstrs x)) instrExps
 
+    let public instrsToString instrs = 
+        (String.concat "\n" (List.map (fun x ->match x with
+                                               | CSTI i -> String.Format("CSTI {0}", i)
+                                               | ADD -> "ADD"
+                                               | SUB -> "SUB"
+                                               | MUL -> "MUL"
+                                               | DIV -> "DIV"
+                                               | MOD -> "MOD"
+                                               | EQ -> "EQ"
+                                               | LT -> "LT"
+                                               | NOT -> "NOT"
+                                               | DUP -> "DUP"
+                                               | SWAP -> "SWAP"
+                                               | LDI -> "LDI"
+                                               | STI -> "STI"
+                                               | GETBP -> "GETBP"
+                                               | GETSP -> "GETSP"
+                                               | INCSP m -> String.Format("INCSP {0}", m)
+                                               | GOTO a -> String.Format("GOTO {0}", a)
+                                               | IFZERO a -> String.Format("IFZERO {0}", a)
+                                               | IFNZRO a -> String.Format("IFNZRO {0}", a)
+                                               | CALL(m, a) -> String.Format("CALL {0} {1}", m, a)
+                                               | TCALL(m, n, a) -> String.Format("TCALL {0} {1} {2}", m, n, a)
+                                               | RET m -> String.Format("RET {0}", m)
+                                               | PRINTI -> "PRINTI"
+                                               | PRINTC -> "PRINTC"
+                                               | LDARGS -> "LDARGS"
+                                               | STOP -> "STOP"
+                                               | Label a -> String.Format("Label {0}", a)) instrs))     
+
 
     let rec private removeUntilLabel instrs =
         match instrs with
@@ -190,11 +220,11 @@ module Optimizer =
         | Mul(a, Csti 1) -> a
         | Mul(Csti a, Csti b) -> Csti (a * b)
         //Div
-        | Div(Csti 0, b) -> Csti 0
+        | Div(Csti 0, _) -> Csti 0
         | Div(a, Csti 1) -> a
         | Div(Csti a, Csti b) -> Csti (a / b)
         //Mod
-        | Mod(Csti 0, b) -> Csti 0
+        | Mod(Csti 0, _) -> Csti 0
         | Mod(Csti a, Csti b) -> Csti (a % b)
         //Eq
         | Eq(Csti a, Csti b) -> Csti (if a = b then 1 else 0)
@@ -206,9 +236,9 @@ module Optimizer =
         | Not(Not(a)) -> a
         //Ifzero
         | Ifzero(a, Csti 0) -> Goto a
-        | Ifzero(a, Csti _) -> Nothing
+        | Ifzero(_, Csti _) -> Nothing
         //Ifnzro
-        | Ifnzro(a, Csti 0) -> Nothing
+        | Ifnzro(_, Csti 0) -> Nothing
         | Ifnzro(a, Csti _) -> Goto a
         | _ -> recursed    
 
@@ -224,35 +254,31 @@ module Optimizer =
         | a :: rest -> a :: optimizeInstrList rest
         | [] -> []
 
-    let public instrsToString instrs = 
-        (String.concat "\n" (List.map (fun x ->match x with
-                                               | CSTI i -> String.Format("CSTI {0}", i)
-                                               | ADD -> "ADD"
-                                               | SUB -> "SUB"
-                                               | MUL -> "MUL"
-                                               | DIV -> "DIV"
-                                               | MOD -> "MOD"
-                                               | EQ -> "EQ"
-                                               | LT -> "LT"
-                                               | NOT -> "NOT"
-                                               | DUP -> "DUP"
-                                               | SWAP -> "SWAP"
-                                               | LDI -> "LDI"
-                                               | STI -> "STI"
-                                               | GETBP -> "GETBP"
-                                               | GETSP -> "GETSP"
-                                               | INCSP m -> String.Format("INCSP {0}", m)
-                                               | GOTO a -> String.Format("GOTO {0}", a)
-                                               | IFZERO a -> String.Format("IFZERO {0}", a)
-                                               | IFNZRO a -> String.Format("IFNZRO {0}", a)
-                                               | CALL(m, a) -> String.Format("CALL {0} {1}", m, a)
-                                               | TCALL(m, n, a) -> String.Format("TCALL {0} {1} {2}", m, n, a)
-                                               | RET m -> String.Format("RET {0}", m)
-                                               | PRINTI -> "PRINTI"
-                                               | PRINTC -> "PRINTC"
-                                               | LDARGS -> "LDARGS"
-                                               | STOP -> "STOP"
-                                               | Label a -> String.Format("Label {0}", a)) instrs)) 
+    let rec private optimizeGoto allInstrs =
+        let rec replaceGotoTarget instrs fromLab toLab =
+            match instrs with
+            | GOTO a   :: rest when a = fromLab -> GOTO toLab   :: replaceGotoTarget rest fromLab toLab
+            | IFZERO a :: rest when a = fromLab -> IFZERO toLab :: replaceGotoTarget rest fromLab toLab
+            | IFNZRO a :: rest when a = fromLab -> IFNZRO toLab :: replaceGotoTarget rest fromLab toLab
+            | CALL(m, a) :: rest when a = fromLab -> CALL(m, toLab) :: replaceGotoTarget rest fromLab toLab
+            | TCALL(m, n, a) :: rest when a = fromLab -> TCALL(m, n, toLab) :: replaceGotoTarget rest fromLab toLab
+            | a :: rest -> a :: replaceGotoTarget rest fromLab toLab
+            | [] -> []
+        let rec optimizeGotointernal instrs = 
+            match instrs with
+            | Label a :: GOTO b         :: rest -> (GOTO b         :: rest, a, b, true)
+            | a :: rest -> let (b, c, d, e) = optimizeGotointernal rest
+                           (a::b, c, d, e)
+            | [] -> ([], "", "", false)
+        let rec loopUntilNoChange instrs = 
+            let (chr, fromLab, toLab, foundPattern) = optimizeGotointernal instrs
+            let optiInstrs = if foundPattern 
+                             then  replaceGotoTarget chr fromLab toLab
+                             else chr
+            if optiInstrs.Length <> instrs.Length
+            then loopUntilNoChange optiInstrs
+            else optiInstrs
+        loopUntilNoChange allInstrs
 
     let rec public optimize instrs = 
         let firstOptiInstrs = optimizeInstrList instrs
@@ -262,5 +288,5 @@ module Optimizer =
         let optiInstrs = instrExpsToInstrs optiExps
         if instrs.Length <> optiInstrs.Length
         then optimize optiInstrs
-        else optiInstrs                                   
+        else optimizeGoto optiInstrs                                   
 
