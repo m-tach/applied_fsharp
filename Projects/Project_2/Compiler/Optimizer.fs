@@ -104,33 +104,33 @@ module Optimizer =
         let rec instrExpToInstrs instrExp =
             match instrExp with
             | Csti a -> [CSTI a]
-            | Add(a, b) -> (List.collect instrExpToInstrs [a; b]) @ [ADD]
-            | Sub(a, b) -> (List.collect instrExpToInstrs [a; b]) @ [ADD]
-            | Mul(a, b) -> (List.collect instrExpToInstrs [a; b]) @ [ADD] 
-            | Div(a, b) -> (List.collect instrExpToInstrs [a; b]) @ [ADD] 
-            | Mod(a, b) -> (List.collect instrExpToInstrs [a; b]) @ [ADD] 
-            | Eq(a, b)  -> (List.collect instrExpToInstrs [a; b]) @ [ADD] 
-            | Lt(a, b)  -> (List.collect instrExpToInstrs [a; b]) @ [ADD]
-            | Not a -> (instrExpToInstrs a) @ [NOT]
-            | Dup a -> (instrExpToInstrs a) @ [DUP]
-            | Ldi(a) -> (instrExpToInstrs a) @ [LDI]
-            | Sti(a, b)  -> (List.collect instrExpToInstrs [a; b]) @ [STI]
-            | Getbp -> []
-            | Getsp -> []
+            | Add(a, b) -> ADD::(List.collect instrExpToInstrs [a; b])
+            | Sub(a, b) -> SUB::(List.collect instrExpToInstrs [a; b])
+            | Mul(a, b) -> MUL::(List.collect instrExpToInstrs [a; b]) 
+            | Div(a, b) -> DIV::(List.collect instrExpToInstrs [a; b])
+            | Mod(a, b) -> MOD::(List.collect instrExpToInstrs [a; b])
+            | Eq(a, b)  -> EQ:: (List.collect instrExpToInstrs [a; b]) 
+            | Lt(a, b)  -> LT:: (List.collect instrExpToInstrs [a; b])
+            | Not a -> NOT::instrExpToInstrs a
+            | Dup a -> DUP::instrExpToInstrs a
+            | Ldi(a) -> LDI::instrExpToInstrs a
+            | Sti(a, b)  -> STI::(List.collect instrExpToInstrs [a; b])
+            | Getbp -> [GETBP]
+            | Getsp -> [GETSP]
             | Incsp a -> [INCSP a]
             | Goto a -> [GOTO a]
-            | Ifzero(a, b) -> (instrExpToInstrs b) @ [IFZERO a]
-            | Ifnzro(a, b) -> (instrExpToInstrs b) @ [IFNZRO a]
-            | Call(a, b, c) -> (List.collect instrExpToInstrs c) @ [CALL(a, b)]
-            | Tcall(a, b, c, d) -> (List.collect instrExpToInstrs d) @ [TCALL(a, b, c)]
-            | Ret(a, b) -> (instrExpToInstrs b) @ [RET a]
-            | Printi a -> (instrExpToInstrs a) @ [PRINTI]
-            | Printc a -> (instrExpToInstrs a) @ [PRINTC]
+            | Ifzero(a, b) -> IFZERO a::instrExpToInstrs b
+            | Ifnzro(a, b) -> IFNZRO a::instrExpToInstrs b
+            | Call(a, b, c) -> CALL(a, b)::List.collect instrExpToInstrs c
+            | Tcall(a, b, c, d) -> TCALL(a, b, c)::(List.collect instrExpToInstrs d)
+            | Ret(a, b) -> RET a::instrExpToInstrs b
+            | Printi a -> PRINTI::instrExpToInstrs a
+            | Printc a -> PRINTC::instrExpToInstrs a
             | Ldargs -> [LDARGS]
             | Stop -> [STOP]
             | Lab a -> [Label a]
             | _ -> []        
-        List.collect instrExpToInstrs instrExps
+        List.collect(fun x -> List.rev (instrExpToInstrs x)) instrExps
 
 
     let rec private removeUntilLabel instrs =
