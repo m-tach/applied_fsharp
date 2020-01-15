@@ -100,7 +100,7 @@ module Optimizer =
         let (fstexp, rest) = inter (List.rev allintrs)
         createExps ([fstexp], rest)
 
-    let rec instrExpsToInstrs instrExps =
+    let rec private instrExpsToInstrs instrExps =
         let rec instrExpToInstrs instrExp =
             match instrExp with
             | Csti a -> [CSTI a]
@@ -128,7 +128,8 @@ module Optimizer =
             | Printc a -> (instrExpToInstrs a) @ [PRINTC]
             | Ldargs -> [LDARGS]
             | Stop -> [STOP]
-            | _ -> []
+            | Lab a -> [Label a]
+            | _ -> []        
         List.collect instrExpToInstrs instrExps
 
 
@@ -145,18 +146,35 @@ module Optimizer =
 
 
     let rec private optimizeInstrExp intrExp = 
-        let reachedBottom = 
-            match intrExp with
-            | Csti(_) -> true
-            | Getbp(_) -> true
-            | Getsp(_) -> true
-            | Incsp(_) -> true
-            | Goto(_) -> true
-            | Ldargs(_) -> true
-            | Stop(_) -> true
-            | Nothing(_) -> true
-            | _ -> false
-        let recursed = if reachedBottom then intrExp else optimizeInstrExp intrExp        
+        //let recursed = if reachedBottom then intrExp else optimizeInstrExp intrExp        
+        let recursed = match intrExp with
+                       | Csti a -> Csti a
+                       | Add(a, b) -> Add(optimizeInstrExp a, optimizeInstrExp b)
+                       | Sub(a, b) -> Sub(optimizeInstrExp a, optimizeInstrExp b)
+                       | Mul(a, b) -> Mul(optimizeInstrExp a, optimizeInstrExp b)
+                       | Div(a, b) -> Div(optimizeInstrExp a, optimizeInstrExp b)
+                       | Mod(a, b) -> Mod(optimizeInstrExp a, optimizeInstrExp b)
+                       | Eq(a, b) -> Eq(optimizeInstrExp a, optimizeInstrExp b)
+                       | Lt(a, b) -> Lt(optimizeInstrExp a, optimizeInstrExp b)
+                       | Not(a) -> Not(optimizeInstrExp a)
+                       | Dup(a) -> Dup(optimizeInstrExp a)
+                       | Ldi(a) -> Ldi(optimizeInstrExp a)
+                       | Sti(a, b) -> Sti(optimizeInstrExp a, optimizeInstrExp b)
+                       | Getbp -> Getbp
+                       | Getsp -> Getsp
+                       | Incsp a -> Incsp a
+                       | Goto a -> Goto a
+                       | Ifzero(a, b) -> Ifzero(a, optimizeInstrExp b)
+                       | Ifnzro(a, b) -> Ifnzro(a, optimizeInstrExp b)
+                       | Call(a, b, c) -> Call(a, b, List.map optimizeInstrExp c)
+                       | Tcall(a, b, c, d) -> Tcall(a, b, c, List.map optimizeInstrExp d)
+                       | Ret(a, b) -> Ret(a, optimizeInstrExp b)
+                       | Printi a -> Printi(optimizeInstrExp a)
+                       | Printc a -> Printc(optimizeInstrExp a)
+                       | Ldargs -> Ldargs
+                       | Stop -> Stop
+                       | Nothing -> Nothing
+                       | Lab a -> Lab a
         match recursed with
         //Add
         | Add(Csti 0, b) -> b
@@ -206,7 +224,37 @@ module Optimizer =
         | a :: rest -> a :: optimizeInstrList rest
         | [] -> []
 
-    let rec optimize instrs = 
+    let public instrsToString instrs = 
+        (String.concat "\n" (List.map (fun x ->match x with
+                                               | CSTI i -> String.Format("CSTI {0}", i)
+                                               | ADD -> "ADD"
+                                               | SUB -> "SUB"
+                                               | MUL -> "MUL"
+                                               | DIV -> "DIV"
+                                               | MOD -> "MOD"
+                                               | EQ -> "EQ"
+                                               | LT -> "LT"
+                                               | NOT -> "NOT"
+                                               | DUP -> "DUP"
+                                               | SWAP -> "SWAP"
+                                               | LDI -> "LDI"
+                                               | STI -> "STI"
+                                               | GETBP -> "GETBP"
+                                               | GETSP -> "GETSP"
+                                               | INCSP m -> String.Format("INCSP {0}", m)
+                                               | GOTO a -> String.Format("GOTO {0}", a)
+                                               | IFZERO a -> String.Format("IFZERO {0}", a)
+                                               | IFNZRO a -> String.Format("IFNZRO {0}", a)
+                                               | CALL(m, a) -> String.Format("CALL {0} {1}", m, a)
+                                               | TCALL(m, n, a) -> String.Format("TCALL {0} {1} {2}", m, n, a)
+                                               | RET m -> String.Format("RET {0}", m)
+                                               | PRINTI -> "PRINTI"
+                                               | PRINTC -> "PRINTC"
+                                               | LDARGS -> "LDARGS"
+                                               | STOP -> "STOP"
+                                               | Label a -> String.Format("Label {0}", a)) instrs)) 
+
+    let rec public optimize instrs = 
         let firstOptiInstrs = optimizeInstrList instrs
         let noDeadCode = deadInstrElimination firstOptiInstrs
         let exps = instrsToInstrsExp noDeadCode
@@ -214,5 +262,5 @@ module Optimizer =
         let optiInstrs = instrExpsToInstrs optiExps
         if instrs.Length <> optiInstrs.Length
         then optimize optiInstrs
-        else optiInstrs
+        else optiInstrs                                   
 
