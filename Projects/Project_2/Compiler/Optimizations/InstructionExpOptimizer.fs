@@ -3,7 +3,7 @@ namespace GuardedCommands.Backend
 open System
 open Machine
 
-module Optimizer =
+module InstructionExpAnalyzer =
     type InstrExp = Csti of int
                   | Add of InstrExp * InstrExp
                   | Sub of InstrExp * InstrExp
@@ -32,7 +32,7 @@ module Optimizer =
                   | Lab of label
                   | Nothing
 
-    let private instrsToInstrsExp allintrs = 
+    let public instrsToInstrsExp allintrs = 
         let rec inter intrs =
             match intrs with
             | CSTI(a)::rest1 -> (Csti(a), rest1)
@@ -100,7 +100,7 @@ module Optimizer =
         let (fstexp, rest) = inter (List.rev allintrs)
         createExps ([fstexp], rest)
 
-    let rec private instrExpsToInstrs instrExps =
+    let rec public instrExpsToInstrs instrExps =
         let rec instrExpToInstrs instrExp =
             match instrExp with
             | Csti a -> [CSTI a]
@@ -163,19 +163,7 @@ module Optimizer =
                                                | Label a -> String.Format("Label {0}", a)) instrs))     
 
 
-    let rec private removeUntilLabel instrs =
-        match instrs with
-        | Label(a)::rest -> instrs
-        | a::rest -> removeUntilLabel rest
-        | [] -> []
-    let rec private deadInstrElimination instrs =
-        match instrs with
-        | GOTO(a)::rest -> GOTO(a)::deadInstrElimination (removeUntilLabel rest)
-        | a::rest -> a::deadInstrElimination rest
-        | [] -> []
-
-
-    let rec private optimizeInstrExp intrExp = 
+    let rec public optimizeInstrExp intrExp = 
         //let recursed = if reachedBottom then intrExp else optimizeInstrExp intrExp        
         let recursed = match intrExp with
                        | Csti a -> Csti a
@@ -243,52 +231,3 @@ module Optimizer =
         | Ifnzro(a, Csti _) -> Goto a
         | Ifnzro(a, Not(b)) -> Ifzero(a, b)
         | _ -> recursed    
-
-    let rec private optimizeInstrList instrs =
-        match instrs with
-        //Dup
-        | DUP :: INCSP a :: rest when a < 0 -> INCSP (a - 1) :: optimizeInstrList rest
-        | DUP :: RET a :: rest when a < 0 -> RET (a - 1) :: optimizeInstrList rest
-        //Incsp
-        | INCSP a :: INCSP b :: rest -> INCSP (a + b) :: optimizeInstrList rest
-        | GOTO a :: Label b :: rest when a = b -> optimizeInstrList rest
-        | CALL(m, a):: RET n :: rest -> RET n :: TCALL(m, n, a) :: optimizeInstrList rest
-        | a :: rest -> a :: optimizeInstrList rest
-        | [] -> []
-
-    let rec private optimizeGoto allInstrs =
-        let rec replaceGotoTarget instrs fromLab toLab =
-            match instrs with
-            | GOTO a   :: rest when a = fromLab -> GOTO toLab   :: replaceGotoTarget rest fromLab toLab
-            | IFZERO a :: rest when a = fromLab -> IFZERO toLab :: replaceGotoTarget rest fromLab toLab
-            | IFNZRO a :: rest when a = fromLab -> IFNZRO toLab :: replaceGotoTarget rest fromLab toLab
-            | CALL(m, a) :: rest when a = fromLab -> CALL(m, toLab) :: replaceGotoTarget rest fromLab toLab
-            | TCALL(m, n, a) :: rest when a = fromLab -> TCALL(m, n, toLab) :: replaceGotoTarget rest fromLab toLab
-            | a :: rest -> a :: replaceGotoTarget rest fromLab toLab
-            | [] -> []
-        let rec optimizeGotointernal instrs = 
-            match instrs with
-            | Label a :: GOTO b         :: rest -> (GOTO b         :: rest, a, b, true)
-            | a :: rest -> let (b, c, d, e) = optimizeGotointernal rest
-                           (a::b, c, d, e)
-            | [] -> ([], "", "", false)
-        let rec loopUntilNoChange instrs = 
-            let (chr, fromLab, toLab, foundPattern) = optimizeGotointernal instrs
-            let optiInstrs = if foundPattern 
-                             then  replaceGotoTarget chr fromLab toLab
-                             else chr
-            if optiInstrs.Length <> instrs.Length
-            then loopUntilNoChange optiInstrs
-            else optiInstrs
-        loopUntilNoChange allInstrs
-
-    let rec public optimize instrs = 
-        let firstOptiInstrs = optimizeInstrList instrs
-        let noDeadCode = deadInstrElimination firstOptiInstrs
-        let exps = instrsToInstrsExp noDeadCode
-        let optiExps = List.map optimizeInstrExp exps
-        let optiInstrs = instrExpsToInstrs optiExps
-        if instrs.Length <> optiInstrs.Length
-        then optimize optiInstrs
-        else optimizeGoto optiInstrs                                   
-
