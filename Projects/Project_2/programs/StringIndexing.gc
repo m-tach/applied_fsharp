@@ -1,0 +1,7 @@
+begin
+  str : char[5],
+  c : char;
+  str := "Hello";
+  c := str[0];
+  print c
+end

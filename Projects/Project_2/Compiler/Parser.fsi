@@ -42,6 +42,8 @@ type token =
   | RSP
   | ITYP
   | BTYP
+  | CTYP
+  | CHAR of (char)
   | NAME of (string)
   | STRING of (string)
   | BOOL of (bool)
@@ -88,6 +90,8 @@ type tokenId =
     | TOKEN_RSP
     | TOKEN_ITYP
     | TOKEN_BTYP
+    | TOKEN_CTYP
+    | TOKEN_CHAR
     | TOKEN_NAME
     | TOKEN_STRING
     | TOKEN_BOOL
