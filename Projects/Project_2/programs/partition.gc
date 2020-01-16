@@ -7,11 +7,11 @@ procedure swap(a: int[], i: int, j: int) =
   a[j] := tmp
 },
 
-procedure printA(a: int[], len:int) = 
+procedure printA(a: int[], b:int) = 
 {
   i: int;  
   i:= 0; 
-  do ! i=len -> print a[i]; 
+  do ! i=b -> print a[i]; 
                 i:= i+1 
   od
 },
@@ -33,7 +33,7 @@ procedure qs(a: int[], i: int, j:int) =
   | true -> skip
   fi },
 
-procedure quicksort(a: int[], len: int) = qs(a, 0, len - 1) ,
+procedure quicksort(a: int[], b: int) = qs(a, 0, b - 1) ,
 
 a: int[5], 
 i: int;
