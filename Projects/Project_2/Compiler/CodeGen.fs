@@ -99,35 +99,38 @@ module CodeGeneration =
    // Unpack varEnv and map it to (VarName -> VarType)
    let parseVarTypes (vars, _, _) = Map.map(fun _ v -> snd v) vars
    
+   let printCTyp (str : list<instr>) : list<instr> =
+      match (List.contains LDI str) with // For CTyp loaded from variables, we have the Load Indirect instruction. If we don't handle this, the List.fold would mess up our value-loading instructions.
+      | true  -> str @ [PRINTC; INCSP -1; CSTI 10; PRINTC; INCSP -1] // CTyp is from a variable, so str is [CSTI arrLocation; CSTI index; ADD; LDI]
+      | false -> (List.fold (fun s c -> match c with // CTyp is a literal, so str is [CSTI 74; CSTI 91; CSTI 95; ...] (ascii codes), and we append PRINTC to each char.
+                                        | CSTI _ -> s @ [c; PRINTC; INCSP -1]
+                                        | _      -> s @ [c]) [] str) @ [CSTI 10; PRINTC; INCSP -1] // We also append a newline (ascii 10, linux style) to the stack
+
 /// CS vEnv fEnv s gives the code for a statement s on the basis of a variable and a function environment                          
    let rec CS (vEnv:varEnv) fEnv st = 
        match st with
        | PrintLn e        -> let tcVars = parseVarTypes vEnv
                              match tcE tcVars tcVars e with
-                             | ATyp(CTyp, Some(len)) -> match e with
+                             | ATyp(CTyp, Some(len)) -> match e with // Typechecked expression is a char array; Get its address in the stack and iterate each char to print.
                                                         | Access acc -> let addr = CA vEnv fEnv acc
-                                                                        printfn "Printing ATyp %A" addr
                                                                         (List.fold (fun s c -> s @ addr @ [CSTI c; ADD; LDI; PRINTC; INCSP -1]) [] [0 .. len]) @
-                                                                        [CSTI 10; PRINTC; INCSP -1]
+                                                                        [CSTI 10; PRINTC; INCSP -1] // Also appends a newline (ascii 10, linux style) to the stack
                                                         | _          -> failwith "Impossible case: Array cannot be without a variable"
-                             | CTyp _                -> let str = CE vEnv fEnv e
-                                                        match (List.contains LDI str) with
-                                                        | true  -> str @ [PRINTC; INCSP -1; CSTI 10; PRINTC; INCSP -1]
-                                                        | false -> (List.fold (fun s c -> match c with
-                                                                                          | CSTI _ -> s @ [c; PRINTC; INCSP -1]
-                                                                                          | _      -> s @ [c]) [] str) @ [CSTI 10; PRINTC; INCSP -1]
+                             | CTyp _                -> printCTyp (CE vEnv fEnv e)
+                                                        
                              | _                     -> CE vEnv fEnv e @ [PRINTI; INCSP -1] 
 
        | Ass(acc,e)       -> let tcVars = parseVarTypes vEnv
                              match tcE tcVars tcVars e with
-                             | CTyp -> let str = CE vEnv fEnv e
+                             | CTyp -> let str = CE vEnv fEnv e // str is the list of instructions of the string/char expression. [CSTI 65; CSTI 91; ...]
                                        match tcA tcVars tcVars acc with
-                                       | ATyp(CTyp, _) -> let addr = CA vEnv fEnv acc
-                                                          snd (List.fold (fun (i, s) c -> match c with
-                                                                                          | CSTI _ -> (i + 1, s @ addr @ [CSTI i; ADD; c; STI; INCSP -1])
-                                                                                          | _      -> failwith "Invalid syntax for string assignment."
-                                                                    ) (0, []) str)
-                                       | _             -> failwith "Strings can only be assigned to char arrays."
+                                       | ATyp(CTyp, _)            -> let addr = CA vEnv fEnv acc // Variable to assign to is a char array; for each character, store it in the array.
+                                                                     snd (List.fold (fun (i, s) c -> match c with // The failwith-case should be impossible to get.
+                                                                                                     | CSTI _ -> (i + 1, s @ addr @ [CSTI i; ADD; c; STI; INCSP -1])
+                                                                                                     | _      -> failwith "Invalid syntax for string assignment."
+                                                                                    ) (0, []) str)
+                                       | CTyp when str.Length = 1 -> CA vEnv fEnv acc @ str @ [STI; INCSP -1] // Allows for char = char assignment. Single-char strings are also chars.
+                                       | _                        -> failwith "Strings can only be assigned to char arrays."
                              | _    -> CA vEnv fEnv acc @ CE vEnv fEnv e @ [STI; INCSP -1]
 
        | Return(Some(e))  -> let (_, locals, _) = vEnv
