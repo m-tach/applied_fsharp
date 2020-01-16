@@ -30,7 +30,7 @@ module CodeGeneration =
        match expr with
        | N n          -> [CSTI n]
        | B b          -> [CSTI (if b then 1 else 0)]
-       | C c          -> List.map (fun c -> (CSTI (int c))) (Seq.toList c)
+       | STR c          -> List.map (fun c -> (CSTI (int c))) (Seq.toList c)
        | Access acc   -> CA vEnv fEnv acc @ [LDI] 
        | Addr acc     -> CA vEnv fEnv acc
 

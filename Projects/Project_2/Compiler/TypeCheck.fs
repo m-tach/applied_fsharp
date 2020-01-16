@@ -13,7 +13,7 @@ module TypeCheck =
       match ex with                        
       | N _              -> ITyp   
       | B _              -> BTyp  
-      | C _              -> CTyp 
+      | STR _            -> CTyp 
       | Access acc       -> tcA gtenv ltenv acc    
       | Addr acc         -> PTyp (tcA gtenv ltenv acc)
                 

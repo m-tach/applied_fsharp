@@ -10,6 +10,7 @@
     <Compile Include="Lexer.fs" />
     <Compile Include="TypeCheck.fs" />
     <Compile Include="CodeGen.fs" />
+    <Compile Include="CodeGenOpt.fs" />
     <Compile Include="Util.fs" />
   </ItemGroup>
 

@@ -44,7 +44,13 @@
 
 ## Strings
  * Chars
-    * Char declaration type implemented and type-checked
-    * Char value type implemented and type-checked
+    * Char declaration type implemented and type-checked (CTyp)
+    * Char value type implemented and type-checked (STR)
     * PRINT handles type-checking against int/bool and chars, and uses PRINTC if it's a char
     * Chars are defined using 'x' (where x is a single symbol)
+    * Assignment handles multi-char strings and single-char strings when assigning to char.
+  * Strings
+    * Support for char arrays, and setting the value of a char array to a literal string.
+    * Can index individual characters of a char array by doing arr[index].
+    * PRINT handles char arrays and literal strings, as well as single characters.
+    * Strings can be defined as either a char or using "abcde" (where abcde is a variable amount of characters. Not escaped!)

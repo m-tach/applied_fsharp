@@ -91,7 +91,7 @@ module ASTConverter =
     and private expToNode exp = match exp with
                                 | N(n) -> Node(n.ToString(), [])
                                 | B(b) -> Node(b.ToString(), [])
-                                | C(c) -> Node(c.ToString(), [])
+                                | STR(c) -> Node("\"" + c.ToString() + "\"", [])
                                 | Access(AVar(acc)) -> accToNode (AVar(acc))
                                 | Access(a) -> Node("Access", [accToNode a])
                                 | Addr(a) -> Node("Address", [accToNode a])
