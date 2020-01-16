@@ -1,0 +1,11 @@
+begin
+  str : char[5],
+  c : char;
+  str := "Hello";
+  c := 'a';
+  
+  print str;
+  print c;
+  print "Hello world!";
+  print 'b'
+end
