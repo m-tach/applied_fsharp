@@ -1,0 +1,9 @@
+begin
+  a : char,
+  b : char;
+  a := 'A';
+  b := 'A';
+  if a = b  -> print 1
+   | a <> b -> print 0
+  fi
+end

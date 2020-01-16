@@ -129,7 +129,8 @@ module CodeGeneration =
                                                                                                      | CSTI _ -> (i + 1, s @ addr @ [CSTI i; ADD; c; STI; INCSP -1])
                                                                                                      | _      -> failwith "Invalid syntax for string assignment."
                                                                                     ) (0, []) str)
-                                       | CTyp when str.Length = 1 -> CA vEnv fEnv acc @ str @ [STI; INCSP -1] // Allows for char = char assignment. Single-char strings are also chars.
+                                       | CTyp when str.Length = 1 -> CA vEnv fEnv acc @ str @ [STI; INCSP -1] // Allows for char = char assignment from literals. Single-char strings are also chars.
+                                       | CTyp when (List.where (fun inst -> inst = LDI) str).Length = 1 -> CA vEnv fEnv acc @ str @ [STI; INCSP -1] // Allows for char = char assignment from variables.
                                        | _                        -> failwith "Strings can only be assigned to char arrays."
                              | _    -> CA vEnv fEnv acc @ CE vEnv fEnv e @ [STI; INCSP -1]
 
