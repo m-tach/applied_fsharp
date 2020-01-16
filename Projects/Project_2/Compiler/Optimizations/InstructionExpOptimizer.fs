@@ -130,37 +130,7 @@ module InstructionExpAnalyzer =
             | Stop -> [STOP]
             | Lab a -> [Label a]
             | _ -> []        
-        List.collect(fun x -> List.rev (instrExpToInstrs x)) instrExps
-
-    let public instrsToString instrs = 
-        (String.concat "\n" (List.map (fun x ->match x with
-                                               | CSTI i -> String.Format("CSTI {0}", i)
-                                               | ADD -> "ADD"
-                                               | SUB -> "SUB"
-                                               | MUL -> "MUL"
-                                               | DIV -> "DIV"
-                                               | MOD -> "MOD"
-                                               | EQ -> "EQ"
-                                               | LT -> "LT"
-                                               | NOT -> "NOT"
-                                               | DUP -> "DUP"
-                                               | SWAP -> "SWAP"
-                                               | LDI -> "LDI"
-                                               | STI -> "STI"
-                                               | GETBP -> "GETBP"
-                                               | GETSP -> "GETSP"
-                                               | INCSP m -> String.Format("INCSP {0}", m)
-                                               | GOTO a -> String.Format("GOTO {0}", a)
-                                               | IFZERO a -> String.Format("IFZERO {0}", a)
-                                               | IFNZRO a -> String.Format("IFNZRO {0}", a)
-                                               | CALL(m, a) -> String.Format("CALL {0} {1}", m, a)
-                                               | TCALL(m, n, a) -> String.Format("TCALL {0} {1} {2}", m, n, a)
-                                               | RET m -> String.Format("RET {0}", m)
-                                               | PRINTI -> "PRINTI"
-                                               | PRINTC -> "PRINTC"
-                                               | LDARGS -> "LDARGS"
-                                               | STOP -> "STOP"
-                                               | Label a -> String.Format("Label {0}", a)) instrs))     
+        List.collect(fun x -> List.rev (instrExpToInstrs x)) instrExps    
 
 
     let rec public optimizeInstrExp intrExp = 
