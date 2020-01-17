@@ -10,7 +10,7 @@ open GuardedCommands.Frontend.AST
 %token ITYP BTYP CTYP
 %token LP LCP LSP RP RCP RSP
 %token IF FI DO OD BEGIN END
-%token COMMA COLON SEMI BAR TO
+%token COMMA COLON SEMI BAR TO QMARK
 %token NEG PLUS MINUS TIMES AND EQ LE LT GT NEQ ADDRESSOF PDEREF LENGTH
 %token PRINT ASG SKIP ABORT FUNC RETURN PROC
 %token EOF
@@ -139,4 +139,4 @@ Exp:
   | Exp LT Exp                        { Apply("<", [$1; $3])}
   | Exp NEQ Exp                       { Apply("<>", [$1; $3])}
   | NAME LP ExpL RP                   { Apply($1, $3) }
-
+  | Exp QMARK Exp COLON Exp           { Apply("?:", [$1; $3; $5]) }

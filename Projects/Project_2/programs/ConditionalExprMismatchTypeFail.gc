@@ -1,0 +1,4 @@
+begin
+  i : int;
+  i := ((i = 0) ? 2 : "text")
+end

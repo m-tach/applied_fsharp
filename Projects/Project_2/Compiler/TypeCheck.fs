@@ -23,6 +23,11 @@ module TypeCheck =
       | Apply(f,[e1;e2]) when List.exists (fun x ->  x=f) ["+";"-";"*"; "="; "&&"; "<>"; "<"; ">";"<="]        
                          -> tcDyadic gtenv ltenv f e1 e2   
 
+      | Apply("?:",[c;e1;e2]) -> match (tcE gtenv ltenv c, tcE gtenv ltenv e1, tcE gtenv ltenv e2) with
+                                 | (ct, _, _) when ct <> BTyp  -> failwith "illegal/illtyped ternary expression. condition must evaluate to a boolean"
+                                 | (BTyp, t1, t2) when t1 = t2 -> t1
+                                 |_                            -> failwith "illegal/illtyped ternary expression. expressions must be of the same type"
+
       | Apply(func, exps) when Map.containsKey func gtenv -> match Map.find func gtenv with
                                                              | FTyp(typs, Some(retType)) -> if exps.Length <> typs.Length then failwith ("function " + func + " expected " + (exps.Length).ToString() + " arguments but only " + (typs.Length).ToString() + " arguments were given")
                                                                                             let expTypes = List.map(fun x -> tcE gtenv ltenv x) exps
