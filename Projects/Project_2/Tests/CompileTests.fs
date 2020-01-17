@@ -182,4 +182,9 @@ type TestCompile () =
     [<TestMethod>]
     member this.CompilePointers4 () =
         let ast = parseFromFile "programs/pointers6.gc"
+        CP ast |> ignore  
+                             
+    [<TestMethod>]
+    member this.CompileOrOperator () =
+        let ast = parseFromFile "programs/OrOperator.gc"
         CP ast |> ignore                        

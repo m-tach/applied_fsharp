@@ -258,3 +258,8 @@ type TestTypeCheck () =
     member this.TypeCheckPointers4 () =
         let ast = parseFromFile "programs/pointers6.gc"
         tcP ast |> ignore                
+
+    [<TestMethod>]
+    member this.TypeCheckOrOperator () =
+        let ast = parseFromFile "programs/OrOperator.gc"
+        tcP ast |> ignore                

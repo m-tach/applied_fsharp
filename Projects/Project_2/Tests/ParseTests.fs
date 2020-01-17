@@ -148,4 +148,8 @@ type TestParse () =
 
     [<TestMethod>]
     member this.ParsePointer4 () =
-        parseFromFile "programs/pointers6.gc" |> ignore        
+        parseFromFile "programs/pointers6.gc" |> ignore      
+
+    [<TestMethod>]
+    member this.ParseOrOperator () =
+        parseFromFile "programs/OrOperator.gc" |> ignore   
