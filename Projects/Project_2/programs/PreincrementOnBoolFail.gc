@@ -1,0 +1,5 @@
+begin
+  i : int,
+  b : bool;
+  ++b;
+end

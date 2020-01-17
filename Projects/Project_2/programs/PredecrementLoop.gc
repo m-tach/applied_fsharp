@@ -1,0 +1,6 @@
+begin
+  i : int;
+  i := 10;
+  do i > 0 -> print --i
+  od
+end

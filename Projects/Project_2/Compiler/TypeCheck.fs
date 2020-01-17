@@ -16,6 +16,13 @@ module TypeCheck =
       | STR _            -> CTyp 
       | Access acc       -> tcA gtenv ltenv acc    
       | Addr acc         -> PTyp (tcA gtenv ltenv acc)
+
+      | PreInc acc       -> match tcA gtenv ltenv acc with
+                            | ITyp -> ITyp
+                            | _    -> failwith "preincrement expects an integer value"
+      | PreDec acc       -> match tcA gtenv ltenv acc with
+                            | ITyp -> ITyp
+                            | _    -> failwith "predecrement expects an integer value"
                 
       | Apply(f,[e]) when List.exists (fun x ->  x=f) ["-"; "!"; "len"]  
                          -> tcMonadic gtenv ltenv f e        

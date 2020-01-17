@@ -17,12 +17,15 @@ type token =
   | AND
   | EQ
   | LE
+  | GE
   | LT
   | GT
   | NEQ
   | ADDRESSOF
   | PDEREF
   | LENGTH
+  | INCR
+  | DECR
   | COMMA
   | COLON
   | SEMI
@@ -65,12 +68,15 @@ type tokenId =
     | TOKEN_AND
     | TOKEN_EQ
     | TOKEN_LE
+    | TOKEN_GE
     | TOKEN_LT
     | TOKEN_GT
     | TOKEN_NEQ
     | TOKEN_ADDRESSOF
     | TOKEN_PDEREF
     | TOKEN_LENGTH
+    | TOKEN_INCR
+    | TOKEN_DECR
     | TOKEN_COMMA
     | TOKEN_COLON
     | TOKEN_SEMI
