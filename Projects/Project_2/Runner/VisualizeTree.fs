@@ -65,6 +65,7 @@ module ASTConverter =
     and private typToNode typ = match typ with 
                                 | ITyp -> Node("int", [])
                                 | BTyp -> Node("bool", [])
+                                | CTyp -> Node("char", [])
                                 | ATyp(t, Some(x)) -> Node("Array", [typToNode(t); Node(String.Format("Size: {0}", x), [])])
                                 | ATyp(t, None) -> Node("Array", [typToNode(t); Node(String.Format("Size: {0}", "Unknown"), [])])
                                 | PTyp(t) -> Node("Pointer", [typToNode t])
@@ -78,6 +79,7 @@ module ASTConverter =
     and private stmToNode stm = match stm with
                                 | PrintLn(e) -> Node("PrintLn",[expToNode e])
                                 | Ass(a, e) -> Node("Assignment", [accToNode a; expToNode e])
+                                | MAss(a, e) -> Node("Multiple Assignment", List.map2 (fun ca ce -> stmToNode (Ass(ca, ce))) a e)
                                 | Return(Some(e)) -> Node("Return", [expToNode e])
                                 | Return(None) -> Node("Return", [])
                                 | Alt(gc) -> Node("Alt", guardToNodeList gc)
@@ -90,6 +92,7 @@ module ASTConverter =
     and private expToNode exp = match exp with
                                 | N(n) -> Node(n.ToString(), [])
                                 | B(b) -> Node(b.ToString(), [])
+                                | STR(s) -> Node("\"" + s.ToString() + "\"", [])
                                 | Access(AVar(acc)) -> accToNode (AVar(acc))
                                 | Access(a) -> Node("Access", [accToNode a])
                                 | Addr(a) -> Node("Address", [accToNode a])
