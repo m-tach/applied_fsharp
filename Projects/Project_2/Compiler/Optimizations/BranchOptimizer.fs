@@ -27,6 +27,7 @@ module BranchAnalyzer =
             | (chr, _, _, _) -> chr
         loopUntilNoChange allInstrs
 
+(*
     let rec private optimizeThroughBranches allInstrs =
         let rec findJumpData instrs branches =
             match instrs with
@@ -68,24 +69,25 @@ module BranchAnalyzer =
             | [] -> failwith (String.Format("failed to find the label {0}", lab))
         let rec replacePattern instrs fromPat toPat =
             match (instrs, fromPat, toPat) with
-            | (_, [], _) -> instrs
+            | (a :: instrsRest, [], b :: toRest) -> b :: replacePattern instrs fromPat toRest
+            | (_, [], []) -> instrs
             | (_, _, []) -> failwith "pattern to replace and pattern to eplace with should have the same length"
             | ([], _, _) -> failwith "couldn't replace the pattern"
             | (a :: instrsRest, b :: fromRest, c :: toRest) when a = b -> c :: replacePattern instrsRest fromRest toRest
             | (a :: instrsRest, _, _) -> a :: replacePattern instrsRest fromPat toPat        
         let rec optimizeJump instrs beforeJump afterJump =
             match (List. rev beforeJump, afterJump) with
-            | (GOTO a :: _, Label b :: IFZERO c :: _) -> let instrs2 = (replacePattern instrs [GOTO a] [IFZERO c])
-                                                         (replacePattern instrs2 [Label b] [INCSP 0], true)
+            | (GOTO a :: _, Label b :: IFZERO c :: _) -> let instrs2 = (replacePattern instrs [GOTO a] [IFZERO b])
+                                                         (replacePattern instrs2 [Label b; IFZERO c] [INCSP 0; IFZERO c; Label b], true)
                                                                  //((List.rev (IFZERO c :: rest1)) @ (IFZERO c :: rest2), true)
-            | (GOTO a :: _, Label b :: IFNZRO c :: _) -> let instrs2 = (replacePattern instrs [GOTO a] [IFNZRO c])
-                                                         (replacePattern instrs2 [Label b] [INCSP 0], true)
+            | (GOTO a :: _, Label b :: IFNZRO c :: _) -> let instrs2 = (replacePattern instrs [GOTO a] [IFNZRO b])
+                                                         (replacePattern instrs2 [Label b; IFNZRO c] [INCSP 0; IFNZRO c; Label b], true)
                                                                  //((List.rev (IFNZRO c :: rest1)) @ (IFNZRO c :: rest2), true)
-            | (GOTO a :: CSTI 0 :: _, Label b :: IFZERO c :: _) -> let instrs2 = (replacePattern instrs [GOTO a] [GOTO c])
-                                                                   (replacePattern instrs2 [Label b] [INCSP 0], true)
+            //| (GOTO a :: CSTI 0 :: _, Label b :: IFZERO c :: _) -> let instrs2 = (replacePattern instrs [GOTO a] [GOTO c])
+            //                                                       (replacePattern instrs2 [Label b] [INCSP 0], true)
                                                                            //((List.rev (GOTO c :: rest1)) @ (IFZERO c :: rest2), true)
-            | (GOTO x :: CSTI a :: _, Label b :: IFNZRO c :: _) when a <> 0 -> let instrs2 = (replacePattern instrs [GOTO x] [GOTO c])
-                                                                               (replacePattern instrs2 [Label b] [INCSP 0], true)
+            //| (GOTO x :: CSTI a :: _, Label b :: IFNZRO c :: _) when a <> 0 -> let instrs2 = (replacePattern instrs [GOTO x] [GOTO c])
+            //                                                                   (replacePattern instrs2 [Label b] [INCSP 0], true)
                                                                                        //((List.rev (GOTO c :: rest1)) @ (IFNZRO c :: rest2), true)
             | _ -> ([], false)
         let rec optimizeJumps instrs jumpData =
@@ -98,7 +100,8 @@ module BranchAnalyzer =
             | (_, _) :: rest -> optimizeJumps instrs rest
             | [] -> instrs
         optimizeJumps allInstrs (Map.toList (findJumpData allInstrs Map.empty))
-
+*)
     let public optimizeBranching instrs =
         let optiInstrs = optimizeGoto instrs
-        optimizeThroughBranches optiInstrs
+        optiInstrs
+        //optimizeThroughBranches optiInstrs
