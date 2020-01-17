@@ -31,6 +31,7 @@ type token =
   | SEMI
   | BAR
   | TO
+  | QMARK
   | IF
   | FI
   | DO
@@ -82,6 +83,7 @@ type tokenId =
     | TOKEN_SEMI
     | TOKEN_BAR
     | TOKEN_TO
+    | TOKEN_QMARK
     | TOKEN_IF
     | TOKEN_FI
     | TOKEN_DO

@@ -55,6 +55,7 @@ rule tokenize =
   | ","         { COMMA }         
   | ";"         { SEMI  }
   | ":"         { COLON }
+  | "?"         { QMARK }
   | "--"        { DECR }
   | "++"        { INCR }
   | "|"         { BAR }
