@@ -78,8 +78,8 @@ Access:
   | Exp PDEREF                        { ADeref $1 }
 
 AccessList:
-   | NAME COMMA NAME                  { [AVar $1; AVar $3] }
-   | NAME COMMA AccessList            { AVar $1 :: $3 }
+   | Access COMMA Access                  { [$1; $3] }
+   | Access COMMA AccessList            { $1 :: $3 }
 
 Stm:
     PRINT Exp                         { PrintLn $2 }
