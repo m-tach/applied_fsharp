@@ -133,7 +133,7 @@ Exp:
   | Exp PLUS Exp                      { Apply("+", [$1; $3])}
   | Exp MINUS Exp                     { Apply("-", [$1; $3])}
   | Exp AND Exp                       { Apply("&&", [$1; $3])}
-  | Exp OR Exp                       { Apply("||", [$1; $3])}
+  | Exp OR Exp                        { Apply("||", [$1; $3])}
   | Exp EQ Exp                        { Apply("=", [$1; $3])}
   | Exp LE Exp                        { Apply("<=", [$1; $3])}
   | Exp GT Exp                        { Apply(">", [$1; $3])}
