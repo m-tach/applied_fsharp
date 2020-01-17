@@ -100,7 +100,7 @@ module CodeGeneration =
       | true  -> str @ [PRINTC; INCSP -1; CSTI 10; PRINTC; INCSP -1] // CTyp is from a variable, so str is [CSTI arrLocation; CSTI index; ADD; LDI]
       | false -> (List.collect (fun c -> match c with // CTyp is a literal, so str is [CSTI 74; CSTI 91; CSTI 95; ...] (ascii codes), and we append PRINTC to each char.
                                          | CSTI _ -> [c; PRINTC; INCSP -1]
-                                         | _      -> [c]) str) @ [CSTI 10; PRINTC; INCSP -1] // We also append a newline (ascii 10, linux style) to the stack
+                                         | _      -> failwith "Impossible case: Corrupt/malformed string content.") str) @ [CSTI 10; PRINTC; INCSP -1] // We also append a newline (ascii 10, linux style) to the stack
    
    
    // Recursively scan and find the inferred basic type (int, bool, char or array of some type)
@@ -138,10 +138,10 @@ module CodeGeneration =
                              | CTyp -> let str = CE vEnv fEnv e // str is the list of instructions of the string/char expression. [CSTI 65; CSTI 91; ...]
                                        match getBasicTypeA vEnv fEnv acc with
                                        | ATyp(CTyp, Some(len))    -> let addr = CA vEnv fEnv acc // Variable to assign to is a char array; for each character, store it in the array.
-                                                                     List.collect (fun (c, i) -> match c with // The failwith-case should be impossible to get.
-                                                                                                 | CSTI _ -> addr @ [CSTI i; ADD; c; STI; INCSP -1]
-                                                                                                 | _      -> failwith "Invalid syntax for string assignment."
-                                                                                  ) (List.zip str [0 .. (len - 1)])
+                                                                     addr @ (List.collect (fun (c, i) -> match c with // The failwith-case should be impossible to get.
+                                                                                                         | CSTI _ -> [DUP; CSTI i; ADD; c; STI; INCSP -1]
+                                                                                                         | _      -> failwith "Invalid syntax for string assignment."
+                                                                                          ) (List.zip str [0 .. (len - 1)])) @ [INCSP -1]
                                        | CTyp when str.Length = 1 -> CA vEnv fEnv acc @ str @ [STI; INCSP -1] // Allows for char = char assignment from literals. Single-char strings are also chars.
                                        | CTyp when (List.where (fun inst -> inst = LDI) str).Length = 1 -> CA vEnv fEnv acc @ str @ [STI; INCSP -1] // Allows for char = char assignment from variables.
                                        | _                        -> failwith "Strings can only be assigned to char arrays."
