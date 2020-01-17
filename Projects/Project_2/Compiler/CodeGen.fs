@@ -32,8 +32,9 @@ module CodeGeneration =
        | STR c        -> List.map (fun c -> (CSTI (int c))) (Seq.toList c)
        | Access acc   -> CA vEnv fEnv acc @ [LDI] 
        | Addr acc     -> CA vEnv fEnv acc
-
-       | Apply("-", [e]) -> CE vEnv fEnv e @ [CSTI 0; SWAP; SUB]
+       | Apply("-", [e]) -> [CSTI 0] @ CE vEnv fEnv e @ [SUB]
+       | PreInc acc   -> CA vEnv fEnv acc @ [DUP; LDI; CSTI 1; ADD; STI]
+       | PreDec acc   -> CA vEnv fEnv acc @ [DUP; LDI; CSTI 1; SUB; STI]
 
        | Apply("!", [e]) -> CE vEnv fEnv e @ [NOT]
 
@@ -43,28 +44,32 @@ module CodeGeneration =
                                 let labfalse = newLabel()
                                 CE vEnv fEnv b1 @ [IFZERO labfalse] @ CE vEnv fEnv b2
                                 @ [GOTO labend; Label labfalse; CSTI 0; Label labend]
-       
+
        | Apply("?:",[c;e1;e2]) -> let labend   = newLabel()
                                   let labfalse = newLabel()
                                   printfn "Ternary: %A;; %A;; %A" c e1 e2
                                   CE vEnv fEnv c @ [IFZERO labfalse] @ CE vEnv fEnv e1 @ [GOTO labend; Label labfalse] @
                                   CE vEnv fEnv e2 @ [Label labend];
 
+       | Apply("||", [b1;b2]) -> let labend  = newLabel()
+                                 let labtrue = newLabel()
+                                 CE vEnv fEnv b1 @ [IFNZRO labtrue] @ CE vEnv fEnv b2
+                                 @ [GOTO labend; Label labtrue; CSTI 1; Label labend]
+
        | Apply(o,[e1;e2]) when List.exists (fun x -> o=x) ["-"; "+"; "*"; "%"; "/"; "="; "<"; ">"; "<="; ">="; "<>"]
-                             -> let ins = match o with
-                                          | "-" ->  [SUB]
-                                          | "+"  -> [ADD]
-                                          | "*"  -> [MUL]
-                                          | "/"  -> [DIV]
-                                          | "%"  -> [MOD]
-                                          | "="  -> [EQ]
-                                          | "<>" -> [EQ; NOT]
-                                          | "<"  -> [LT]
-                                          | ">"  -> [SWAP; LT]
-                                          | "<=" -> [SWAP; LT; NOT]
-                                          | ">=" -> [LT; NOT] 
-                                          | _    -> failwith "CE: this case is not possible"
-                                CE vEnv fEnv e1 @ CE vEnv fEnv e2 @ ins
+                             -> match o with
+                                | "-" ->  CE vEnv fEnv e1 @ CE vEnv fEnv e2 @ [SUB]
+                                | "+"  -> CE vEnv fEnv e1 @ CE vEnv fEnv e2 @ [ADD]
+                                | "*"  -> CE vEnv fEnv e1 @ CE vEnv fEnv e2 @ [MUL]
+                                | "/"  -> CE vEnv fEnv e1 @ CE vEnv fEnv e2 @ [DIV]
+                                | "%"  -> CE vEnv fEnv e1 @ CE vEnv fEnv e2 @ [MOD]
+                                | "="  -> CE vEnv fEnv e1 @ CE vEnv fEnv e2 @ [EQ]
+                                | "<>" -> CE vEnv fEnv e1 @ CE vEnv fEnv e2 @ [EQ; NOT]
+                                | "<"  -> CE vEnv fEnv e1 @ CE vEnv fEnv e2 @ [LT]
+                                | ">"  -> CE vEnv fEnv e2 @ CE vEnv fEnv e1 @ [LT]
+                                | "<=" -> CE vEnv fEnv e2 @ CE vEnv fEnv e1 @ [LT; NOT]
+                                | ">=" -> CE vEnv fEnv e1 @ CE vEnv fEnv e2 @ [LT; NOT] 
+                                | _    -> failwith "CE: this case is not possible"
        
        | Apply(f, args) when Map.containsKey f fEnv -> let (label, typ, param) = Map.find f fEnv
                                                        (List.collect(fun x -> CE vEnv fEnv x) args) @ 
@@ -124,6 +129,8 @@ module CodeGeneration =
        | STR v        -> CTyp
        | Access acc   -> getBasicTypeA vEnv fEnv acc
        | Addr acc     -> getBasicTypeA vEnv fEnv acc
+       | PreInc acc   -> getBasicTypeA vEnv fEnv acc
+       | PreDec acc   -> getBasicTypeA vEnv fEnv acc
        | _            -> ITyp // Placeholder
 
 /// CS vEnv fEnv s gives the code for a statement s on the basis of a variable and a function environment                          

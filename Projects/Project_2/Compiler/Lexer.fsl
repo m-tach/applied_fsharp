@@ -56,11 +56,14 @@ rule tokenize =
   | ";"         { SEMI  }
   | ":"         { COLON }
   | "?"         { QMARK }
+  | "--"        { DECR }
+  | "++"        { INCR }
   | "|"         { BAR }
   | "->"        { TO }
   | ":="        { ASG   }
   | "!"         { NEG }
   | "&&"        { AND }
+  | "||"        { OR }
   | "&"         { ADDRESSOF }
   | "^"         { PDEREF }
   | "<>"        { NEQ }

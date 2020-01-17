@@ -11,17 +11,17 @@ open GuardedCommands.Frontend.AST
 %token LP LCP LSP RP RCP RSP
 %token IF FI DO OD BEGIN END
 %token COMMA COLON SEMI BAR TO QMARK
-%token NEG PLUS MINUS TIMES AND EQ LE LT GT NEQ ADDRESSOF PDEREF LENGTH
+%token NEG PLUS MINUS TIMES AND EQ LE LT GT NEQ ADDRESSOF PDEREF LENGTH OR INCR DECR
 %token PRINT ASG SKIP ABORT FUNC RETURN PROC
 %token EOF
 %token HIGH
 
-%left AND
+%left AND OR
 %nonassoc NEG LENGTH
 %left EQ LE LT GT NEQ
 %left PLUS MINUS 
 %left TIMES
-%nonassoc ADDRESSOF
+%nonassoc ADDRESSOF INCR DECR
 %nonassoc PDEREF
 
 %start Main Prog 
@@ -78,12 +78,14 @@ Access:
   | Exp PDEREF                        { ADeref $1 }
 
 AccessList:
-   | NAME COMMA NAME                  { [AVar $1; AVar $3] }
-   | NAME COMMA AccessList            { AVar $1 :: $3 }
+   | Access COMMA Access                  { [$1; $3] }
+   | Access COMMA AccessList            { $1 :: $3 }
 
 Stm:
     PRINT Exp                         { PrintLn $2 }
   | Access ASG Exp                    { Ass($1,$3)  }
+  | INCR Access                       { Ass($2,PreInc $2) }
+  | DECR Access                       { Ass($2,PreDec $2) }
   | RETURN Exp                        { Return(Some($2)) }
   | RETURN                            { Return(None) }
   | AccessList ASG ExpList            { MAss($1,$3) }
@@ -126,6 +128,8 @@ Exp:
   | BOOL                              { B $1 }   
   | STRING                            { STR $1 }    
   | LP Exp RP                         { $2 } 
+  | INCR Access                       { PreInc $2 }
+  | DECR Access                       { PreDec $2 }
   | MINUS Exp                         { Apply("-", [$2])}
   | NEG Exp                           { Apply("!", [$2])}
   | LENGTH Exp                        { Apply("len", [$2])}
@@ -133,6 +137,7 @@ Exp:
   | Exp PLUS Exp                      { Apply("+", [$1; $3])}
   | Exp MINUS Exp                     { Apply("-", [$1; $3])}
   | Exp AND Exp                       { Apply("&&", [$1; $3])}
+  | Exp OR Exp                        { Apply("||", [$1; $3])}
   | Exp EQ Exp                        { Apply("=", [$1; $3])}
   | Exp LE Exp                        { Apply("<=", [$1; $3])}
   | Exp GT Exp                        { Apply(">", [$1; $3])}

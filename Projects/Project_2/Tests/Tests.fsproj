@@ -20,6 +20,7 @@
     <Compile Include="ConditionalExprTests.fs" />
     <Compile Include="ParseTests.fs" />
     <Compile Include="StringTests.fs" />
+    <Compile Include="PreincrementDecrementTests.fs" />
     <Compile Include="ArrayTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
@@ -77,6 +78,7 @@
     <Copy SourceFiles="..\programs\MultiAssign3_Fail.gc" DestinationFolder="$(OutDir)programs" />
     <Copy SourceFiles="..\programs\MultiAssign4_Fail.gc" DestinationFolder="$(OutDir)programs" />
     <Copy SourceFiles="..\programs\MultiAssign5_Fail.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\OrOperator.gc" DestinationFolder="$(OutDir)programs" />
     <Copy SourceFiles="..\programs\StringAssignments.gc" DestinationFolder="$(OutDir)programs" />
     <Copy SourceFiles="..\programs\StringPrints.gc" DestinationFolder="$(OutDir)programs" />
     <Copy SourceFiles="..\programs\StringIndexing.gc" DestinationFolder="$(OutDir)programs" />
@@ -85,5 +87,9 @@
     <Copy SourceFiles="..\programs\ConditionalExpr1.gc" DestinationFolder="$(OutDir)programs" />
     <Copy SourceFiles="..\programs\ConditionalExpr2.gc" DestinationFolder="$(OutDir)programs" />
     <Copy SourceFiles="..\programs\ConditionalExprMismatchTypeFail.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\Preincrement1.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\PreincDecLoop.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\PreincrementOnBoolFail.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\PredecrementLoop.gc" DestinationFolder="$(OutDir)programs" />
   </Target>
 </Project>

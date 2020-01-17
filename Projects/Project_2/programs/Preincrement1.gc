@@ -1,0 +1,6 @@
+begin
+  i : int;
+  ++i;
+  ++i;
+  print i
+end
