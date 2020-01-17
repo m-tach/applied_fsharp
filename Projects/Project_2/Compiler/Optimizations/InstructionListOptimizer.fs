@@ -12,7 +12,7 @@ module InstructionListAnalyzer =
             | DUP :: RET a :: rest when a < 0 -> RET (a - 1) :: optimizeInstrList rest
             //Incsp
             | INCSP a :: INCSP b :: rest -> INCSP (a + b) :: optimizeInstrList rest
-            | GOTO a :: Label b :: rest when a = b -> optimizeInstrList rest
+            | GOTO a :: Label b :: rest when a = b -> Label b :: optimizeInstrList rest
             | GOTO a :: GOTO b :: rest when a = b -> printfn "%s" "adaw" 
                                                      GOTO a :: optimizeInstrList rest
             | CALL(m, a):: RET n :: rest -> TCALL(m, n, a) :: RET 0 :: optimizeInstrList rest
