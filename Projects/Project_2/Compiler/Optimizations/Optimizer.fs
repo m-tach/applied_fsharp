@@ -87,8 +87,7 @@ module Optimizer =
                                                         |_     -> Map.add a 1 branches
                                         findJumpData rest branches2  
             | _ :: rest -> findJumpData rest branches 
-            | [] -> printfn "%A" (Map.toList branches)
-                    branches
+            | [] -> branches
         let rec findToBranch instrs branch =
             match instrs with
             | GOTO a         :: _ when a = branch -> [GOTO a]
@@ -103,19 +102,33 @@ module Optimizer =
             | Label a :: rest when a = lab -> Label a :: rest
             | _ :: rest -> findAfterLabel rest lab
             | [] -> failwith (String.Format("failed to find the label {0}", lab))
-        let rec optimizeJump beforeJump afterJump =
+        let rec replacePattern instrs fromPat toPat =
+            match (instrs, fromPat, toPat) with
+            | (_, [], _) -> instrs
+            | (_, _, []) -> failwith "pattern to replace and pattern to eplace with should have the same length"
+            | ([], _, _) -> failwith "couldn't replace the pattern"
+            | (a :: instrsRest, b :: fromRest, c :: toRest) when a = b -> c :: replacePattern instrsRest fromRest toRest
+            | (a :: instrsRest, _, _) -> a :: replacePattern instrsRest fromPat toPat        
+        let rec optimizeJump instrs beforeJump afterJump =
             match (List. rev beforeJump, afterJump) with
-            | (GOTO _ :: rest1, Label _ :: IFZERO c :: rest2) -> ((List.rev (IFZERO c :: rest1)) @ (IFZERO c :: rest2), true)
-            | (GOTO _ :: rest1, Label _ :: IFNZRO c :: rest2) -> ((List.rev (IFNZRO c :: rest1)) @ (IFNZRO c :: rest2), true)
-            | (GOTO _ :: CSTI 0 :: rest1, Label _ :: IFZERO c :: rest2) ->             ((List.rev (GOTO c :: rest1)) @ (IFZERO c :: rest2), true)
-            | (GOTO _ :: CSTI a :: rest1, Label _ :: IFNZRO c :: rest2) when a <> 0 -> ((List.rev (GOTO c :: rest1)) @ (IFNZRO c :: rest2), true)
+            | (GOTO a :: rest1, Label b :: IFZERO c :: rest2) -> let instrs2 = (replacePattern instrs [GOTO a] [IFZERO c])
+                                                                 (replacePattern instrs2 [Label b] [INCSP 0], true)
+                                                                 //((List.rev (IFZERO c :: rest1)) @ (IFZERO c :: rest2), true)
+            | (GOTO a :: rest1, Label b :: IFNZRO c :: rest2) -> let instrs2 = (replacePattern instrs [GOTO a] [IFNZRO c])
+                                                                 (replacePattern instrs2 [Label b] [INCSP 0], true)
+                                                                 //((List.rev (IFNZRO c :: rest1)) @ (IFNZRO c :: rest2), true)
+            | (GOTO a :: CSTI 0 :: rest1, Label b :: IFZERO c :: rest2) -> let instrs2 = (replacePattern instrs [GOTO a] [GOTO c])
+                                                                           (replacePattern instrs2 [Label b] [INCSP 0], true)
+                                                                           //((List.rev (GOTO c :: rest1)) @ (IFZERO c :: rest2), true)
+            | (GOTO x :: CSTI a :: rest1, Label b :: IFNZRO c :: rest2) when a <> 0 -> let instrs2 = (replacePattern instrs [GOTO x] [GOTO c])
+                                                                                       (replacePattern instrs2 [Label b] [INCSP 0], true)
+                                                                                       //((List.rev (GOTO c :: rest1)) @ (IFNZRO c :: rest2), true)
             | _ -> ([], false)
         let rec optimizeJumps instrs jumpData =
             match jumpData with
-            | (lab, 1) :: rest -> printfn "\n\n\n\n\n%s" (instrsToString instrs)
-                                  let beforeJump = findToBranch instrs lab
+            | (lab, 1) :: rest -> let beforeJump = findToBranch instrs lab
                                   let afterJump  = findAfterLabel instrs lab
-                                  match optimizeJump beforeJump afterJump with
+                                  match optimizeJump instrs beforeJump afterJump with
                                   | (opti, true) -> optimizeJumps opti rest
                                   | (_, false) -> optimizeJumps instrs rest
             | (_, _) :: rest -> optimizeJumps instrs rest
@@ -129,7 +142,7 @@ module Optimizer =
     let rec public optimize instrs = 
         let fstOptiInstrs = optimizeInstrList instrs
         let sndOptiInstrs = optimizeBranching fstOptiInstrs 
-        printfn "%s" (sndOptiInstrs.Length.ToString())
+        //printfn "%s" (sndOptiInstrs.Length.ToString())
         let noDeadCode = deadInstrElimination sndOptiInstrs
         let exps = instrsToInstrsExp noDeadCode
         let optiExps = List.map optimizeInstrExp exps
