@@ -9,6 +9,7 @@
     <Compile Include="TypeCheck.fs" />
     <Compile Include="CodeGen.fs" />
     <Compile Include="Optimizations/ASTOptimizer.fs" />
+    <Compile Include="Optimizations/BranchOptimizer.fs" />
     <Compile Include="Optimizations/DeadCodeOptimizer.fs" />
     <Compile Include="Optimizations/InstructionExpOptimizer.fs" />
     <Compile Include="Optimizations/InstructionListOptimizer.fs" />
