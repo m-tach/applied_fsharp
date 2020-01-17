@@ -55,6 +55,8 @@ rule tokenize =
   | ","         { COMMA }         
   | ";"         { SEMI  }
   | ":"         { COLON }
+  | "--"        { DECR }
+  | "++"        { INCR }
   | "|"         { BAR }
   | "->"        { TO }
   | ":="        { ASG   }

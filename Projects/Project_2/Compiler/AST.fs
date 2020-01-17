@@ -17,6 +17,8 @@ module AST =
          | Access of Access            (* x    or  ^p    or  a[e]     *)
          | Addr of Access              (* &x   or  &p^   or  &a[e]    *)
          | Apply of string * Exp list  (* Function application        *)
+         | PreInc of Access            (* ++i    or    ++a[e]         *)
+         | PreDec of Access            (* --i    or    --a[e]         *)
 
    and Access = 
           | AVar of string             (* Variable access        x    *) 

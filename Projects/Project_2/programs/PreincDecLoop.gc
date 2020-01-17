@@ -1,0 +1,12 @@
+begin
+  i : int,
+  j : int;
+  i := 5;
+  ++i;
+  print i;
+  --j;
+  do i < 10 -> print ++i
+  od;
+  print i;
+  print j
+end

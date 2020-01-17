@@ -24,6 +24,8 @@ type token =
   | PDEREF
   | LENGTH
   | OR
+  | INCR
+  | DECR
   | COMMA
   | COLON
   | SEMI
@@ -73,6 +75,8 @@ type tokenId =
     | TOKEN_PDEREF
     | TOKEN_LENGTH
     | TOKEN_OR
+    | TOKEN_INCR
+    | TOKEN_DECR
     | TOKEN_COMMA
     | TOKEN_COLON
     | TOKEN_SEMI
