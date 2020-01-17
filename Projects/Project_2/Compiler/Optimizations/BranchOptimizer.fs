@@ -75,17 +75,17 @@ module BranchAnalyzer =
             | (a :: instrsRest, _, _) -> a :: replacePattern instrsRest fromPat toPat        
         let rec optimizeJump instrs beforeJump afterJump =
             match (List. rev beforeJump, afterJump) with
-            | (GOTO a :: rest1, Label b :: IFZERO c :: rest2) -> let instrs2 = (replacePattern instrs [GOTO a] [IFZERO c])
-                                                                 (replacePattern instrs2 [Label b] [INCSP 0], true)
+            | (GOTO a :: _, Label b :: IFZERO c :: _) -> let instrs2 = (replacePattern instrs [GOTO a] [IFZERO c])
+                                                         (replacePattern instrs2 [Label b] [INCSP 0], true)
                                                                  //((List.rev (IFZERO c :: rest1)) @ (IFZERO c :: rest2), true)
-            | (GOTO a :: rest1, Label b :: IFNZRO c :: rest2) -> let instrs2 = (replacePattern instrs [GOTO a] [IFNZRO c])
-                                                                 (replacePattern instrs2 [Label b] [INCSP 0], true)
+            | (GOTO a :: _, Label b :: IFNZRO c :: _) -> let instrs2 = (replacePattern instrs [GOTO a] [IFNZRO c])
+                                                         (replacePattern instrs2 [Label b] [INCSP 0], true)
                                                                  //((List.rev (IFNZRO c :: rest1)) @ (IFNZRO c :: rest2), true)
-            | (GOTO a :: CSTI 0 :: rest1, Label b :: IFZERO c :: rest2) -> let instrs2 = (replacePattern instrs [GOTO a] [GOTO c])
-                                                                           (replacePattern instrs2 [Label b] [INCSP 0], true)
+            | (GOTO a :: CSTI 0 :: _, Label b :: IFZERO c :: _) -> let instrs2 = (replacePattern instrs [GOTO a] [GOTO c])
+                                                                   (replacePattern instrs2 [Label b] [INCSP 0], true)
                                                                            //((List.rev (GOTO c :: rest1)) @ (IFZERO c :: rest2), true)
-            | (GOTO x :: CSTI a :: rest1, Label b :: IFNZRO c :: rest2) when a <> 0 -> let instrs2 = (replacePattern instrs [GOTO x] [GOTO c])
-                                                                                       (replacePattern instrs2 [Label b] [INCSP 0], true)
+            | (GOTO x :: CSTI a :: _, Label b :: IFNZRO c :: _) when a <> 0 -> let instrs2 = (replacePattern instrs [GOTO x] [GOTO c])
+                                                                               (replacePattern instrs2 [Label b] [INCSP 0], true)
                                                                                        //((List.rev (GOTO c :: rest1)) @ (IFNZRO c :: rest2), true)
             | _ -> ([], false)
         let rec optimizeJumps instrs jumpData =
