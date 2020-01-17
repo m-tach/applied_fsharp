@@ -60,6 +60,7 @@ rule tokenize =
   | ":="        { ASG   }
   | "!"         { NEG }
   | "&&"        { AND }
+  | "||"        { OR }
   | "&"         { ADDRESSOF }
   | "^"         { PDEREF }
   | "<>"        { NEQ }
