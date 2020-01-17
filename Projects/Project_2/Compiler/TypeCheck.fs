@@ -13,10 +13,11 @@ module TypeCheck =
       match ex with                        
       | N _              -> ITyp   
       | B _              -> BTyp   
+      | STR _            -> CTyp 
       | Access acc       -> tcA gtenv ltenv acc    
       | Addr acc         -> PTyp (tcA gtenv ltenv acc)
                 
-      | Apply(f,[e]) when List.exists (fun x ->  x=f) ["-"; "!"]  
+      | Apply(f,[e]) when List.exists (fun x ->  x=f) ["-"; "!"; "len"]  
                          -> tcMonadic gtenv ltenv f e        
 
       | Apply(f,[e1;e2]) when List.exists (fun x ->  x=f) ["+";"-";"*"; "="; "&&"; "<>"; "<"; ">";"<="]        
@@ -37,12 +38,14 @@ module TypeCheck =
    and tcMonadic gtenv ltenv f e = match (f, tcE gtenv ltenv e) with
                                    | ("-", ITyp) -> ITyp
                                    | ("!", BTyp) -> BTyp
+                                   | ("len", ATyp(_, Some _)) -> ITyp
                                    | _           -> failwith("illegal/illtyped monadic expression: " + f)
    
    and tcDyadic gtenv ltenv f e1 e2 = match (f, tcE gtenv ltenv e1, tcE gtenv ltenv e2) with
                                       | (o, ITyp, ITyp) when List.exists (fun x ->  x=o) ["+";"*";"-"]  -> ITyp
                                       | (o, ITyp, ITyp) when List.exists (fun x ->  x=o) ["=";"<>";"<=";"<";">"] -> BTyp
                                       | (o, BTyp, BTyp) when List.exists (fun x ->  x=o) ["&&";"=";"<>"]     -> BTyp 
+                                      | (o, CTyp, CTyp) when List.exists (fun x ->  x=o) ["=";"<>"] -> BTyp 
                                       | _                      -> failwith("illegal/illtyped dyadic expression: " + f)
 
    and tcNaryFunction gtenv ltenv f es = failwith "type check: functions not supported yet"
@@ -74,9 +77,10 @@ module TypeCheck =
 /// for global and local variables and the possible type of return expressions 
    and tcS gtenv ltenv = function                           
                          | PrintLn e -> ignore(tcE gtenv ltenv e)
-                         | Ass(acc,e) -> if tcA gtenv ltenv acc = tcE gtenv ltenv e
-                                         then ()
-                                         else failwith "illtyped assignment" 
+                         | Ass(acc,e) -> match tcA gtenv ltenv acc with
+                                         | a when a = tcE gtenv ltenv e                  -> ()
+                                         | ATyp(CTyp, _) when tcE gtenv ltenv e = CTyp   -> ()
+                                         | _                                             -> failwith "illtyped assignment" 
                          | MAss(acc,e) -> if acc.Length <> e.Length then failwith (String.Format("Trying to multi assign {0} variables with {1} values", acc.Length, e.Length))
                                           let assignments = List.zip acc e
                                           List.iter (fun (cacc, ce) -> tcS gtenv ltenv (Ass(cacc, ce))) assignments

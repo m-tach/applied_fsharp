@@ -17,14 +17,23 @@
     <Compile Include="CodeGenOpt.fs" />
     <Compile Include="Util.fs" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../VirtualMachine/VirtualMachine.fsproj">
+      <Name>VirtualMachine.fsproj</Name>
+    </ProjectReference>
+  </ItemGroup>
+
+  <Target Name="PreBuild" AfterTargets="PreBuildEvent">
+    <Exec Command="$(ProjectDir)/packages/FsLexYacc.7.0.6/build/fslex.exe $(ProjectDir)/Lexer.fsl" />
+    <Exec Command="$(ProjectDir)/packages/FsLexYacc.7.0.6/build/fsyacc.exe -v  --module Parser $(ProjectDir)/Parser.fsy" />
+  </Target>
+
   <ItemGroup>
     <PackageReference Include="FsLexYacc" Version="7.0.6" />
     <PackageReference Include="FsLexYacc.Runtime" Version="7.0.6" />
     <Reference Include="Machine">
       <HintPath>..\libraries\Machine.dll</HintPath>
-    </Reference>
-    <Reference Include="virtualMachine">
-      <HintPath>..\libraries\virtualMachine.dll</HintPath>
     </Reference>
     <Reference Include="FsLexYacc.Runtime">
       <HintPath>..\libraries\FsLexYacc.Runtime.dll</HintPath>

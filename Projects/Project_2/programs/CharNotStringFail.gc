@@ -1,0 +1,4 @@
+begin
+  c : char;
+  c := "I am a string!"
+end

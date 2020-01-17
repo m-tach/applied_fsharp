@@ -6,6 +6,9 @@
     <ProjectReference Include="../Compiler/Compiler.fsproj">
       <Name>Compiler.fsproj</Name>
     </ProjectReference>
+    <ProjectReference Include="../VirtualMachine/VirtualMachine.fsproj">
+      <Name>VirtualMachine.fsproj</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="RunTests.fs" />
@@ -15,6 +18,7 @@
     <Compile Include="IllTypedTests.fs" />
     <Compile Include="MultiAssignTests.fs" />
     <Compile Include="ParseTests.fs" />
+    <Compile Include="StringTests.fs" />
     <Compile Include="ArrayTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
@@ -25,9 +29,6 @@
     <PackageReference Include="coverlet.collector" Version="1.0.1" />
     <Reference Include="Machine">
       <HintPath>..\libraries\Machine.dll</HintPath>
-    </Reference>
-    <Reference Include="virtualMachine">
-      <HintPath>..\libraries\virtualMachine.dll</HintPath>
     </Reference>
     <Reference Include="FsLexYacc.Runtime">
       <HintPath>..\libraries\FsLexYacc.Runtime.dll</HintPath>
@@ -75,5 +76,10 @@
     <Copy SourceFiles="..\programs\MultiAssign3_Fail.gc" DestinationFolder="$(OutDir)programs" />
     <Copy SourceFiles="..\programs\MultiAssign4_Fail.gc" DestinationFolder="$(OutDir)programs" />
     <Copy SourceFiles="..\programs\MultiAssign5_Fail.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\StringAssignments.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\StringPrints.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\StringIndexing.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\CharEquals.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\CharNotStringFail.gc" DestinationFolder="$(OutDir)programs" />
   </Target>
 </Project>

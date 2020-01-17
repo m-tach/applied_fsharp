@@ -9,6 +9,7 @@ let keyword s =
     match s with
     | "bool"      -> BTYP
     | "int"       -> ITYP
+    | "char"      -> CTYP
     | "print"     -> PRINT 
     | "skip"      -> SKIP
     | "abort"     -> ABORT
@@ -23,6 +24,7 @@ let keyword s =
     | "function"  -> FUNC
     | "procedure" -> PROC
     | "return"    -> RETURN
+    | "len"   -> LENGTH
     | _           -> NAME s  
 }
 
@@ -34,7 +36,9 @@ let char = ['A'-'Z' 'a'-'z']
 let int = digit+
 let identifier  = char(char|digit|['_'])*
 let quote                 = '\"'
+let apos                  = '\''
 let StringConst           = quote ([^'\"'])* quote
+let CharConst             = apos ([^'\'']) apos
 
 
 rule tokenize = 
@@ -66,6 +70,8 @@ rule tokenize =
   | "-"         { MINUS }
   | "="         { EQ }
   | "+"         { PLUS }   
+  | CharConst   { STRING(Encoding.UTF8.GetString(lexbuf.Lexeme).Substring(1,1)) }
+  | StringConst { STRING(Encoding.UTF8.GetString(lexbuf.Lexeme).Substring(1,Encoding.UTF8.GetString(lexbuf.Lexeme).Length-2)) }
   | identifier  { keyword(Encoding.UTF8.GetString(lexbuf.Lexeme)) }
   | eof         { EOF }
 

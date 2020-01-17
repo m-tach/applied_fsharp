@@ -13,6 +13,7 @@ module AST =
    type Exp =                            
          | N  of int                   (* Integer constant            *)
          | B of bool                   (* Boolean constant            *)
+         | STR of string               (* String constant             *)
          | Access of Access            (* x    or  ^p    or  a[e]     *)
          | Addr of Access              (* &x   or  &p^   or  &a[e]    *)
          | Apply of string * Exp list  (* Function application        *)
@@ -42,6 +43,7 @@ module AST =
    and Typ  = 
          | ITyp                          (* Type int                    *)
          | BTyp                          (* Type bool                   *)
+         | CTyp                          (* Type char                   *)
          | ATyp of Typ * int option      (* Type array                  *)
          | PTyp of Typ                   (* Type pointer                *)
          | FTyp of Typ list * Typ option (* Type function and procedure *)
