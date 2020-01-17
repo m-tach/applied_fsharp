@@ -23,6 +23,8 @@ type token =
   | ADDRESSOF
   | PDEREF
   | LENGTH
+  | INCR
+  | DECR
   | COMMA
   | COLON
   | SEMI
@@ -71,6 +73,8 @@ type tokenId =
     | TOKEN_ADDRESSOF
     | TOKEN_PDEREF
     | TOKEN_LENGTH
+    | TOKEN_INCR
+    | TOKEN_DECR
     | TOKEN_COMMA
     | TOKEN_COLON
     | TOKEN_SEMI

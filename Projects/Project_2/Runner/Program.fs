@@ -7,12 +7,16 @@ open ParserUtil
 open CompilerUtil
 open Visualizer
 
+let testFile str = 
+    let ex0Tree = parseFromFile str
+    let intrs = CP ex0Tree
+    let intInstrs = Machine.code2ints intrs
+    VirtualMachine.run intInstrs |> ignore
 
 [<EntryPoint>]
 let main argv =
-    let ex0Tree = parseFromFile "../programs/fact.gc"
-    let intrs = CP ex0Tree
-    let intInstrs = Machine.code2ints intrs
-    VirtualMachine.runTrace intInstrs |> ignore
+    testFile "../programs/Preincrement1.gc" ;
+    testFile "../programs/PreincDecLoop.gc" ;
+    testFile "../programs/PredecrementLoop.gc" ;
     //Visualizer.Visualize ex0Tree
     0 // return an integer exit code
