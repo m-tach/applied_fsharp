@@ -153,12 +153,12 @@ type TestRun () =
         let ast = parseFromFile "programs/partition.gc"
         runAST ast     
 
-    //[<TestMethod>]
+    [<TestMethod>]
     member this.RunQuickSortV1 () =
         let ast = parseFromFile "programs/QuickSortV1.gc"
         runAST ast
 
-    //[<TestMethod>]
+    [<TestMethod>]
     member this.RunQuickSortV2 () =
         let ast = parseFromFile "programs/QuickSortV2.gc"
         runAST ast 
