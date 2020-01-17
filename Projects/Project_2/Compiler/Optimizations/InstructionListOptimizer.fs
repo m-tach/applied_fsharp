@@ -15,7 +15,7 @@ module InstructionListAnalyzer =
             | GOTO a :: Label b :: rest when a = b -> optimizeInstrList rest
             | GOTO a :: GOTO b :: rest when a = b -> printfn "%s" "adaw" 
                                                      GOTO a :: optimizeInstrList rest
-            | CALL(m, a):: RET n :: rest -> RET n :: TCALL(m, n, a) :: optimizeInstrList rest
+            | CALL(m, a):: RET n :: rest -> TCALL(m, n, a) :: RET 0 :: optimizeInstrList rest
             | a :: rest -> a :: optimizeInstrList rest
             | [] -> []
         let optiInstrs = optimizeInstrListInternal allInstrs
