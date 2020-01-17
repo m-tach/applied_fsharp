@@ -1,0 +1,13 @@
+begin
+  i : int,
+  ia : int[2],
+  ip : ^int;
+  
+  i := 5;
+  ip := &i;
+  ia[0] := 2;
+  
+  print ++ip^;
+  print ++i;
+  print --ia[1]
+end
