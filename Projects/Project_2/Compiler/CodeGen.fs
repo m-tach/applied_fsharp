@@ -33,6 +33,9 @@ module CodeGeneration =
        | Access acc   -> CA vEnv fEnv acc @ [LDI] 
        | Addr acc     -> CA vEnv fEnv acc
 
+       | PreInc acc   -> CA vEnv fEnv acc @ [DUP; LDI; CSTI 1; ADD; STI]
+       | PreDec acc   -> CA vEnv fEnv acc @ [DUP; LDI; CSTI 1; SUB; STI]
+
        | Apply("-", [e]) -> CE vEnv fEnv e @ [CSTI 0; SWAP; SUB]
 
        | Apply("!", [e]) -> CE vEnv fEnv e @ [NOT]
@@ -118,6 +121,8 @@ module CodeGeneration =
        | STR v        -> CTyp
        | Access acc   -> getBasicTypeA vEnv fEnv acc
        | Addr acc     -> getBasicTypeA vEnv fEnv acc
+       | PreInc acc   -> getBasicTypeA vEnv fEnv acc
+       | PreDec acc   -> getBasicTypeA vEnv fEnv acc
        | _            -> ITyp // Placeholder
 
 /// CS vEnv fEnv s gives the code for a statement s on the basis of a variable and a function environment                          
