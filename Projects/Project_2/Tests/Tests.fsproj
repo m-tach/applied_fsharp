@@ -76,6 +76,7 @@
     <Copy SourceFiles="..\programs\MultiAssign3_Fail.gc" DestinationFolder="$(OutDir)programs" />
     <Copy SourceFiles="..\programs\MultiAssign4_Fail.gc" DestinationFolder="$(OutDir)programs" />
     <Copy SourceFiles="..\programs\MultiAssign5_Fail.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\OrOperator.gc" DestinationFolder="$(OutDir)programs" />
     <Copy SourceFiles="..\programs\StringAssignments.gc" DestinationFolder="$(OutDir)programs" />
     <Copy SourceFiles="..\programs\StringPrints.gc" DestinationFolder="$(OutDir)programs" />
     <Copy SourceFiles="..\programs\StringIndexing.gc" DestinationFolder="$(OutDir)programs" />
