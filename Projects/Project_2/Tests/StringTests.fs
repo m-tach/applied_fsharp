@@ -33,4 +33,4 @@ type StringTests() =
     //expect an error because chars should not contain strings
     [<TestMethod>]
     member this.CharNotStringFail () =
-        Assert.ThrowsException (fun t -> exec "programs/CharNotStringFail.gc") ;
+        Assert.ThrowsException (fun t -> exec "programs/CharNotStringFail.gc") |> ignore
