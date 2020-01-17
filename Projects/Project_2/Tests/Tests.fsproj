@@ -19,6 +19,7 @@
     <Compile Include="MultiAssignTests.fs" />
     <Compile Include="ParseTests.fs" />
     <Compile Include="StringTests.fs" />
+    <Compile Include="PreincrementDecrementTests.fs" />
     <Compile Include="ArrayTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
@@ -81,5 +82,9 @@
     <Copy SourceFiles="..\programs\StringIndexing.gc" DestinationFolder="$(OutDir)programs" />
     <Copy SourceFiles="..\programs\CharEquals.gc" DestinationFolder="$(OutDir)programs" />
     <Copy SourceFiles="..\programs\CharNotStringFail.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\Preincrement1.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\PreincDecLoop.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\PreincrementOnBoolFail.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\PredecrementLoop.gc" DestinationFolder="$(OutDir)programs" />
   </Target>
 </Project>
