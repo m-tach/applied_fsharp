@@ -22,6 +22,7 @@
     <Compile Include="StringTests.fs" />
     <Compile Include="PreincrementDecrementTests.fs" />
     <Compile Include="ArrayTests.fs" />
+    <Compile Include="ConstantFoldingTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
