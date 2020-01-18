@@ -75,7 +75,7 @@ type TestOptimizations () =
 
     [<TestMethod>]
     member this.ConstantFolding13 () =
-        verifyOptimizationReturnsConstant [CSTI 3; CSTI 4; MOD; CSTI 5; CSTI 5; MOD; MOD] 
+        verifyOptimizationReturnsConstant [CSTI 3; CSTI 4; MOD; CSTI 6; CSTI 5; MOD; MOD] 
 
     [<TestMethod>]
     member this.ConstantFolding14 () =
@@ -111,7 +111,7 @@ type TestOptimizations () =
 
     [<TestMethod>]
     member this.ConstantFolding22 () =
-        verifyOptimization [CSTI 0; GETBP; CSTI 1; ADD; LDI; MOD] [GETBP; CSTI 1; ADD; LDI]
+        verifyOptimization [CSTI 0; GETBP; CSTI 1; ADD; LDI; MOD] [CSTI 0]
 
     [<TestMethod>]
     member this.ConstantFolding23 () =
@@ -135,11 +135,11 @@ type TestOptimizations () =
 
     [<TestMethod>]
     member this.ConstantFolding28 () =
-        verifyOptimization [CSTI 0; GETBP; CSTI 0; ADD; LDI; MUL] []
+        verifyOptimization [CSTI 0; GETBP; CSTI 0; ADD; LDI; MUL] [CSTI 0]
 
     [<TestMethod>]
     member this.ConstantFolding29 () =
-        verifyOptimization [GETBP; CSTI 0; ADD; LDI; CSTI 0; MUL] []
+        verifyOptimization [GETBP; CSTI 0; ADD; LDI; CSTI 0; MUL] [CSTI 0]
 
     [<TestMethod>]
     member this.ConstantFolding30 () =
@@ -147,8 +147,8 @@ type TestOptimizations () =
 
     [<TestMethod>]
     member this.ConstantFolding31 () =
-        verifyOptimization [GETBP; CSTI 0; ADD; LDI; CSTI 0; DIV] [] 
+        verifyOptimization [CSTI 0; GETBP; CSTI 0; ADD; LDI; DIV] [CSTI 0] 
 
     [<TestMethod>]
     member this.ConstantFolding32 () =
-        verifyOptimization [CSTI 0; GETBP; CSTI 0; ADD; LDI; MOD] [GETBP; LDI]
+        verifyOptimization [CSTI 0; GETBP; CSTI 0; ADD; LDI; MOD] [CSTI 0]
