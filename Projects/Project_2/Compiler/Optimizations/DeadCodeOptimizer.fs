@@ -12,5 +12,6 @@ module DeadCodeAnalyzer =
     let rec public deadInstrElimination instrs =
         match instrs with
         | GOTO(a)::rest -> GOTO(a)::deadInstrElimination (removeUntilLabel rest)
+        | RET(a)::rest -> RET(a)::deadInstrElimination (removeUntilLabel rest)
         | a::rest -> a::deadInstrElimination rest
         | [] -> []
