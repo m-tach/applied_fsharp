@@ -197,6 +197,7 @@ module InstructionExpAnalyzer =
         | Ifzero(_, Csti _) -> Nothing
         | Ifzero(a, Not(b)) -> Ifnzro(a, b)
         | Ifzero(a, Eq(b, Csti 0)) -> Ifnzro(a, b)
+        | Ifzero(a, Eq(Csti 0, b)) -> Ifnzro(a, b)
         //Ifnzro
         | Ifnzro(_, Csti 0) -> Nothing
         | Ifnzro(a, Csti _) -> Goto a
