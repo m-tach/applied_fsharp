@@ -71,6 +71,7 @@ rule tokenize =
   | ">"         { GT }
   | "<="        { LE } 
   | "*"         { TIMES }
+  | "/"         { DIVIDE }
   | "-"         { MINUS }
   | "="         { EQ }
   | "+"         { PLUS }   
