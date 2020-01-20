@@ -79,7 +79,7 @@ module TypeCheck =
          | AIndex(acc, e) -> match tcE gtenv ltenv e with
                               | ITyp -> match (tcA gtenv ltenv acc) with
                                           | ATyp (t,_) -> t
-                                          | _ -> failwith "expected array but was not given an array"
+                                          | _ -> failwith (String.Format("expected an array type but got: {0}", tcA gtenv ltenv acc))
                               | _    -> failwith "tcA: Array index has to be an int"
 
          | ADeref e       -> match tcE gtenv ltenv e with
@@ -91,10 +91,18 @@ module TypeCheck =
 /// for global and local variables and the possible type of return expressions 
    and tcS gtenv ltenv = function                           
                          | PrintLn e -> ignore(tcE gtenv ltenv e)
-                         | Ass(acc,e) -> match tcA gtenv ltenv acc with
-                                         | a when a = tcE gtenv ltenv e                  -> ()
-                                         | ATyp(CTyp, _) when tcE gtenv ltenv e = CTyp   -> ()
-                                         | _                                             -> failwith "illtyped assignment" 
+                         | Ass(acc,e) -> let rec normalize t =
+                                           match t with
+                                           | ATyp(t, _) -> ATyp(normalize t, None)
+                                           | PTyp(t) -> PTyp(normalize t)
+                                           | FTyp(ts, opt) -> FTyp(List.map normalize ts, opt)
+                                           | x -> x
+
+                                         let normalizedExpType = normalize (tcE gtenv ltenv e)
+                                         match tcA gtenv ltenv acc with
+                                         | a when a = normalizedExpType                  -> ()
+                                         | ATyp(CTyp, _) when normalizedExpType = CTyp   -> ()
+                                         | _                                             -> failwith (String.Format("illtyped assignment.\nTried to do:\n {0} := {1}\n which is not allowed as the types don't match", tcA gtenv ltenv acc, normalizedExpType))
                          | MAss(acc,e) -> if acc.Length <> e.Length then failwith (String.Format("Trying to multi assign {0} variables with {1} values", acc.Length, e.Length))
                                           let assignments = List.zip acc e
                                           List.iter (fun (cacc, ce) -> tcS gtenv ltenv (Ass(cacc, ce))) assignments
