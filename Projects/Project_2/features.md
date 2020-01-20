@@ -39,15 +39,22 @@
 
 ## Arrays
  * Typecheck:
-   * Arrays can be made up of int, bool, char types; arrays of arrays are not allowed
+   * Arrays can be made up of int, bool, char and pointer types; arrays of arrays are not allowed.
  * Lexer:
-   * 
+   * keyword "len" -> returns array length
+   * "[" - LSP and "]" - RSP
  * Parser
+   * added ATyp to Typ
+   * ATyp has the following semantic actions:
+     * BasicTyp LSP RSP                  { ATyp($1,None) }
+     * BasicTyp LSP INT RSP              { ATyp($1,Some($3)) }
  * AST:
    * Arrays have type ATyp
    * Array indexes have type AIndex (AVar, ITyp) 
  * Code gen
- * 
+   * allocation: adds length + amount of elements 
+   * lenght is stored as the address of the array declaration - 1
+   * when returning, cleanup removes length + amount of elements from stack
 
 ## Strings
  * Chars

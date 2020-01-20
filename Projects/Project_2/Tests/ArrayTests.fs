@@ -35,6 +35,22 @@ type ArrayTests() =
     print a[1]^
     end"
 
+    let addressOfArrayTest = "begin 
+    a : ^int[2],
+    v1 : int,
+    v2 : int;
+
+    print a[0];
+    print a[1];
+    a[0] := &v1;
+    a[1] := &v2;
+    v1 := 5;
+    v2 := 6;
+
+    print a[0]^;
+    print a[1]^
+    end"
+
     [<TestMethod>]
     member this.ParseA0 () =
         exec "programs/A0.gc" ;
