@@ -157,7 +157,7 @@ let runBenchmark is = let sw = System.Diagnostics.Stopwatch()
                       let _  = sw.Start()
                       let stk = runArgs is [||]
                       let elabsed = int sw.ElapsedMilliseconds
-                      printfn "\nStack : %s" (Array.fold (fun s n -> s + (string n) + "  ") "" stk)
+                      //printfn "\nStack : %s" (Array.fold (fun s n -> s + (string n) + "  ") "" stk)
                       (executedInst,  elabsed)          
                       
 let runTrace is = runArgsTrace is [||]

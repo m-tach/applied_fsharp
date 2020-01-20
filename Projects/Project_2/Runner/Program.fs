@@ -23,21 +23,28 @@ let runAST ast =
 
 [<EntryPoint>]
 let main argv =
-    let ex0Tree = parseFromFile "../programs/QuickSortV2.gc"
+    let filename = "../programs/QuickSortV2.gc"
+    //let filename = "../programs/factRec.gc"
+    //let filename = "../programs/StringPrints.gc"
+
+    let ex0Tree = parseFromFile filename
     let instrs = CP ex0Tree
     let optiInstrs = optimize instrs
 
-    //printfn "%s" (String.concat"\n" (List.map string (GuardedCommands.Backend.InstructionExpAnalyzer.instrsToInstrsExp optiInstrs)))
-    
-    printfn "not optimized\n%s" (instrsToString instrs)
-    printfn "\n\noptimized\n%s" (instrsToString optiInstrs)
-    printfn ""
-    printfn "no opti:   %s" (instrs.Length.ToString())
-    printfn "with opti: %s" (optiInstrs.Length.ToString())
 
-    runAST ex0Tree
-    
-    //let intInstrs = Machine.code2ints optiInstrs
-    //VirtualMachine.runTrace intInstrs |> ignore
-    //Visualizer.Visualize ex0Tree
+    //run code
+    let (execInstr, runtime) = VirtualMachine.runBenchmark(Machine.code2ints(instrs))
+    let (opti_execInstr, opti_runtime) = VirtualMachine.runBenchmark(Machine.code2ints(optiInstrs))
+    printfn "Running file %s" filename
+    printfn ("\tNot optimized:")
+    printfn "\t\tGenerated instructions: %s" (instrs.Length.ToString())
+    printfn "\t\tExecuted instructions: %d" execInstr
+    printfn "\t\tRuntime[ms]: %d" runtime
+
+    printfn ("\tOptimized:")
+    printfn "\t\tGenerated instructions: %s" (optiInstrs.Length.ToString())
+    printfn "\t\tExecuted instructions: %d" opti_execInstr
+    printfn "\t\tRuntime[ms]: %d" opti_runtime
+
+
     0 // return an integer exit code
