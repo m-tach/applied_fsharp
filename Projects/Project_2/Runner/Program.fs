@@ -5,6 +5,7 @@ open GuardedCommands.Backend.CodeGeneration
 open GuardedCommands.Backend.Optimizer
 
 open System.Diagnostics
+open System
 
 open ParserUtil
 open CompilerUtil
@@ -25,6 +26,8 @@ let main argv =
     let ex0Tree = parseFromFile "../programs/QuickSortV2.gc"
     let instrs = CP ex0Tree
     let optiInstrs = optimize instrs
+
+    //printfn "%s" (String.concat"\n" (List.map string (GuardedCommands.Backend.InstructionExpAnalyzer.instrsToInstrsExp optiInstrs)))
     
     printfn "not optimized\n%s" (instrsToString instrs)
     printfn "\n\noptimized\n%s" (instrsToString optiInstrs)

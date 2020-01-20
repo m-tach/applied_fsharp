@@ -38,25 +38,25 @@ module InstructionExpAnalyzer =
             | CSTI(a)::rest1 -> (Csti(a), rest1)
             | ADD::rest1 -> let (e1, rest2) = inter rest1
                             let (e2, rest3) = inter rest2
-                            (Add(e1, e2), rest3)
+                            (Add(e2, e1), rest3)
             | SUB::rest1 -> let (e1, rest2) = inter rest1
                             let (e2, rest3) = inter rest2
-                            (Sub(e1, e2), rest3)
+                            (Sub(e2, e1), rest3)
             | MUL::rest1 -> let (e1, rest2) = inter rest1
                             let (e2, rest3) = inter rest2
-                            (Mul(e1, e2), rest3)
+                            (Mul(e2, e1), rest3)
             | DIV::rest1 -> let (e1, rest2) = inter rest1
                             let (e2, rest3) = inter rest2
-                            (Div(e1, e2), rest3)
+                            (Div(e2, e1), rest3)
             | MOD::rest1 -> let (e1, rest2) = inter rest1
                             let (e2, rest3) = inter rest2
-                            (Mod(e1, e2), rest3)
+                            (Mod(e2, e1), rest3)
             | EQ::rest1  -> let (e1, rest2) = inter rest1
                             let (e2, rest3) = inter rest2
-                            (Eq(e1, e2), rest3)
+                            (Eq(e2, e1), rest3)
             | LT::rest1  -> let (e1, rest2) = inter rest1
                             let (e2, rest3) = inter rest2
-                            (Lt(e1, e2), rest3)         
+                            (Lt(e2, e1), rest3)         
             | NOT::rest1 -> let (e1, rest2) = inter rest1
                             (Not(e1), rest2)    
             | DUP::rest1 -> let (e1, rest2) = inter rest1
@@ -66,7 +66,7 @@ module InstructionExpAnalyzer =
                             (Ldi(e1), rest2)     
             | STI::rest1  -> let (e1, rest2) = inter rest1
                              let (e2, rest3) = inter rest2
-                             (Sti(e1, e2), rest3) 
+                             (Sti(e2, e1), rest3) 
             | GETBP::rest1 -> (Getbp, rest1)
             | GETSP::rest1 -> (Getsp, rest1)  
             | INCSP(a)::rest1 -> (Incsp(a), rest1)        
@@ -77,10 +77,10 @@ module InstructionExpAnalyzer =
                                   (Ifnzro(a, e1), rest2)                    
             | CALL(m, a)::rest1 -> let (e1s, rest2) = List.fold(fun (es, rest) _ -> let (e1, rest2) = inter rest
                                                                                     (e1::es, rest2)) ([], rest1) [1..m]
-                                   (Call(m, a, List.rev e1s), rest2)  
+                                   (Call(m, a, e1s), rest2)  
             | TCALL(m, n, a)::rest1 -> let (e1s, rest2) = List.fold(fun (es, rest) _ -> let (e1, rest2) = inter rest
                                                                                         (e1::es, rest2)) ([], rest1) [1..m]
-                                       (Tcall(m, n, a, List.rev e1s), rest2)    
+                                       (Tcall(m, n, a, e1s), rest2)    
             | RET(m)::rest1 -> let (e1, rest2) = inter rest1
                                (Ret(m, e1), rest2)    
             | PRINTI::rest1 -> let (e1, rest2) = inter rest1
@@ -104,25 +104,25 @@ module InstructionExpAnalyzer =
         let rec instrExpToInstrs instrExp =
             match instrExp with
             | Csti a -> [CSTI a]
-            | Add(a, b) -> ADD::(List.collect instrExpToInstrs [a; b])
-            | Sub(a, b) -> SUB::(List.collect instrExpToInstrs [a; b])
-            | Mul(a, b) -> MUL::(List.collect instrExpToInstrs [a; b]) 
-            | Div(a, b) -> DIV::(List.collect instrExpToInstrs [a; b])
-            | Mod(a, b) -> MOD::(List.collect instrExpToInstrs [a; b])
-            | Eq(a, b)  -> EQ:: (List.collect instrExpToInstrs [a; b]) 
-            | Lt(a, b)  -> LT:: (List.collect instrExpToInstrs [a; b])
+            | Add(a, b) -> ADD::(List.collect instrExpToInstrs [b; a])
+            | Sub(a, b) -> SUB::(List.collect instrExpToInstrs [b; a])
+            | Mul(a, b) -> MUL::(List.collect instrExpToInstrs [b; a]) 
+            | Div(a, b) -> DIV::(List.collect instrExpToInstrs [b; a])
+            | Mod(a, b) -> MOD::(List.collect instrExpToInstrs [b; a])
+            | Eq(a, b)  -> EQ:: (List.collect instrExpToInstrs [b; a]) 
+            | Lt(a, b)  -> LT:: (List.collect instrExpToInstrs [b; a])
             | Not a -> NOT::instrExpToInstrs a
             | Dup a -> DUP::instrExpToInstrs a
             | Ldi(a) -> LDI::instrExpToInstrs a
-            | Sti(a, b)  -> STI::(List.collect instrExpToInstrs [a; b])
+            | Sti(a, b)  -> STI::(List.collect instrExpToInstrs [b; a])
             | Getbp -> [GETBP]
             | Getsp -> [GETSP]
             | Incsp a -> [INCSP a]
             | Goto a -> [GOTO a]
             | Ifzero(a, b) -> IFZERO a::instrExpToInstrs b
             | Ifnzro(a, b) -> IFNZRO a::instrExpToInstrs b
-            | Call(a, b, c) -> CALL(a, b)::List.collect instrExpToInstrs c
-            | Tcall(a, b, c, d) -> TCALL(a, b, c)::(List.collect instrExpToInstrs d)
+            | Call(a, b, c) -> CALL(a, b)::List.collect instrExpToInstrs (List.rev c)
+            | Tcall(a, b, c, d) -> TCALL(a, b, c)::(List.collect instrExpToInstrs  (List.rev d))
             | Ret(a, b) -> RET a::instrExpToInstrs b
             | Printi a -> PRINTI::instrExpToInstrs a
             | Printc a -> PRINTC::instrExpToInstrs a
@@ -196,7 +196,8 @@ module InstructionExpAnalyzer =
         | Ifzero(a, Csti 0) -> Goto a
         | Ifzero(_, Csti _) -> Nothing
         | Ifzero(a, Not(b)) -> Ifnzro(a, b)
-        | Ifzero(a, Eq(b, Csti 0)) -> Ifzero(a, b)
+        | Ifzero(a, Eq(b, Csti 0)) -> Ifnzro(a, b)
+        | Ifzero(a, Eq(Csti 0, b)) -> Ifnzro(a, b)
         //Ifnzro
         | Ifnzro(_, Csti 0) -> Nothing
         | Ifnzro(a, Csti _) -> Goto a

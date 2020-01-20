@@ -15,7 +15,7 @@ module Optimizer =
         let fstOptiInstrs = optimizeInstrList instrs
         let sndOptiInstrs = optimizeBranching fstOptiInstrs 
         //printfn "%s" (sndOptiInstrs.Length.ToString())
-        let noDeadCode = deadInstrElimination sndOptiInstrs
+        let noDeadCode = deadCodeOptimization sndOptiInstrs
         let exps = instrsToInstrsExp noDeadCode
         let optiExps = List.map optimizeInstrExp exps
         let optiInstrs = instrExpsToInstrs optiExps
