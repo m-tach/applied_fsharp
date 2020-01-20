@@ -58,7 +58,7 @@ module TypeCheck =
    and tcDyadic gtenv ltenv f e1 e2 = match (f, tcE gtenv ltenv e1, tcE gtenv ltenv e2) with
                                       | (o, ITyp, ITyp) when List.exists (fun x ->  x=o) ["+";"*";"-"]  -> ITyp
                                       | (o, ITyp, ITyp) when List.exists (fun x ->  x=o) ["=";"<>";"<=";">=";"<";">"] -> BTyp
-                                      | (o, BTyp, BTyp) when List.exists (fun x ->  x=o) ["&&";"=";"<>"]     -> BTyp 
+                                      | (o, BTyp, BTyp) when List.exists (fun x ->  x=o) ["&&";"=";"<>";"||"]     -> BTyp 
                                       | (o, CTyp, CTyp) when List.exists (fun x ->  x=o) ["=";"<>"] -> BTyp 
                                       | _                      -> failwith("illegal/illtyped dyadic expression: " + f)
 
