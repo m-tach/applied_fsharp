@@ -87,6 +87,13 @@ type IllTypedTests() =
     print res <= 2
     end"
 
+    let illegalGE = "begin
+    res : bool;
+    res := true;
+    print res >= 2
+    end"
+
+
     let illegalMonadicMINUS = "begin
     res : bool;
     res := true;
@@ -103,6 +110,12 @@ type IllTypedTests() =
     res : bool;
     res := true;
     print res * 2
+    end"
+
+    let illegalDIVIDE = "begin
+    res : bool;
+    res := true;
+    print res / 2
     end"
 
     let illegalNEG = "begin
@@ -152,6 +165,10 @@ type IllTypedTests() =
     member this.IllegalTIMESException() = 
         Assert.Throws<Exception> "illegal/illtyped dyadic expression: *" (fun () -> tcP (parseString illegalTIMES))
 
+    [<TestMethod>]
+    member this.IllegalDIVIDEException() = 
+        Assert.Throws<Exception> "illegal/illtyped dyadic expression: /" (fun () -> tcP (parseString illegalDIVIDE))
+
 
     [<TestMethod>]
     member this.IllegalPLUSException() = 
@@ -185,6 +202,10 @@ type IllTypedTests() =
     [<TestMethod>]
     member this.IllegalLException() = 
         Assert.Throws<Exception> "illegal/illtyped dyadic expression: <=" (fun () -> tcP (parseString illegalLE))
+    
+    [<TestMethod>]
+    member this.IllegalGException() = 
+        Assert.Throws<Exception> "illegal/illtyped dyadic expression: >=" (fun () -> tcP (parseString illegalGE))
     
     [<TestMethod>]
     member this.IllegalGTException() = 

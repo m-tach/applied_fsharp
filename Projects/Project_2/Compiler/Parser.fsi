@@ -17,6 +17,7 @@ type token =
   | AND
   | EQ
   | LE
+  | GE
   | LT
   | GT
   | NEQ
@@ -26,6 +27,7 @@ type token =
   | OR
   | INCR
   | DECR
+  | DIVIDE
   | COMMA
   | COLON
   | SEMI
@@ -69,6 +71,7 @@ type tokenId =
     | TOKEN_AND
     | TOKEN_EQ
     | TOKEN_LE
+    | TOKEN_GE
     | TOKEN_LT
     | TOKEN_GT
     | TOKEN_NEQ
@@ -78,6 +81,7 @@ type tokenId =
     | TOKEN_OR
     | TOKEN_INCR
     | TOKEN_DECR
+    | TOKEN_DIVIDE
     | TOKEN_COMMA
     | TOKEN_COLON
     | TOKEN_SEMI

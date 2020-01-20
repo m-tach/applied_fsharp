@@ -19,7 +19,38 @@ type ArrayTests() =
     print res
     end"
 
-    //fails because bug in array code
+    let arrayOfPointersTest = "begin 
+    a : ^int[2],
+    v1 : int,
+    v2 : int;
+
+    print a[0];
+    print a[1];
+    a[0] := &v1;
+    a[1] := &v2;
+    v1 := 5;
+    v2 := 6;
+
+    print a[0]^;
+    print a[1]^
+    end"
+
+    let addressOfArrayTest = "begin 
+    a : ^int[2],
+    v1 : int,
+    v2 : int;
+
+    print a[0];
+    print a[1];
+    a[0] := &v1;
+    a[1] := &v2;
+    v1 := 5;
+    v2 := 6;
+
+    print a[0]^;
+    print a[1]^
+    end"
+
     [<TestMethod>]
     member this.ParseA0 () =
         exec "programs/A0.gc" ;
@@ -28,7 +59,6 @@ type ArrayTests() =
     member this.ParseA1 () =
         exec "programs/A1.gc" ;
 
-    //fails because bug in array code
     [<TestMethod>]
     member this.ParseA2 () =
         exec "programs/A2.gc" ;
@@ -37,7 +67,12 @@ type ArrayTests() =
     member this.ParseA3 () =
         exec "programs/A3.gc" ;
 
-    //TODO: fails because procedures are not implemented
     [<TestMethod>]
     member this.ParseA4 () =
         exec "programs/A4.gc" ;
+
+    [<TestMethod>]
+    member this.ParsePointerTest () =
+        let prog = parseString(arrayOfPointersTest)
+        tcP prog
+        go prog;

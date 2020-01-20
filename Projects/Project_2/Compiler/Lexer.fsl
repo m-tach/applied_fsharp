@@ -70,7 +70,9 @@ rule tokenize =
   | "<"         { LT }
   | ">"         { GT }
   | "<="        { LE } 
+  | ">="        { GE } 
   | "*"         { TIMES }
+  | "/"         { DIVIDE }
   | "-"         { MINUS }
   | "="         { EQ }
   | "+"         { PLUS }   
