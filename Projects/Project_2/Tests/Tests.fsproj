@@ -95,5 +95,6 @@
     <Copy SourceFiles="..\programs\PreincrementOnBoolFail.gc" DestinationFolder="$(OutDir)programs" />
     <Copy SourceFiles="..\programs\PredecrementLoop.gc" DestinationFolder="$(OutDir)programs" />
     <Copy SourceFiles="..\programs\PreincDecAccessTypes.gc" DestinationFolder="$(OutDir)programs" />
+    <Copy SourceFiles="..\programs\VarDefinedTwiceFail.gc" DestinationFolder="$(OutDir)programs" />
   </Target>
 </Project>

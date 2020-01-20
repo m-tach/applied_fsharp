@@ -263,3 +263,8 @@ type TestTypeCheck () =
     member this.TypeCheckOrOperator () =
         let ast = parseFromFile "programs/OrOperator.gc"
         tcP ast |> ignore                
+
+    [<TestMethod>]
+    member this.TypeCheckExistingDeclarationFails () =
+        let ast = parseFromFile "programs/VarDefinedTwiceFail.gc"
+        Assert.ThrowsException(fun _ -> tcP ast) |> ignore

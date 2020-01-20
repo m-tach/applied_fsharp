@@ -137,27 +137,31 @@ module TypeCheck =
                              let ltenv2 = List.fold tcGDec ltenv decs
                              List.collect (getReturnStms gtenv2 ltenv2) stms
       | Call(_)           -> []
+   
+   and tcGDecInternal gtenv stenv = function  
+                                    | VarDec(t,s)               -> if (Map.containsKey s stenv) then failwith (String.Format ("The variable '{0}' is already defined.", s))
+                                                                   Map.add s t stenv |> ignore
+                                                                   Map.add s t gtenv
+                                    | FunDec(retTypOpt,f, decs, stm) -> let ltenv = List.fold (fun s dec -> tcGDecInternal s (Map.empty) dec) (Map.empty) decs
+                                                                        let gtenv2 = Map.add f (FTyp(List.map(fun dec -> match dec with
+                                                                                                                         | VarDec(t, _) -> t
+                                                                                                                         | _ -> failwith "function arguments can only be variables"
+                                                                                               ) decs, retTypOpt)) gtenv
+                                                                        let returnTypes = getReturnStms gtenv2 ltenv stm
+                                                                        if List.exists(fun actualRetTypOpt -> match actualRetTypOpt with
+                                                                                                              | Some(typ) when retTypOpt.IsSome -> retTypOpt.Value <> typ
+                                                                                                              | Some(_) -> failwith "procedure contain a return which returns a type"
+                                                                                                              | None when retTypOpt.IsNone -> false
+                                                                                                              | None -> failwith "function contains a return that doesn't return anything") returnTypes
+                                                                        then failwith "return type does not match functions expected return type"
+                                                                        tcS gtenv2 ltenv stm
+                                                                        gtenv2
+         
+   and tcGDec gtenv st = tcGDecInternal gtenv Map.empty st
 
-   and tcGDec gtenv = function  
-                      | VarDec(t,s)               -> Map.add s t gtenv
-                      | FunDec(retTypOpt,f, decs, stm) -> let ltenv = List.fold tcGDec (Map.empty) decs
-                                                          let gtenv2 = Map.add f (FTyp(List.map(fun dec -> match dec with
-                                                                                                           | VarDec(t, _) -> t
-                                                                                                           | _ -> failwith "function arguments can only be variables"
-                                                                        ) decs, retTypOpt)) gtenv
-                                                          let returnTypes = getReturnStms gtenv2 ltenv stm
-                                                          if List.exists(fun actualRetTypOpt -> match actualRetTypOpt with
-                                                                                                | Some(typ) when retTypOpt.IsSome -> retTypOpt.Value <> typ
-                                                                                                | Some(_) -> failwith "procedure contain a return which returns a type"
-                                                                                                | None when retTypOpt.IsNone -> false
-                                                                                                | None -> failwith "function contains a return that doesn't return anything") returnTypes
-                                                            then failwith "return type does not match functions expected return type"
-                                                          tcS gtenv2 ltenv stm
-                                                          gtenv2
-
-   and tcGDecs gtenv = function
-                       | dec::decs -> tcGDecs (tcGDec gtenv dec) decs
-                       | _         -> gtenv
+   and tcGDecs gtenv stenv = function
+                             | dec::decs -> tcGDecs (tcGDecInternal gtenv stenv dec) decs stenv
+                             | _         -> gtenv
 
    /// tcGS checks if GuardedCommand has a valid condition type bool
    and tcGC gtenv ltenv cexp cstms = match (tcE gtenv ltenv cexp)  with
@@ -166,7 +170,7 @@ module TypeCheck =
 
 
 /// tcP prog checks the well-typeness of a program prog
-   and tcP(P(decs, stms)) = let gtenv = tcGDecs Map.empty decs
+   and tcP(P(decs, stms)) = let gtenv = tcGDecs Map.empty Map.empty decs
                             if (List.sumBy(fun x -> (getReturnStms gtenv Map.empty x).Length) stms) > 0 then failwith "can't return outside a function"
                             List.iter (tcS gtenv Map.empty) stms
 

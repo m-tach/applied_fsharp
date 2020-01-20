@@ -1,0 +1,6 @@
+begin
+  a : int,
+  a : bool;
+  
+  a := true
+end
