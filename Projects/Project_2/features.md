@@ -86,6 +86,5 @@
 ## Optimizations
  * Constant folding
  * Expression simplification
- * Common subexpression elimination
  * Dead code elimination
- * Branch elimination
+ * Branch elimination and optimization
