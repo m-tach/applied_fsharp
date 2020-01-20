@@ -40,7 +40,16 @@
     * [ ] Write code so you can't derenference a variable before setting it
 
 ## Arrays
- * [ ] Write explanation of features
+ * Typecheck:
+   * Arrays can be made up of int, bool, char types; arrays of arrays are not allowed
+ * Lexer:
+   * 
+ * Parser
+ * AST:
+   * Arrays have type ATyp
+   * Array indexes have type AIndex (AVar, ITyp) 
+ * Code gen
+ * 
 
 ## Strings
  * Chars
