@@ -1,0 +1,10 @@
+begin
+  i : int,
+  j : int,
+  r : int;
+  
+  i := 5;
+  j := 4;
+  
+  r := (i < j) ? i : j
+end

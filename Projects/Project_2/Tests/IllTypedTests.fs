@@ -50,6 +50,13 @@ type IllTypedTests() =
     print res && 2
     end"
 
+    let illegalOR = "begin
+    res : bool;
+    res := true;
+    print res || 2
+    end"
+
+
     let illegalEQ = "begin
     res : bool;
     res := true;
@@ -173,6 +180,10 @@ type IllTypedTests() =
     [<TestMethod>]
     member this.IllegalANDException() = 
         Assert.Throws<Exception> "illegal/illtyped dyadic expression: &&" (fun () -> tcP (parseString illegalAND))
+
+    [<TestMethod>]
+    member this.IllegalORException() = 
+        Assert.Throws<Exception> "illegal/illtyped dyadic expression: ||" (fun () -> tcP (parseString illegalOR))
 
     [<TestMethod>]
     member this.IllegalEQException() = 

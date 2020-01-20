@@ -1,0 +1,9 @@
+begin
+  i : int;
+  
+  do (i < 10) -> i := i * 2 + 1
+  od;
+  
+  print ((i > 12) ? true : false);
+  i := ((i > 12) ? (5 + 1) : (5 - 1))
+end

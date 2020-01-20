@@ -1,23 +1,40 @@
 begin
 procedure swap(a: int[], i: int, j: int) =
-     { tmp: int; tmp := a[i]; a[i] := a[j]; a[j] := tmp},
+{ 
+  tmp: int; 
+  tmp := a[i]; 
+  a[i] := a[j]; 
+  a[j] := tmp
+},
 
-procedure printA(a: int[], b:int) = {i: int;  i:= 0; do ! i=b -> print a[i]; i:= i+1 od},
+procedure printA(a: int[], b:int) = 
+{
+  i: int;  
+  i:= 0; 
+  do ! i=b -> print a[i]; 
+                i:= i+1 
+  od
+},
 
 procedure partition(a : int[], x0 : int, i: int, j: int, p: ^int) =
-{ do i<=j && a[i] <= x0 -> i:= i+1
-   | i<=j               -> swap(a, i, j); j:= j-1
+{ 
+  do i<=j && a[i] <= x0 -> i:= i+1
+  |  i<=j               -> swap(a, i, j); 
+                          j:= j-1
   od ;
-  p^ := i },
+  p^ := i 
+},
 
 procedure qs(a: int[], i: int, j:int) =
-{ p: int ; 
+{ 
+  p: int ; 
   if i<j -> partition(a, a[i], i+1, j, &p);
-             swap(a,i,p-1);
-		     qs(a,i,p-2);
-		     qs(a,p,j)
+            swap(a,i,p-1);
+            qs(a,i,p-2);
+            qs(a,p,j)
   | true -> skip
-  fi },
+  fi 
+},
 
 procedure quicksort(a: int[], b: int) = qs(a, 0, b - 1) ,
 
@@ -26,7 +43,10 @@ b: int,
 i: int ;
 b := 1500;
 i := 0 ;
-do i< b-> a[i] := b-i; i:= i+1 od;
+
+do i< b-> a[i] := b-i; 
+            i:= i+1 
+od;
 
 a[1]:= 3;
 

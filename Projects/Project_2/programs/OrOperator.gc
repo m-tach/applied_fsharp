@@ -1,0 +1,7 @@
+begin
+    n: bool, y: bool;
+    n := true;
+    y := false;
+    if (n || y) -> print "Hi"
+    fi
+end
