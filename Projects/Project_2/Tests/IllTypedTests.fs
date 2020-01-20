@@ -87,6 +87,13 @@ type IllTypedTests() =
     print res <= 2
     end"
 
+    let illegalGE = "begin
+    res : bool;
+    res := true;
+    print res >= 2
+    end"
+
+
     let illegalMonadicMINUS = "begin
     res : bool;
     res := true;
@@ -195,6 +202,10 @@ type IllTypedTests() =
     [<TestMethod>]
     member this.IllegalLException() = 
         Assert.Throws<Exception> "illegal/illtyped dyadic expression: <=" (fun () -> tcP (parseString illegalLE))
+    
+    [<TestMethod>]
+    member this.IllegalGException() = 
+        Assert.Throws<Exception> "illegal/illtyped dyadic expression: >=" (fun () -> tcP (parseString illegalGE))
     
     [<TestMethod>]
     member this.IllegalGTException() = 
