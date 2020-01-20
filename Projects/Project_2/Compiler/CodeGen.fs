@@ -120,7 +120,7 @@ module CodeGeneration =
        | AVar x        -> let (map, _, _) = vEnv
                           snd (Map.find x map)
        | AIndex (a, _) -> getBasicTypeA vEnv fEnv a
-       | ADeref e      -> getBasicTypeE vEnv fEnv e
+       | ADeref e      ->getBasicTypeE vEnv fEnv e
 
    and getBasicTypeE (vEnv:varEnv) fEnv e =
        match e with
@@ -128,7 +128,7 @@ module CodeGeneration =
        | B v          -> BTyp
        | STR v        -> CTyp
        | Access acc   -> getBasicTypeA vEnv fEnv acc
-       | Addr acc     -> getBasicTypeA vEnv fEnv acc
+       | Addr acc     -> PTyp(getBasicTypeA vEnv fEnv acc)
        | PreInc acc   -> getBasicTypeA vEnv fEnv acc
        | PreDec acc   -> getBasicTypeA vEnv fEnv acc
        | _            -> ITyp // Placeholder
