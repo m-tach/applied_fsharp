@@ -97,7 +97,7 @@ module CodeGeneration =
     | ATyp (ATyp _, _) -> 
       raise (Failure "allocate: array of arrays not permitted")
 
-    | ATyp (t, Some i) when List.contains t [BTyp; ITyp; CTyp] -> 
+    | ATyp (t, Some i) when List.contains t [BTyp; ITyp; CTyp; PTyp(ITyp)] -> 
       let newEnv = (Map.add x (kind (fdepth+1), typ) env, fdepth+i+1, isInFunc)
       let code = [CSTI i; INCSP i ] 
       (newEnv, code)

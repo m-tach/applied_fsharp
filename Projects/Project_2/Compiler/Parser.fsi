@@ -17,6 +17,7 @@ type token =
   | AND
   | EQ
   | LE
+  | GE
   | LT
   | GT
   | NEQ
@@ -69,6 +70,7 @@ type tokenId =
     | TOKEN_AND
     | TOKEN_EQ
     | TOKEN_LE
+    | TOKEN_GE
     | TOKEN_LT
     | TOKEN_GT
     | TOKEN_NEQ
