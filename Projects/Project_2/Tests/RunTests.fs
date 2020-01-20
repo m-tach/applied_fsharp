@@ -200,3 +200,14 @@ type TestRun () =
         let intInstrs = Machine.code2ints intrs
         VirtualMachine.run intInstrs |> ignore             
 
+    [<TestMethod>]
+    member this.RunDivideOperator () =
+        let ast = parseString "begin
+                                res : int, x : int;
+                                res := 6;
+                                x := res / 2
+                               end"
+        let intrs = CP ast
+        let resultStack = runInstrs intrs
+        let expectedStack = [6; 3]
+        Assert.AreEqual(expectedStack, resultStack)

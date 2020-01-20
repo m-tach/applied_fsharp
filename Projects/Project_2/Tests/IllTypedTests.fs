@@ -112,6 +112,12 @@ type IllTypedTests() =
     print res * 2
     end"
 
+    let illegalDIVIDE = "begin
+    res : bool;
+    res := true;
+    print res / 2
+    end"
+
     let illegalNEG = "begin
     res : int;
     res := 2;
@@ -158,6 +164,10 @@ type IllTypedTests() =
     [<TestMethod>]
     member this.IllegalTIMESException() = 
         Assert.Throws<Exception> "illegal/illtyped dyadic expression: *" (fun () -> tcP (parseString illegalTIMES))
+
+    [<TestMethod>]
+    member this.IllegalDIVIDEException() = 
+        Assert.Throws<Exception> "illegal/illtyped dyadic expression: /" (fun () -> tcP (parseString illegalDIVIDE))
 
 
     [<TestMethod>]

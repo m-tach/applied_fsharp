@@ -27,6 +27,7 @@ type token =
   | OR
   | INCR
   | DECR
+  | DIVIDE
   | COMMA
   | COLON
   | SEMI
@@ -80,6 +81,7 @@ type tokenId =
     | TOKEN_OR
     | TOKEN_INCR
     | TOKEN_DECR
+    | TOKEN_DIVIDE
     | TOKEN_COMMA
     | TOKEN_COLON
     | TOKEN_SEMI
