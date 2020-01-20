@@ -14,7 +14,7 @@ open CompilerUtil
 open Machine
 
 [<TestClass>]
-type TestOptimizations () =
+type TestConstantFolding () =
     
     let verifyOptimization given expected =
         let actual = Optimizer.optimize given

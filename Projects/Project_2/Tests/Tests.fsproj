@@ -24,6 +24,7 @@
     <Compile Include="ArrayTests.fs" />
     <Compile Include="ConstantFoldingTests.fs" />
     <Compile Include="ParseExpTests.fs" />
+    <Compile Include="OptimizationTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
