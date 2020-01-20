@@ -49,11 +49,16 @@ BasicTyp:
     BTYP                              { BTyp }
   | ITYP                              { ITyp } 
   | CTYP                              { CTyp }
-  | PDEREF BasicTyp                   { PTyp $2 }
+  | PDEREF PATyp                      { PTyp $2 }
+
+PATyp:
+  | BasicTyp LSP RSP                  { ATyp($1,None) }
+  | BasicTyp                          { $1 }
 
 ATyp:
     BasicTyp LSP RSP                  { ATyp($1,None) }
   | BasicTyp LSP INT RSP              { ATyp($1,Some($3)) }
+  | PDEREF BasicTyp LSP INT RSP       { ATyp(PTyp $2,Some($4)) }
 
 Typ:
    | BasicTyp                         { $1 }
