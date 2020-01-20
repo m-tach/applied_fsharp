@@ -9,10 +9,8 @@
     * Parsing implemented
     * Type checking implemented
         * Checks that all returns are of the same type that the function expects
-        * --Checks that everything returns as the last thing within a function 
     * Codegen implemented
     * Supports recursion
-    * --Supports local functions
  * Return is now implemented
     * Checks that there is no returns outside of a function
 
@@ -60,22 +58,18 @@
  * Parsing / Lexing implemented
  * Type-checking only allows int types for this
  * Instructions are is ``<addr>; DUP; LDI; CSTI +-1; ADD; STI``
- * Tests added
  * Codegen added
 
 ## Ternary operators (conditional expressions)
  * Parsing / Lexing implemented - syntax in form of ``condition ? expr1 : expr2`` 
  * Type-checking checks that the condition gives a bool, and that expr1 and expr2 are of the same type.
  * Codegen added
- * Tests added
  * Instructions in form of ``<condition>; IFZERO L1; <expr1>; GOTO L2; Label L1; <expr2>; Label L2`` (L1 = false-case, L2 = end label)
  * Does not work well with arrays/strings, so be careful
 
 ## Optimizations
  * Constant folding
- * --Constant propegation
  * Expression simplification
  * Common subexpression elimination
  * Dead code elimination
  * Branch elimination
- * -- Tail recursion
