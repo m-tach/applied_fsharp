@@ -29,7 +29,11 @@ let main argv =
 
     let ex0Tree = parseFromFile filename
     let instrs = CP ex0Tree
+    //printfn "%A" (CompilerUtil.instrsToString instrs)
+
     let optiInstrs = optimize instrs
+    //printfn "%A" (CompilerUtil.instrsToString optiInstrs)
+
 
 
     //run code
