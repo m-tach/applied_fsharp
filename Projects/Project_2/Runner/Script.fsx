@@ -86,6 +86,6 @@ List.iter exec ["../programs/A4.gc"; "../programs/Swap.gc"; "../programs/QuickSo
 List.iter exec ["../programs/par1.gc"; "../programs/factImpPTyp.gc"; "../programs/QuickSortV2.gc"; "../programs/par2.gc"];;
 
 // Test of programs covered by the fifth task using optimized compilation (Section 8.2):
-//List.iter execOpt ["../programs/par1.gc"; "../programs/factImpPTyp.gc"; "../programs/QuickSortV2.gc"; "../programs/par2.gc"];;
+List.iter execOpt ["../programs/par1.gc"; "../programs/factImpPTyp.gc"; "../programs/QuickSortV2.gc"; "../programs/par2.gc"];;
 
 // ^ TO-DO: Get optimizations into master branch, then update execOpt to use the two-step optimization
