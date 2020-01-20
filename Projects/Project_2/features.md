@@ -37,7 +37,7 @@
            * Since we're using PTyp<Typ>, type checking for function/procedure arguments should also work properly
     * Codegen implemented
            * Array handling not yet added
-    * [ ] Write code so you can't derenference a variable before setting it
+    * No indication of unitialized pointers on typecheck; so usually the pointer points to address 0
 
 ## Arrays
  * [ ] Write explanation of features
