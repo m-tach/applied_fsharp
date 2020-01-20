@@ -25,7 +25,6 @@ type TestOperator () =
         try
             let ast = parseString program
             tcP ast
-            runInstrs (CP ast) |> ignore
         with
         | e -> failwith (String.Format("Program:\n{0}\n\nFailed with: {1}\n\nStacktrace:\n", program, e.Message, e.StackTrace)) 
 
@@ -33,8 +32,7 @@ type TestOperator () =
         let program = String.Format("begin x: {0}, y: {0}, z: bool; z := x {1} y end", typ, oper)
         try
             let ast = parseString program
-            tcP ast
-            runInstrs (CP ast) |> ignore   
+            tcP ast  
         with
         | e -> failwith (String.Format("Program:\n{0}\n\nFailed with: {1}\n\nStacktrace:\n", program, e.Message, e.StackTrace)) 
     let verifyMonoPreExprToBool typ oper =
@@ -42,7 +40,6 @@ type TestOperator () =
         try
             let ast = parseString program
             tcP ast
-            runInstrs (CP ast) |> ignore 
         with
         | e -> failwith (String.Format("Program:\n{0}\n\nFailed with: {1}\n\nStacktrace:\n", program, e.Message, e.StackTrace)) 
     let verifyMonoPreExprDualTyp typ1 typ2 oper =
@@ -50,7 +47,6 @@ type TestOperator () =
         try
             let ast = parseString program
             tcP ast
-            runInstrs (CP ast) |> ignore
         with
         | e -> failwith (String.Format("Program:\n{0}\n\nFailed with: {1}\n\nStacktrace:\n", program, e.Message, e.StackTrace))       
     let verifyMonoPostExprToBool typ oper =
@@ -58,7 +54,13 @@ type TestOperator () =
         try
             let ast = parseString program
             tcP ast
-            runInstrs (CP ast) |> ignore 
+        with
+        | e -> failwith (String.Format("Program:\n{0}\n\nFailed with: {1}\n\nStacktrace:\n", program, e.Message, e.StackTrace))     
+    let verifyMonoPostExprDualTyp typ1 typ2 oper =
+        let program = String.Format("begin x: {0}, z: {1}; z :=  x {2} end", typ1, typ2, oper)
+        try
+            let ast = parseString program
+            tcP ast
         with
         | e -> failwith (String.Format("Program:\n{0}\n\nFailed with: {1}\n\nStacktrace:\n", program, e.Message, e.StackTrace))      
 
@@ -87,7 +89,7 @@ type TestOperator () =
     [<TestMethod>]
     member this.IntLength () = Assert.ThrowsException(fun _ -> verifyMonoPreExprDualTyp "int" "int" "len") |> ignore
     [<TestMethod>]
-    member this.IntDeref () = Assert.ThrowsException(fun _ -> verifyMonoPostExprToBool "int" "^") |> ignore
+    member this.IntDeref () = Assert.ThrowsException(fun _ -> verifyMonoPostExprDualTyp "int" "int" "^") |> ignore
     [<TestMethod>]
     member this.IntAddress () = verifyMonoPreExprDualTyp "int" "^int" "&"
 
@@ -116,7 +118,7 @@ type TestOperator () =
     [<TestMethod>]
     member this.BoolLength () = Assert.ThrowsException(fun _ -> verifyMonoPreExprDualTyp "bool" "int" "len") |> ignore
     [<TestMethod>]
-    member this.BoolDeref () = Assert.ThrowsException(fun _ -> verifyMonoPostExprToBool "bool" "^") |> ignore
+    member this.BoolDeref () = Assert.ThrowsException(fun _ -> verifyMonoPostExprDualTyp "bool" "bool" "^") |> ignore
     [<TestMethod>]
     member this.BoolAddress () = verifyMonoPreExprDualTyp "bool" "^bool" "&"
 
@@ -145,7 +147,7 @@ type TestOperator () =
     [<TestMethod>]
     member this.CharLength () = Assert.ThrowsException(fun _ -> verifyMonoPreExprDualTyp "char" "int" "len") |> ignore
     [<TestMethod>]
-    member this.CharDeref () = Assert.ThrowsException(fun _ -> verifyMonoPostExprToBool "char" "^") |> ignore
+    member this.CharDeref () = Assert.ThrowsException(fun _ -> verifyMonoPostExprDualTyp "char" "char" "^") |> ignore
     [<TestMethod>]
     member this.CharAddress () = verifyMonoPreExprDualTyp "char" "^char" "&"
 
@@ -174,6 +176,35 @@ type TestOperator () =
     [<TestMethod>]
     member this.ArrayLength () = verifyMonoPreExprDualTyp "int[2]" "int" "len"
     [<TestMethod>]
-    member this.ArrayDeref () = Assert.ThrowsException(fun _ -> verifyMonoPostExprToBool "int[2]" "^") |> ignore
+    member this.ArrayDeref () = Assert.ThrowsException(fun _ -> verifyMonoPostExprDualTyp "int[2]" "int[2]" "^") |> ignore
     [<TestMethod>]
     member this.ArrayAddress () = verifyMonoPreExprDualTyp "int[2]" "^int[]" "&"
+
+    [<TestMethod>]
+    member this.IntPtrPlus () = Assert.ThrowsException(fun _ -> verifyBIExpr "^int" "+") |> ignore
+    [<TestMethod>]
+    member this.IntPtrMinus () = Assert.ThrowsException(fun _ -> verifyBIExpr "^int" "-") |> ignore
+    [<TestMethod>]
+    member this.IntPtrMult () = Assert.ThrowsException(fun _ -> verifyBIExpr "^int" "*") |> ignore
+    [<TestMethod>]
+    member this.IntPtrDiv () = Assert.ThrowsException(fun _ -> verifyBIExpr "^int" "/") |> ignore
+    [<TestMethod>]
+    member this.IntPtrEq () = Assert.ThrowsException(fun _ -> verifyBIExprToBool "^int" "=") |> ignore
+    [<TestMethod>]
+    member this.IntPtrLess () = Assert.ThrowsException(fun _ -> verifyBIExprToBool "^int" "<") |> ignore
+    [<TestMethod>]
+    member this.IntPtrLeq () = Assert.ThrowsException(fun _ -> verifyBIExprToBool "^int" "<=") |> ignore
+    [<TestMethod>]
+    member this.IntPtrGeq () = Assert.ThrowsException(fun _ -> verifyBIExprToBool "^int" ">=") |> ignore
+    [<TestMethod>]
+    member this.IntPtrGreater () = Assert.ThrowsException(fun _ -> verifyBIExprToBool "^int" ">") |> ignore
+    [<TestMethod>]
+    member this.IntPtrNeq () = Assert.ThrowsException(fun _ -> verifyBIExprToBool "^int" "<>") |> ignore
+    [<TestMethod>]
+    member this.IntPtrNot () = Assert.ThrowsException(fun _ -> verifyMonoPreExprToBool "^int" "!") |> ignore
+    [<TestMethod>]
+    member this.IntPtrLength () = Assert.ThrowsException(fun _ -> verifyMonoPreExprDualTyp "^int" "int" "len") |> ignore
+    [<TestMethod>]
+    member this.IntPtrDeref () = verifyMonoPostExprDualTyp "^int" "int" "^"
+    [<TestMethod>]
+    member this.IntPtrAddress () = verifyMonoPreExprDualTyp "^int" "^^int" "&"
