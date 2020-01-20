@@ -50,6 +50,9 @@ module DeadCodeAnalyzer =
         let jData = findJumpData allInstrs Map.empty
         removeUnusedLabelsInternal jData allInstrs
 
-    let deadCodeOptimization instrs =
+    let rec public deadCodeOptimization instrs =
         let withoutDeadCode = deadInstrElimination instrs
-        removeUnusedLabels withoutDeadCode
+        let optiInstrs = removeUnusedLabels withoutDeadCode
+        if optiInstrs.Length <> instrs.Length
+        then deadCodeOptimization optiInstrs
+        else optiInstrs
