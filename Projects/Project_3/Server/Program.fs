@@ -16,11 +16,10 @@
         let playerPaddleSize = (1, 3); //paddle is 1 wide and 3 long 
 
         ///Move player one up
-        let moveUp pos = (fst pos , (snd pos - 1.0))
+        let moveUp pos score = if snd pos < 10.0 then ((fst pos , (snd pos + 1.0)), score) else ((fst pos, snd pos), score)
         
         ///Move player one down
-        let moveDown pos = (fst pos , (snd pos + 1.0))
-
+        let moveDown pos score = if snd pos > -10.0 then ((fst pos , (snd pos - 1.0)), score) else ((fst pos, snd pos), score)
 
         let incrementScore player: PlayerData = (fst player, (snd player + 1) )
 
