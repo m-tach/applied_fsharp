@@ -25,37 +25,65 @@
 
         let restartGame (player1, player2) : GameState = 
             printfn "Ball has left the field : restarting game"
+            printfn "Player1 score: %d " (snd player1)
+            printfn "Player2 score: %d " (snd player2)
             (
                 ((0.0, 0.0), (-1.0, 1.0)), //Ball
                 ((-10.0, 0.0), snd player1), //Player 1
                 ((10.0, 0.0), snd player2) //Player 2
             ) 
 
+        let checkBounds (ball':Ball, player1:PlayerData, player2:PlayerData) : GameState =
+            let rx = fst (fst ball')
+            let ry = snd (fst ball')
+            let vy = snd (snd ball')
+
+            if rx +  fst (snd ball') < -9.0 then //is ball at left edge
+                if (((ry + vy) > (fst (fst player1) + 1.5)) ||             
+                    ((ry + vy) < fst (fst player1) - 1.5)) 
+                then 
+                    printfn "Player1 missed ball"
+                    restartGame (player1, incrementScore player2)
+                else 
+                    printfn "Player1 hit ball"
+                    (ball',player1, player2)    
+
+            else if rx +  fst (snd ball') > 9.0 then
+                if (((ry + vy) > (fst (fst player2) + 1.5)) ||             //is ball hitting player1
+                    ((ry + vy) < fst (fst player2) - 1.5)) 
+                then 
+                    printfn "Player2 missed ball"
+                    restartGame (incrementScore player1, player2)
+                else 
+                    printfn "Player2 hit ball"
+                    (ball', player1, player2)
+
+            else
+                (ball', player1, player2)                            
+
         ///Move ball; change direction if hitting top edge; bottom edge; player paddle
         ///Change score if gone through edge and restart from center
         let moveBall (ball':Ball, player1:PlayerData, player2:PlayerData) : Ball = 
             let rx = fst (fst ball')
             let ry = snd (fst ball')
-
+            
+            // change direction when hitting top / bottom
             let vy = if (ry + snd (snd ball') + ballRadius > 10.0) then -(snd (snd ball'))
                      elif (ry + snd (snd ball') + ballRadius < -10.0) then -(snd (snd ball'))
-                     else snd (snd ball')            
+                     else snd (snd ball')
+                                 
             let vx = if rx +  fst (snd ball') < -9.0 then //is ball at left edge
-                        if (((ry + vy) > (fst (fst player1) + 1.5)) ||             //is ball hitting player1
-                            ((ry + vy) < fst (fst player1) - 1.5)) 
-                        then 
-                            restartGame (player1, incrementScore player2)
-                            1.0
-                        else //player 1 has hit ball
-                            -(fst (snd ball'))
+                        if (((ry + vy) < (fst (fst player1) + 1.5)) ||             //is ball hitting player1
+                            ((ry + vy) > fst (fst player1) - 1.5)) 
+                            then -(fst (snd ball'))
+                        else 
+                            1.0                                                
                      elif rx +  fst (snd ball') > 9.0 then //is ball at right edge
-                        if (((ry + vy) > fst (fst player2) + 1.5) ||             //is ball hitting player2
-                            ((ry + vy) < fst (fst player2) - 1.5)) 
-                        then 
-                            restartGame (incrementScore player1, player2)
-                            1.0
-                        else //player 2 has hit ball
-                            -(fst (snd ball'))
+                        if (((ry + vy) < fst (fst player2) + 1.5) ||             //is ball hitting player2
+                            ((ry + vy) > fst (fst player2) - 1.5)) 
+                            then -(fst (snd ball'))
+                        else
+                            1.0                                                
                      else
                         fst (snd ball')
             ((rx + vx, ry + vy),(vx, vy))
@@ -72,10 +100,10 @@
                                      | Down -> (player1, moveDown  player2)              
                             else
                                 (player1, player2)    
-            
-            let newBall = moveBall (ball, player1, player2)
+            let (outside, p1', p2') = checkBounds(ball, p1, p2)
+            let newBall = moveBall (outside, p1', p2')
 
-            (newBall, p1, p2)
+            (newBall, p1', p2')
 
 
 
@@ -86,14 +114,14 @@
 
         let rec start() = 
             async {
-                printfn "state: start"; 
+                //printfn "state: start"; 
                 return! waitingForPlayers()
                 }    
 
         /// wait until two players are connected
         and waitingForPlayers() = 
             async {
-                printfn "state: waitingForPlayers"; 
+                //printfn "state: waitingForPlayers"; 
                 let! msg = ev.Receive();
                 match msg with
                  | "Two players have now joined"  -> return! playGame()
@@ -104,7 +132,7 @@
         and playGame() = 
             async {
 
-                printfn "state: playGame";                 
+                //printfn "state: playGame";                 
                 return! sendNewState( 
                     ((0.0, 0.0), (-1.0, 1.0)), //Ball
                     ((-10.0, 0.0), 0), //Player 1
@@ -115,7 +143,7 @@
         ///sends a GameState to connected players
         and sendNewState(state: GameState) = 
             async {
-                printfn "state: sendNewState";
+                //printfn "state: sendNewState";
                 printfn "GameState: %A" (state)
                 //TODO: send gameState via Comm library
                 return! waitForClientInput(state)
@@ -124,7 +152,7 @@
         ///updates PlayerData for corresponding player
         and waitForClientInput(state: GameState) = 
             async {
-                printfn "state: waitForClientInput"; 
+                //printfn "state: waitForClientInput"; 
                 let! msg = ev.Receive();
                 //TODO: replace strings with actual events (how to identify which player is which)
                 match msg with
@@ -142,7 +170,7 @@
         /// call "Start" to launch a new Server 
         [<EntryPoint>]
         let main argv =
-            printfn "Main"
+            //printfn "Main"
             Async.StartImmediate (start())
             ev.Post "Two players have now joined"
             for i in 1 .. 200 do
