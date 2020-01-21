@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net48</TargetFramework>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
   <ItemGroup>
@@ -12,6 +12,9 @@
     <ProjectReference Include="..\Client\Client.fsproj">
       <Name>Client.fsproj</Name>
     </ProjectReference>
+    <Reference Include="PresentationFramework">
+      <HintPath>.\PresentationFramework.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
