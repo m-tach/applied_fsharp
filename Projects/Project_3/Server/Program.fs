@@ -6,8 +6,6 @@
 
     open SharedTypes.SharedTypes 
 
-
-
     /// Automaton for the Server, hosting a ping-pong game
     module StateMachine = 
     //TODO: for now, event queue stores strings
