@@ -16,17 +16,20 @@
         let playerPaddleSize = (1, 3); //paddle is 1 wide and 3 long 
 
         ///Move player one up
-        let moveUp pos score = if snd pos < 10.0 then ((fst pos , (snd pos + 1.0)), score) else ((fst pos, snd pos), score)
+        let moveUp (pos, score) : PlayerData = if snd pos < 10.0 then ((fst pos , (snd pos + 1.0)), score) else ((fst pos, snd pos), score)
         
         ///Move player one down
-        let moveDown pos score = if snd pos > -10.0 then ((fst pos , (snd pos - 1.0)), score) else ((fst pos, snd pos), score)
+        let moveDown (pos, score) : PlayerData = if snd pos > -10.0 then ((fst pos , (snd pos - 1.0)), score) else ((fst pos, snd pos), score)
 
         let incrementScore player: PlayerData = (fst player, (snd player + 1) )
 
         let restartGame (player1, player2) : GameState = 
-            (((0.0, 0.0), (-0.015, 0.015)), //Ball
-            ((-10.0, 0.0), snd player1), //Player 1
-            ((10.0, 0.0), snd player2)) //Player 2
+            printfn "Ball has left the field : restarting game"
+            (
+                ((0.0, 0.0), (-1.0, 1.0)), //Ball
+                ((-10.0, 0.0), snd player1), //Player 1
+                ((10.0, 0.0), snd player2) //Player 2
+            ) 
 
         ///Move ball; change direction if hitting top edge; bottom edge; player paddle
         ///Change score if gone through edge and restart from center
@@ -38,37 +41,41 @@
                      elif (ry + snd (snd ball') + ballRadius < -10.0) then -(snd (snd ball'))
                      else snd (snd ball')            
             let vx = if rx +  fst (snd ball') < -9.0 then //is ball at left edge
-                        if (((ry + vy) > (fst (fst player1) + 1.5)) || 
+                        if (((ry + vy) > (fst (fst player1) + 1.5)) ||             //is ball hitting player1
                             ((ry + vy) < fst (fst player1) - 1.5)) 
                         then 
-                            incrementScore player2 |> ignore
-                            restartGame (player1, player2) |> ignore
-                            0.015
+                            restartGame (player1, incrementScore player2)
+                            1.0
                         else //player 1 has hit ball
                             -(fst (snd ball'))
                      elif rx +  fst (snd ball') > 9.0 then //is ball at right edge
-                        if (((ry + vy) > fst (fst player2) + 1.5) || ((ry + vy) < fst (fst player1) - 1.5)) 
+                        if (((ry + vy) > fst (fst player2) + 1.5) ||             //is ball hitting player2
+                            ((ry + vy) < fst (fst player2) - 1.5)) 
                         then 
-                            incrementScore player1 |> ignore 
-                            restartGame (player1, player2) |> ignore
-                            0.015
+                            restartGame (incrementScore player1, player2)
+                            1.0
                         else //player 2 has hit ball
                             -(fst (snd ball'))
                      else
                         fst (snd ball')
-                    
-
-            //is ball hitting player2
             ((rx + vx, ry + vy),(vx, vy))
 
         ///Derive new state from old state + key press command
-        let calculateState ((ball, player1, player2), command:Input) : GameState =   
-            let newPlayer1 = match command with
-                             | Up -> (moveUp (fst player1), 0)
-                             | Down -> (moveDown (fst player1), 0)
+        let calculateState ((ball, player1, player2), command:Input, player: String) : GameState =
+            let (p1, p2 ) = if (player = "P1") then 
+                                match command with
+                                | Up -> (moveUp player1, player2)
+                                | Down -> (moveDown  player1, player2)
+                            elif (player = "P2") then 
+                                match command with
+                                     | Up -> (player1, moveUp player2)
+                                     | Down -> (player1, moveDown  player2)              
+                            else
+                                (player1, player2)    
+            
             let newBall = moveBall (ball, player1, player2)
 
-            (newBall, newPlayer1, player2)
+            (newBall, p1, p2)
 
 
 
@@ -99,7 +106,7 @@
 
                 printfn "state: playGame";                 
                 return! sendNewState( 
-                    ((0.0, 0.0), (-0.015, 0.015)), //Ball
+                    ((0.0, 0.0), (-1.0, 1.0)), //Ball
                     ((-10.0, 0.0), 0), //Player 1
                     ((10.0, 0.0), 0) //Player 2
                     )
@@ -119,11 +126,16 @@
             async {
                 printfn "state: waitForClientInput"; 
                 let! msg = ev.Receive();
+                //TODO: replace strings with actual events (how to identify which player is which)
                 match msg with
-                 | "Up" -> 
-                     return! sendNewState(GameEngine.calculateState(state, Up))
-                 | "Down" -> 
-                     return! sendNewState(GameEngine.calculateState(state, Down))
+                 | "Up;P1" -> 
+                     return! sendNewState(GameEngine.calculateState(state, Up, "P1" ))
+                 | "Up;P2" -> 
+                     return! sendNewState(GameEngine.calculateState(state, Up, "P2" ))
+                 | "Down;P1" -> 
+                     return! sendNewState(GameEngine.calculateState(state, Down, "P1"))
+                 | "Down;P2" -> 
+                     return! sendNewState(GameEngine.calculateState(state, Down, "P2"))
                  | _         -> failwith("waitForClientInput: unexpected message")
                 }    
 
@@ -135,9 +147,9 @@
             ev.Post "Two players have now joined"
             for i in 1 .. 200 do
                 Thread.Sleep(500)
-                ev.Post "Up"
+                ev.Post "Up;P1"
                 Thread.Sleep(500)
-                ev.Post "Up"
+                ev.Post "Up;P2"
                 Thread.Sleep(500)
-                ev.Post "Up"
+                ev.Post "Up;P1"
             0 // return an integer exit code
