@@ -1,26 +1,48 @@
-﻿// Learn more about F# at http://fsharp.org
+﻿namespace Server
+// Learn more about F# at http://fsharp.org
 
-open System
+    open System
+    open SharedTypes.SharedTypes
 
-/// Automaton for the Server, hosting a ping-pong game
-let rec start() = 
-    async {printfn "start"; return! waitingForPlayers()}    
+    module StateMachine = 
+    //TODO: for now, event queue stores strings
+        let ev = AsyncEventQueue<String>()
 
-and waitingForPlayers() = 
-    async {printfn "waitingForPlayers"; return! playGame()}    
+        /// Automaton for the Server, hosting a ping-pong game
+        let rec start() = 
+            async {printfn "state: start"; return! waitingForPlayers()}    
 
-and playGame() = 
-    async {printfn "playGame"; return! sendNewState()}
+        /// wait until two players are connected
+        and waitingForPlayers() = 
+            async {
+                printfn "state: waitingForPlayers"; 
+                let! msg = ev.Receive();
+                match msg with
+                 | "Start"  -> return! playGame()
+                 | _         -> failwith("waitingForPlayers: unexpected message")
+                }
 
-and sendNewState() = 
-    async {printfn "sendNewState"; return! waitForClientInput()}   
+        ///TODO: is this state needed? 
+        and playGame() = 
+            async {
+                printfn "playGame"; return! sendNewState()
+                }
 
-and waitForClientInput() = 
-    async {printfn "waitForClientInput"; return! sendNewState()}    
+        and sendNewState() = 
+            async {
+                printfn "sendNewState"; return! waitForClientInput()
+                }   
 
-/// call "Start" to launch a new Server 
-[<EntryPoint>]
-let main argv =
-    printfn "Main"
-    Async.StartImmediate (start())
-    0 // return an integer exit code
+        and waitForClientInput() = 
+            async {
+                printfn "waitForClientInput"; return! sendNewState()
+                }    
+
+        /// call "Start" to launch a new Server 
+        [<EntryPoint>]
+        let main argv =
+            printfn "Main"
+            Async.StartImmediate (start())
+            ev.Post "Start"
+
+            0 // return an integer exit code
