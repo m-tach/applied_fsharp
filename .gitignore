@@ -265,3 +265,4 @@ Projects/Project_2/Compiler/Lexer.fs
 Projects/Project_2/Compiler/Parser.fs
 Projects/Project_2/Compiler/Parser.fsyacc.output
 Projects/Project_2/Compiler/Parser.fsi
+*.uxf
