@@ -1,4 +1,4 @@
-﻿namespace Game
+﻿namespace Client
 
 module Say =
     let hello name =
