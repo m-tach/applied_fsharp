@@ -23,7 +23,7 @@ let runAST ast =
 
 [<EntryPoint>]
 let main argv =
-    let filename = "../programs/QuickSortV2.gc"
+    let filename = "../programs/QuickSortV1.gc"
     //let filename = "../programs/factRec.gc"
     //let filename = "../programs/StringPrints.gc"
 
