@@ -6,10 +6,14 @@
 
     open SharedTypes.SharedTypes
 
-    /// Given an input, returns a new GameState
+    /// Given an input key, calculates a new GameState
     module GameEngine =
+        let third (_, _, c) = c
+
         ///used for bouncing off walls
-        let ballRadius = 1;
+        let ballRadius = 1.0;
+        //used for hitting ball
+        let playerPaddleSize = (1, 3); //paddle is 1 wide and 3 long 
 
         ///Move player one up
         let moveUp pos = (fst pos , (snd pos - 1.0))
@@ -17,16 +21,55 @@
         ///Move player one down
         let moveDown pos = (fst pos , (snd pos + 1.0))
 
-        ///Move ball 
-        let moveBall (ball':Ball) : Ball = 
+
+        let incrementScore player: PlayerData = (fst player, (snd player + 1) )
+
+        let restartGame (player1, player2) : GameState = 
+            (((0.0, 0.0), (-0.015, 0.015)), //Ball
+            ((-10.0, 0.0), snd player1), //Player 1
+            ((10.0, 0.0), snd player2)) //Player 2
+
+        ///Move ball; change direction if hitting top edge; bottom edge; player paddle
+        ///Change score if gone through edge and restart from center
+        let moveBall (ball':Ball, player1:PlayerData, player2:PlayerData) : Ball = 
             let rx = fst (fst ball')
             let ry = snd (fst ball')
-            let vx = fst (snd ball')
-            let vy = snd (snd ball')
+
+            let vy = if (ry + snd (snd ball') + ballRadius > 10.0) then -(snd (snd ball'))
+                     elif (ry + snd (snd ball') + ballRadius < -10.0) then -(snd (snd ball'))
+                     else snd (snd ball')            
+            let vx = if rx +  fst (snd ball') < -9.0 then //is ball at left edge
+                        if (((ry + vy) > (fst (fst player1) + 1.5)) || 
+                            ((ry + vy) < fst (fst player1) - 1.5)) 
+                        then 
+                            incrementScore player2 |> ignore
+                            restartGame (player1, player2) |> ignore
+                            0.015
+                        else //player 1 has hit ball
+                            -(fst (snd ball'))
+                     elif rx +  fst (snd ball') > 9.0 then //is ball at right edge
+                        if (((ry + vy) > fst (fst player2) + 1.5) || ((ry + vy) < fst (fst player1) - 1.5)) 
+                        then 
+                            incrementScore player1 |> ignore 
+                            restartGame (player1, player2) |> ignore
+                            0.015
+                        else //player 2 has hit ball
+                            -(fst (snd ball'))
+                     else
+                        fst (snd ball')
+                    
+
+            //is ball hitting player2
             ((rx + vx, ry + vy),(vx, vy))
 
-        let calculateState playerData =   
-            playerData 
+        ///Derive new state from old state + key press command
+        let calculateState ((ball, player1, player2), command:Input) : GameState =   
+            let newPlayer1 = match command with
+                             | Up -> (moveUp (fst player1), 0)
+                             | Down -> (moveDown (fst player1), 0)
+            let newBall = moveBall (ball, player1, player2)
+
+            (newBall, newPlayer1, player2)
 
 
 
@@ -56,27 +99,32 @@
             async {
 
                 printfn "state: playGame";                 
-                return! sendNewState(GameEngine.moveBall( (0.0, 0.0), (-0.015, 0.015)))
+                return! sendNewState( 
+                    ((0.0, 0.0), (-0.015, 0.015)), //Ball
+                    ((-10.0, 0.0), 0), //Player 1
+                    ((10.0, 0.0), 0) //Player 2
+                    )
                 }
 
         ///sends a GameState to connected players
-        and sendNewState(state: Ball) = 
+        and sendNewState(state: GameState) = 
             async {
                 printfn "state: sendNewState";
-                printfn "Ball position: %A" (fst state)
+                printfn "GameState: %A" (state)
+                //TODO: send gameState via Comm library
                 return! waitForClientInput(state)
                 }
 
         ///updates PlayerData for corresponding player
-        and waitForClientInput(state: Ball) = 
+        and waitForClientInput(state: GameState) = 
             async {
                 printfn "state: waitForClientInput"; 
                 let! msg = ev.Receive();
                 match msg with
                  | "Up" -> 
-                     return! sendNewState(GameEngine.moveBall(state))
+                     return! sendNewState(GameEngine.calculateState(state, Up))
                  | "Down" -> 
-                     return! sendNewState(GameEngine.moveBall(state))
+                     return! sendNewState(GameEngine.calculateState(state, Down))
                  | _         -> failwith("waitForClientInput: unexpected message")
                 }    
 
@@ -86,10 +134,11 @@
             printfn "Main"
             Async.StartImmediate (start())
             ev.Post "Two players have now joined"
-            Thread.Sleep(500)
-            ev.Post "Up"
-            Thread.Sleep(500)
-            ev.Post "Up"
-            Thread.Sleep(500)
-            ev.Post "Up"
+            for i in 1 .. 200 do
+                Thread.Sleep(500)
+                ev.Post "Up"
+                Thread.Sleep(500)
+                ev.Post "Up"
+                Thread.Sleep(500)
+                ev.Post "Up"
             0 // return an integer exit code
