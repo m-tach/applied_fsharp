@@ -97,6 +97,26 @@ namespace FrontendWpf3
 
 		// Exit a game screen. Brings you to the lobby.
 		private void ExitGameBtn_Click(object sender, RoutedEventArgs e) => SetScreen(ScreenLobby);
+
+		private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+		{
+			SharedTypes.SharedTypes.Input input = null;
+			switch (e.Key)
+			{
+				case System.Windows.Input.Key.W:
+				case System.Windows.Input.Key.Up:
+					input = SharedTypes.SharedTypes.Input.Up;
+					break;
+				case System.Windows.Input.Key.S:
+				case System.Windows.Input.Key.Down:
+					input = SharedTypes.SharedTypes.Input.Down;
+					break;
+				case System.Windows.Input.Key.Escape:
+					input = SharedTypes.SharedTypes.Input.Escape;
+					break;
+			}
+			//if (input != null) client.KeyPressed(input);
+		}
 	}
 
 	// Placeholder, until we tie together the FS modules and this.

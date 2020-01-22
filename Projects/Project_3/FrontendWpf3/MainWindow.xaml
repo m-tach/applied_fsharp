@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FrontendWpf3"
         mc:Ignorable="d"
-        Title="Ping Pong" Height="450" Width="800" ResizeMode="NoResize" Loaded="Window_Loaded">
+        Title="Ping Pong" Height="450" Width="800" ResizeMode="NoResize" Loaded="Window_Loaded" KeyDown="Window_KeyDown">
 	<Grid x:Name="WindowContent">
 		<StackPanel x:Name="ScreenLobby" Margin="10" Visibility="Hidden">
 			<Label x:Name="TitleLobby" Content="Games" Height="32" VerticalAlignment="Top" FontSize="14" FontWeight="Bold"/>
