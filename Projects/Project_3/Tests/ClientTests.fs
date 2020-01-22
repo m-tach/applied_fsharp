@@ -3,13 +3,13 @@ namespace Tests
 open System
 open Microsoft.VisualStudio.TestTools.UnitTesting
 open SharedTypes.SharedTypes
-open Client.StateMachine
+open Client.ClientStateMachine
 
 [<TestClass>]
 type ClientTests () =
 
     [<TestMethod>]
     member this.RunClientStateMachine () =
-        Async.StartImmediate (start()) 
-        ev.Post "Host game"
+        Async.StartImmediate (startLobby()) 
+        ev.Post HostGame
         Assert.IsTrue(false);

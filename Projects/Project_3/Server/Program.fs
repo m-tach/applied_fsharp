@@ -10,37 +10,59 @@
     open GameEngine
 
     /// Automaton for the Server, hosting a ping-pong game
-    module StateMachine = 
-    //TODO: for now, event queue stores strings
-        let ev = AsyncEventQueue<String>()
+    /// TODO: make state machine a type
+    module ServerStateMachine = 
+        let ev = AsyncEventQueue<SharedTypes.SharedTypes.Message>()
+        ///nwRec listens for incoming traffic on 9001 and adds it to queue
+        let nwRec = NetworkReceiver(9001)
+        nwRec.StartListening();
+        nwRec.ReceiveMessageEvent.Add(fun x -> ev.Post(x))
+        //nwSender for broadcasts
+        let mutable nwSender = NetworkSender(9001, IPAddress.Loopback) 
+        let mutable nwSenderPlayer1 = NetworkSender(9001, IPAddress.Loopback) 
+        let mutable nwSenderPlayer2 = NetworkSender(9001, IPAddress.Loopback) 
+        let mutable serverName = "NOT SET"
 
-        let rec start() = 
+        let rec start(serverName': string) = 
             async {
                 //printfn "state: start"; 
-                return! waitingForPlayers()
-                }    
-
-        /// wait until two players are connected
-        and waitingForPlayers() = 
+                serverName <- serverName';
+                return! waitingFor2Players()
+            }    
+        
+        and waitingFor2Players() = 
             async {
-                //printfn "state: waitingForPlayers"; 
-                let nwRec = NetworkReceiver(9001)
-                nwRec.StartListening();
-                // TODO: handle different types of messages
-                nwRec.ReceiveMessageEvent.Add( 
-                    fun x -> ev.Post(System.Text.Encoding.UTF8.GetString(x)) 
-                    )
+                //printfn "state: waitingFor2Players"; 
                 let! msg = ev.Receive();
                 match msg with
-                 | "Two players have now joined"  -> return! playGame()
-                 | _         -> failwith("waitingForPlayers: unexpected message")
-                }
+                | RequestServers ipAddress -> nwSender <- NetworkSender(9001, ipAddress);
+                                              do! nwSender.Send(Server(GameServer(serverName, getOwnIpAddress)));
+                                              return! waitingFor2Players();   
+                | JoinGame ipAddress ->  nwSenderPlayer1 <- NetworkSender(9001, ipAddress);
+                                         do! nwSenderPlayer1.Send(YouJoinedTheGame(1));
+                                         return! waitingFor1Player();
+                | _        -> return! waitingFor2Players()
+            }
+
+        /// wait until two players are connected
+        and waitingFor1Player() = 
+            async {
+                //printfn "state: waitingForPlayers"; 
+                let! msg = ev.Receive();
+                match msg with
+                | RequestServers ipAddress -> nwSender <- NetworkSender(9001, ipAddress);
+                                              do! nwSender.Send(Server(GameServer(serverName, getOwnIpAddress)));
+                                              return! waitingFor1Player();   
+                | JoinGame ipAddress ->  nwSenderPlayer1 <- NetworkSender(9001, ipAddress);
+                                         do! nwSenderPlayer1.Send(YouJoinedTheGame(2));
+                                         return! startGame();
+                | _         -> return! waitingFor1Player()
+            }
 
         ///TODO: is this state needed? leave it for now incase WPF needs smthg special 
-        and playGame() = 
-            async {
-                //printfn "state: playGame";                 
-                return! sendNewState( 
+        and startGame() = 
+            async {                
+                return! waitFor2Inputs( 
                     GameState(
                         Ball(Vector(0.0f, 0.0f), Vector(-1.0f, 1.0f)), //Ball
                         PlayerData(Vector(-10.0f, 0.0f), 0), //Player 1
@@ -49,67 +71,52 @@
                     )
                 }
 
-        ///sends a GameState to connected players
-        and sendNewState(state: GameState) = 
-            async {
-                //printfn "state: sendNewState";
-                printfn "GameState: %A" (state)
-                //TODO: send gameState via Comm library
-                return! waitForClientInput(state)
-                }
-
-        ///updates PlayerData for corresponding player
-        and waitForClientInput(state: GameState) = 
-            async {
-                //printfn "state: waitForClientInput"; 
+        and waitFor2Inputs(state: GameState) = 
+            async {  
                 let! msg = ev.Receive();
-                //TODO: replace strings with actual events (how to identify which player is which)
                 match msg with
-                 | "Up;P1" -> 
-                     return! sendNewState(GameEngine.calculateState(state.Ball, state.Player1, state.Player2, Up, "P1" ))
-                 | "Up;P2" -> 
-                     return! sendNewState(GameEngine.calculateState(state.Ball, state.Player1, state.Player2, Up, "P2" ))
-                 | "Down;P1" -> 
-                     return! sendNewState(GameEngine.calculateState(state.Ball, state.Player1, state.Player2, Down, "P1"))
-                 | "Down;P2" -> 
-                     return! sendNewState(GameEngine.calculateState(state.Ball, state.Player1, state.Player2, Down, "P2"))
-                 | _         -> failwith("waitForClientInput: unexpected message")
-                }    
+                | PlayerInput (playerId, Escape) ->
+                    return! leaving()
+                | PlayerInput (playerId, key) -> 
+                    let updatedState = GameEngine.calculateState(state.Ball, state.Player1, state.Player2, key, playerId)
+                    return! waitFor1Inputs(updatedState);
+                |_ -> return! waitFor2Inputs(state: GameState)
+
+            }
+
+        and waitFor1Inputs(state: GameState) = 
+            async {                
+                let! msg = ev.Receive();
+                match msg with
+                | PlayerInput (playerId, Escape) ->
+                    return! leaving()
+                | PlayerInput (playerId, key) -> 
+                    let updatedState = GameEngine.calculateState(state.Ball, state.Player1, state.Player2, key, playerId)
+                    return! sendGameStateUpdate(updatedState);
+                |_ ->return! waitFor1Inputs(state);
+            }
+
+        ///sends a GameState to connected players
+        and sendGameStateUpdate(state: GameState) = 
+            async {            
+                printfn "GameState: %A" (state)
+                do! nwSenderPlayer1.Send(GameStateUpdate(state));
+                do! nwSenderPlayer2.Send(GameStateUpdate(state));
+                return! waitFor2Inputs(state)
+                }
+                
+        //when an ESC is pressed -> server dies
+        and leaving() =
+              async {            
+                do! nwSenderPlayer1.Send(GameDone);
+                do! nwSenderPlayer2.Send(GameDone);
+                //server dies
+            }      
 
         /// call "Start" to launch a new Server 
         [<EntryPoint>]
-        let main argv =
-            //Testing ball movement in game engine
-            Async.StartImmediate (start())
-            ev.Post "Two players have now joined"
-            for i in 1 .. 20 do
-                Thread.Sleep(500)
-                ev.Post "Up;P1"
-                Thread.Sleep(500)
-                ev.Post "Up;P2"
-                Thread.Sleep(500)
-                ev.Post "Down;P1"
-                Thread.Sleep(500)
-                ev.Post "Up;P1"
-
-            //Testing broadcasting
-            let receiver = NetworkReceiver(9001)
-            let sender = NetworkSender(9001, IPAddress.Loopback)
-
-            receiver.ReceiveMessageEvent.Add(fun x -> printfn "%s" (System.Text.Encoding.UTF8.GetString(x)))
-
-            receiver.StartListening()
-
-            Async.RunSynchronously (Broadcast(System.Text.Encoding.UTF8.GetBytes("the thing!"), 9001))
-            Async.RunSynchronously (Broadcast(System.Text.Encoding.UTF8.GetBytes("the thing!"), 9001))
-            Async.RunSynchronously (Broadcast(System.Text.Encoding.UTF8.GetBytes("the thing!"), 9001))
-            Async.RunSynchronously (Broadcast(System.Text.Encoding.UTF8.GetBytes("the thing!"), 9001))
-
-
-            Async.RunSynchronously (sender.Send(System.Text.Encoding.UTF8.GetBytes("the taahing!"))) |> ignore
-            Async.RunSynchronously (sender.Send(System.Text.Encoding.UTF8.GetBytes("the taahing!"))) |> ignore
-            Async.RunSynchronously (sender.Send(System.Text.Encoding.UTF8.GetBytes("the taahing!"))) |> ignore
-            Async.RunSynchronously (sender.Send(System.Text.Encoding.UTF8.GetBytes("the taahing!"))) |> ignore
-
-            Async.RunSynchronously (Async.Sleep(3000))            
+        let main argv = 
+            //TODO: fix this
+            let serverName = argv.[0]
+            Async.StartImmediate (start(serverName))                                   
             0 // return an integer exit code

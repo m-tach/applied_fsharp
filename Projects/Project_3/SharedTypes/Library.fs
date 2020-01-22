@@ -153,7 +153,7 @@ module SharedTypes =
             GameServer(stream.ReadString(), IPAddress.Parse(stream.ReadString()))
 
     type public Message = 
-       | RequestServers
+       | RequestServers of IPAddress
        | Server of GameServer
        | JoinGame of IPAddress
        | YouJoinedTheGame of int
@@ -161,7 +161,7 @@ module SharedTypes =
        | GameDone
        | GameStateUpdate of GameState
        | PlayerInput of int * Input
-       | HostGame 
+       | HostGame of string
 
         member public this.ToBytes() =
             use storageStream = new MemoryStream()
