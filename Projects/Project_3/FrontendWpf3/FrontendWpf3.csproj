@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Client/Client.fsproj">
+      <Name>Client.fsproj</Name>
+    </ProjectReference>
+    <ProjectReference Include="../SharedTypes/SharedTypes.fsproj">
+      <Name>SharedTypes.fsproj</Name>
+    </ProjectReference>
+  </ItemGroup>
+
+</Project>
