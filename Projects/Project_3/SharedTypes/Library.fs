@@ -167,7 +167,9 @@ module SharedTypes =
             use storageStream = new MemoryStream()
             use byteWriter = new BinaryWriter(storageStream)
             match this with
-            | RequestServers -> byteWriter.Write(0uy)
+            | RequestServers(ip) -> byteWriter.Write(0uy)
+                                    let addressAsBytes = System.Text.Encoding.UTF8.GetBytes(ip.ToString())
+                                    byteWriter.Write(addressAsBytes, 0, addressAsBytes.Length)
             | Server(gs) -> byteWriter.Write(1uy)
                             gs.ToStream(byteWriter)
             | JoinGame(ip) -> byteWriter.Write(2uy)
@@ -187,7 +189,7 @@ module SharedTypes =
             use storageStream = new MemoryStream(bytes)
             use byteReader = new BinaryReader(storageStream)
             match byteReader.ReadByte() with
-            | 0uy -> RequestServers
+            | 0uy -> RequestServers(IPAddress.Parse(byteReader.ReadString()))
             | 1uy -> Server(GameServer.FromStream(byteReader))
             | 2uy -> JoinGame(IPAddress.Parse(byteReader.ReadString()))
             | 3uy -> YouJoinedTheGame(byteReader.ReadInt32())
