@@ -100,21 +100,15 @@ namespace FrontendWpf3
 
 		private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
 		{
-			SharedTypes.SharedTypes.Input input = null;
-			switch (e.Key)
+			SharedTypes.SharedTypes.Input input = e.Key switch
 			{
-				case System.Windows.Input.Key.W:
-				case System.Windows.Input.Key.Up:
-					input = SharedTypes.SharedTypes.Input.Up;
-					break;
-				case System.Windows.Input.Key.S:
-				case System.Windows.Input.Key.Down:
-					input = SharedTypes.SharedTypes.Input.Down;
-					break;
-				case System.Windows.Input.Key.Escape:
-					input = SharedTypes.SharedTypes.Input.Escape;
-					break;
-			}
+				System.Windows.Input.Key.W => SharedTypes.SharedTypes.Input.Up,
+				System.Windows.Input.Key.Up => SharedTypes.SharedTypes.Input.Up,
+				System.Windows.Input.Key.S => SharedTypes.SharedTypes.Input.Down,
+				System.Windows.Input.Key.Down => SharedTypes.SharedTypes.Input.Down,
+				System.Windows.Input.Key.Escape => SharedTypes.SharedTypes.Input.Escape,
+				_ => null
+			};
 			//if (input != null) client.KeyPressed(input);
 		}
 	}
