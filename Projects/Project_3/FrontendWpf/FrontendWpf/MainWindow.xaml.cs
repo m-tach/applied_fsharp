@@ -53,6 +53,9 @@ namespace FrontendWpf
 			GameCanvasPlayer2.Y2 = middleY + state.Player2.Position.Y * 10 + 80;
 
 			GameCanvasBall.Margin = new Thickness(middleX + state.Ball.BallPosition.X * 10, middleY + state.Ball.BallPosition.Y * 10, 0, 0);
+
+			Player1Score.Content = $"P1: {state.Player1.Score} Points";
+			Player2Score.Content = $"P2: {state.Player2.Score} Points";
 		}
 
 		// When the window has loaded, ping for game hosts and get 'em.
