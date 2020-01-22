@@ -7,6 +7,7 @@
 
     open SharedTypes.NetworkStuff
     open SharedTypes.SharedTypes 
+    open GameEngine
 
     /// Automaton for the Server, hosting a ping-pong game
     module StateMachine = 
@@ -38,12 +39,13 @@
         ///TODO: is this state needed? leave it for now incase WPF needs smthg special 
         and playGame() = 
             async {
-
                 //printfn "state: playGame";                 
                 return! sendNewState( 
-                    ((0.0, 0.0), (-1.0, 1.0)), //Ball
-                    ((-10.0, 0.0), 0), //Player 1
-                    ((10.0, 0.0), 0) //Player 2
+                    GameState(
+                        Ball(Vector(0.0f, 0.0f), Vector(-1.0f, 1.0f)), //Ball
+                        PlayerData(Vector(-10.0f, 0.0f), 0), //Player 1
+                        PlayerData(Vector(10.0f, 0.0f), 0) //Player 2
+                        )
                     )
                 }
 
@@ -64,13 +66,13 @@
                 //TODO: replace strings with actual events (how to identify which player is which)
                 match msg with
                  | "Up;P1" -> 
-                     return! sendNewState(GameEngine.calculateState(state, Up, "P1" ))
+                     return! sendNewState(GameEngine.calculateState(state.Ball, state.Player1, state.Player2, Up, "P1" ))
                  | "Up;P2" -> 
-                     return! sendNewState(GameEngine.calculateState(state, Up, "P2" ))
+                     return! sendNewState(GameEngine.calculateState(state.Ball, state.Player1, state.Player2, Up, "P2" ))
                  | "Down;P1" -> 
-                     return! sendNewState(GameEngine.calculateState(state, Down, "P1"))
+                     return! sendNewState(GameEngine.calculateState(state.Ball, state.Player1, state.Player2, Down, "P1"))
                  | "Down;P2" -> 
-                     return! sendNewState(GameEngine.calculateState(state, Down, "P2"))
+                     return! sendNewState(GameEngine.calculateState(state.Ball, state.Player1, state.Player2, Down, "P2"))
                  | _         -> failwith("waitForClientInput: unexpected message")
                 }    
 
