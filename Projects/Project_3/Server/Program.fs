@@ -2,8 +2,10 @@
 // Learn more about F# at http://fsharp.org
 
     open System
+    open System.Net
     open System.Threading
 
+    open SharedTypes.NetworkStuff
     open SharedTypes.SharedTypes 
 
     /// Automaton for the Server, hosting a ping-pong game
@@ -69,10 +71,10 @@
         /// call "Start" to launch a new Server 
         [<EntryPoint>]
         let main argv =
-            //printfn "Main"
+            //Testing ball movement in game engine
             Async.StartImmediate (start())
             ev.Post "Two players have now joined"
-            for i in 1 .. 200 do
+            for i in 1 .. 20 do
                 Thread.Sleep(500)
                 ev.Post "Up;P1"
                 Thread.Sleep(500)
@@ -81,4 +83,25 @@
                 ev.Post "Down;P1"
                 Thread.Sleep(500)
                 ev.Post "Up;P1"
+
+            //Testing broadcasting
+            let receiver = NetworkReceiver(9001)
+            let sender = NetworkSender(9001, IPAddress.Loopback)
+
+            receiver.ReceiveMessageEvent.Add(fun x -> printfn "%s" (System.Text.Encoding.UTF8.GetString(x)))
+
+            receiver.StartListening()
+
+            Async.RunSynchronously (Broadcast(System.Text.Encoding.UTF8.GetBytes("the thing!"), 9001))
+            Async.RunSynchronously (Broadcast(System.Text.Encoding.UTF8.GetBytes("the thing!"), 9001))
+            Async.RunSynchronously (Broadcast(System.Text.Encoding.UTF8.GetBytes("the thing!"), 9001))
+            Async.RunSynchronously (Broadcast(System.Text.Encoding.UTF8.GetBytes("the thing!"), 9001))
+
+
+            Async.RunSynchronously (sender.Send(System.Text.Encoding.UTF8.GetBytes("the taahing!"))) |> ignore
+            Async.RunSynchronously (sender.Send(System.Text.Encoding.UTF8.GetBytes("the taahing!"))) |> ignore
+            Async.RunSynchronously (sender.Send(System.Text.Encoding.UTF8.GetBytes("the taahing!"))) |> ignore
+            Async.RunSynchronously (sender.Send(System.Text.Encoding.UTF8.GetBytes("the taahing!"))) |> ignore
+
+            Async.RunSynchronously (Async.Sleep(3000))            
             0 // return an integer exit code
