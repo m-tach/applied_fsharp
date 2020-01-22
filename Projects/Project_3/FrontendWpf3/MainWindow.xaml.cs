@@ -1,8 +1,10 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
 using Client;
+using SharedTypes;
 
 namespace FrontendWpf3
 {
@@ -11,12 +13,22 @@ namespace FrontendWpf3
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		// Client F# library
 		private ClientStuff.Client client;
+		// List of servers discovered
+		private List<SharedTypes.SharedTypes.GameServer> servers = new List<SharedTypes.SharedTypes.GameServer>();
 
 		public MainWindow()
 		{
 			InitializeComponent();
 			client = new ClientStuff.Client();
+
+			client.NewGameServerFoundEvent += Client_NewGameServerFoundEvent;
+		}
+
+		private void Client_NewGameServerFoundEvent(object sender, int args)
+		{
+			System.Diagnostics.Debug.Print("Found a new server! " + args); // arg should be a GameServer, waiting for PR.
 		}
 
 		// Sets the current screen by hiding all screens and showing the screen.
