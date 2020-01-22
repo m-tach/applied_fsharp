@@ -3,8 +3,7 @@ namespace SharedTypes
 open System
 open System.Net
 open System.Net.Sockets
-open System.Net.NetworkInformation;
-open System.Threading
+open System.Net.NetworkInformation
 
 module NetworkStuff =
     let private convertToBroadcast (uni:IPAddress) (sub:IPAddress) =
@@ -23,7 +22,7 @@ module NetworkStuff =
                  bList.ToArray()              
             else Array.empty) (NetworkInterface.GetAllNetworkInterfaces())
 
-    let public Broadcast(bytes, port) =
+    let public Broadcast(message: SharedTypes.Message, port) =
         async {               
             Array.iter(fun (x:IPAddress) ->
                 use broadcastClient = new UdpClient()
@@ -32,6 +31,7 @@ module NetworkStuff =
                 broadcastClient.EnableBroadcast <- true
 
                 broadcastClient.Connect(IPEndPoint(x, port))
+                let bytes = message.ToBytes()
                 broadcastClient.Send(bytes, bytes.Length) |> ignore
                 ) getBroadcastAddresses
         }    
@@ -46,13 +46,15 @@ module NetworkStuff =
             client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true)
             client.Connect(IPEndPoint(receiverAddress, port))
 
-        member public this.Send(bytes) =
-            async { client.SendAsync(bytes, bytes.Length) |> ignore }
+        member public this.Send(message: SharedTypes.Message) =
+            async { 
+                let bytes = message.ToBytes()
+                client.SendAsync(bytes, bytes.Length) |> ignore }
 
     type public NetworkReceiver(port: int) =
         let port = port
         let listener = new UdpClient()
-        let receiveEvent = new Event<byte array>()
+        let receiveEvent = new Event<SharedTypes.Message>()
         do
             listener.ExclusiveAddressUse <- false
             listener.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true)
@@ -68,7 +70,7 @@ module NetworkStuff =
 
             //get message
             let endPoint = IPEndPoint(IPAddress.Any, port)
-            let message = listener.EndReceive(result, ref endPoint)
+            let bytes = listener.EndReceive(result, ref endPoint)
 
             //start listening again
             listener.BeginReceive(AsyncCallback(this.Receive), null) |> ignore
@@ -77,6 +79,8 @@ module NetworkStuff =
             //This method may be executed at the same time from multiple threads
             //so it's necessary to synchronize the execution of the events
             //as that's what the rest of the code would expect
-            lock listener (fun () -> receiveEvent.Trigger(message))
+            lock listener (fun () -> 
+                let message = SharedTypes.Message.FromBytes(bytes)
+                receiveEvent.Trigger(message))
 
 
