@@ -161,6 +161,7 @@ module SharedTypes =
        | GameDone
        | GameStateUpdate of GameState
        | PlayerInput of int * Input
+       | HostGame 
 
         member public this.ToBytes() =
             use storageStream = new MemoryStream()
