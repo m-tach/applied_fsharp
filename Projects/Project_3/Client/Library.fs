@@ -1,13 +1,21 @@
 ﻿namespace Client
 
+open SharedTypes.SharedTypes
 
-/// Show "Host game | Join game"
-/// "Host game" -> launch Server
-/// "Join game" -> get available servers; connect to 1;
-/// "Start game" -> 
-///     send input periodically (if nothing captured -> empty input); 
-///     receive game state
-/// "Leave game"  
-module Say =
-    let hello name =
-        printfn "Hello %s" name
+module ClientStuff =
+
+    type Client() =
+        let newGameServerFound = new Event<GameServer>()
+        let newGameState = new Event<GameState>()
+
+        [<CLIEvent>]
+        member public this.NewGameServerFoundEvent = newGameServerFound.Publish
+        [<CLIEvent>]
+        member public this.NewGameStateEvent = newGameState.Publish
+
+
+        member public this.JoinGame(server: GameServer) : bool =
+            true
+
+        member public this.KeyPressed(key: char) =
+            "something" |> ignore                  
