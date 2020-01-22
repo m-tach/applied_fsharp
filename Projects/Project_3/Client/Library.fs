@@ -46,8 +46,12 @@ module StateMachine =
         async {
             printfn "state: start"; 
 
-            //TODO: add broadcast message 
+            //broadcast request available servers for lobby 
+            do! Broadcast(
+                    System.Text.Encoding.UTF8.GetBytes("Give me servers"), 
+                    9001)
 
+            //TODO: events received from UI        
             let! msg = ev.Receive();
             match msg with
              | "Host game"  -> return! startServerProcess()
@@ -87,7 +91,7 @@ module StateMachine =
             match msg with
              | "GameState"  ->
                             //TODO: send message to update UI
-                            return! sendInput() //TODO: should be periodical
+                            return! sendInput() //TODO: should be periodic
              | _         -> failwith("receiveGameState: unexpected message")
             }
 
