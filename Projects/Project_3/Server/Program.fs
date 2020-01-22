@@ -23,6 +23,12 @@
         and waitingForPlayers() = 
             async {
                 //printfn "state: waitingForPlayers"; 
+                let nwRec = NetworkReceiver(9001)
+                nwRec.StartListening();
+                // TODO: handle different types of messages
+                nwRec.ReceiveMessageEvent.Add( 
+                    fun x -> ev.Post(System.Text.Encoding.UTF8.GetString(x)) 
+                    )
                 let! msg = ev.Receive();
                 match msg with
                  | "Two players have now joined"  -> return! playGame()
