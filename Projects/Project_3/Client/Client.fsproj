@@ -6,6 +6,9 @@
     <ProjectReference Include="..\SharedTypes\SharedTypes.fsproj">
       <Name>SharedTypes.fsproj</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Server\Server.fsproj">
+      <Name>Server.fsproj</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Library.fs" />

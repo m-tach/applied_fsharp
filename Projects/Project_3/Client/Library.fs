@@ -1,6 +1,7 @@
 ﻿namespace Client
 
 open System
+open System.Diagnostics
 open System.Net
 open System.Threading
 
@@ -26,8 +27,17 @@ module ClientStuff =
             "something" |> ignore                  
 
 
+
 /// Automaton for the Client, used to connect to a ping-pong game
 module StateMachine = 
+    let procStartInfo = 
+        ProcessStartInfo(
+            UseShellExecute = true,
+            CreateNoWindow = false,
+            FileName = "Server.exe"
+        )
+    let p = new Process(StartInfo = procStartInfo)
+
     //TODO: for now, event queue stores strings
     let ev = AsyncEventQueue<String>()
     
@@ -48,9 +58,11 @@ module StateMachine =
     /// start a server process to host a game
     and startServerProcess() = 
         async {
-            Console.WriteLine "state: startServerProcess"; 
-            //TODO: start a server process
-
+            printfn "state: startServerProcess"; 
+            // start process and check that it exists
+            p.Start();            
+            let processes = Process.GetProcessesByName("Server");
+            printfn "Started process %A " processes
             let! msg = ev.Receive();
             match msg with
              | "Two players have now joined"  -> return! joinGame()
