@@ -2,16 +2,21 @@
 using System.Windows;
 using System.Windows.Controls;
 
-namespace FrontendWpf
+using Client;
+
+namespace FrontendWpf3
 {
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		private ClientStuff.Client client;
+
 		public MainWindow()
 		{
 			InitializeComponent();
+			client = new ClientStuff.Client();
 		}
 
 		// Sets the current screen by hiding all screens and showing the screen.
