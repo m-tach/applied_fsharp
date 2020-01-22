@@ -1,10 +1,9 @@
 ﻿module App  
   
 open System  
-open FsXaml  
-  
-type App = XAML<"App.xaml">  
+open UserInterface
   
 [<EntryPoint;STAThread>]  
-let main argv =   
-    App().Run()  
+let main argv =
+    UserInterface.run
+    0
