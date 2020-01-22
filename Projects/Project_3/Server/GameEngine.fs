@@ -124,12 +124,12 @@ namespace Server
         /// 2. Check if ball's current trajectory will be missed by the paddle in this turn
         ///     - if yes -> restart game
         ///     - if no -> move ball 
-        let calculateState (ball:Ball, player1:PlayerData, player2:PlayerData, command:Input, player: String) : GameState =
-            let (p1, p2 ) = if (player = "P1") then 
+        let calculateState (ball:Ball, player1:PlayerData, player2:PlayerData, command:Input, player: int) : GameState =
+            let (p1, p2 ) = if (player = 1) then 
                                 match command with
                                 | Up -> (moveUp player1, player2)
                                 | Down -> (moveDown  player1, player2)
-                            elif (player = "P2") then 
+                            elif (player = 2) then 
                                 match command with
                                      | Up -> (player1, moveUp player2)
                                      | Down -> (player1, moveDown  player2)              
