@@ -9,13 +9,7 @@ open SharedTypes.NetworkStuff
 open SharedTypes.SharedTypes 
 
 module StartServerHelper =  
-    let procStartInfo = 
-        ProcessStartInfo(
-            UseShellExecute = true,
-            CreateNoWindow = false,
-            FileName = "Server.exe"
-        )
-    let p = new Process(StartInfo = procStartInfo)
+
 
 module ClientStuff =
 
@@ -48,6 +42,9 @@ module ClientStuff =
 
         member public this.JoinGame(server: GameServer) =
             stateMachineQueue.Post(JoinGame(server.Address))
+
+        member public this.HostGame(serverName: string) =
+            stateMachineQueue.Post(HostGame(serverName))
             
         member public this.KeyPressed(input: Input) =
             keyInput <- input                              
@@ -55,11 +52,19 @@ module ClientStuff =
 
 
 /// Automaton for the Client, used to connect to a ping-pong game
-module StateMachine = 
+module ClientStateMachine = 
     /// start a server process to host a game
-    let startServerProcess() = 
+    let startServerProcess(serverName: string) = 
+        let procStartInfo = 
+            ProcessStartInfo(
+                UseShellExecute = true,
+                CreateNoWindow = false,
+                FileName = "Server.exe",
+                Arguments = serverName
+            )
+        let p = new Process(StartInfo = procStartInfo)
         printfn "state: startServerProcess"; 
-        StartServerHelper.p.Start();            
+        p.Start() ;            
         let processes = Process.GetProcessesByName("Server");
         printfn "Started process %A " processes
 
@@ -81,13 +86,13 @@ module StateMachine =
         async {
             printfn "state: start"; 
             //broadcast request available servers for lobby 
-            do! Broadcast(RequestServers, 9001);
+            do! Broadcast(RequestServers(getOwnIpAddress), 9001);
             let! msg = ev.Receive();
             match msg with
-             | HostGame  -> startServerProcess();
-                            nwSender <- NetworkSender(9001, IPAddress.Loopback);
-                            do! nwSender.Send(JoinGame(getOwnIpAddress)) ;
-                            return! startLobby()
+             | HostGame  serverName -> startServerProcess(serverName);
+                                       nwSender <- NetworkSender(9001, IPAddress.Loopback);
+                                       do! nwSender.Send(JoinGame(getOwnIpAddress)) ;
+                                       return! startLobby()
 
              | JoinGame ipAddr-> nwSender <- NetworkSender(9001, ipAddr);
                                  do! nwSender.Send(JoinGame(getOwnIpAddress)) ;
