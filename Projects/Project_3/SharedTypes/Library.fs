@@ -9,6 +9,8 @@ module SharedTypes =
     type GameState = Ball * PlayerData * PlayerData 
     type Input = Up | Down | Escape
 
+    type GameServer = int
+
     // An asynchronous event queue kindly provided by Don Syme 
     type AsyncEventQueue<'T>() = 
         let mutable cont = None 
