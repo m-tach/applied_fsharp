@@ -152,15 +152,51 @@ module SharedTypes =
         static member public FromStream(stream: BinaryReader) =
             GameServer(stream.ReadString(), IPAddress.Parse(stream.ReadString()))
 
-    type Messages = 
+    type public Message = 
        | RequestServers
        | Server of GameServer
        | JoinGame of IPAddress
        | YouJoinedTheGame of int
        | StartGame
        | GameDone
-       | GameStateUpdate
+       | GameStateUpdate of GameState
        | PlayerInput of int * Input
+
+        member public this.ToBytes() =
+            use storageStream = new MemoryStream()
+            use byteWriter = new BinaryWriter(storageStream)
+            match this with
+            | RequestServers -> byteWriter.Write(0uy)
+            | Server(gs) -> byteWriter.Write(1uy)
+                            gs.ToStream(byteWriter)
+            | JoinGame(ip) -> byteWriter.Write(2uy)
+                              let addressAsBytes = System.Text.Encoding.UTF8.GetBytes(ip.ToString())
+                              byteWriter.Write(addressAsBytes, 0, addressAsBytes.Length)
+            | YouJoinedTheGame(p) -> byteWriter.Write(3uy)
+                                     byteWriter.Write(p)
+            | StartGame -> byteWriter.Write(4uy)
+            | GameDone -> byteWriter.Write(5uy)
+            | GameStateUpdate(s) -> byteWriter.Write(6uy)
+                                    s.ToStream(byteWriter)
+            | PlayerInput(p, i) -> byteWriter.Write(7uy)
+                                   byteWriter.Write(p)
+                                   i.ToStream(byteWriter)
+            storageStream.ToArray()                     
+        static member public FromBytes(bytes: byte array) =
+            use storageStream = new MemoryStream(bytes)
+            use byteReader = new BinaryReader(storageStream)
+            match byteReader.ReadByte() with
+            | 0uy -> RequestServers
+            | 1uy -> Server(GameServer.FromStream(byteReader))
+            | 2uy -> JoinGame(IPAddress.Parse(byteReader.ReadString()))
+            | 3uy -> YouJoinedTheGame(byteReader.ReadInt32())
+            | 4uy -> StartGame
+            | 5uy -> GameDone
+            | 6uy -> GameStateUpdate(GameState.FromStream(byteReader))
+            | 7uy -> PlayerInput(byteReader.ReadInt32(), Input.FromStream(byteReader))
+            | a -> failwith (String.Format("failed to convert byte to Message.\nByte: {0}", a))
+
+
 
 
     // An asynchronous event queue kindly provided by Don Syme 
