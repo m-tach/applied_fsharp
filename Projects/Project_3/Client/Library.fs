@@ -26,7 +26,7 @@ module ClientStuff =
             "something" |> ignore                  
 
 
-/// Automaton for the Client, connection to a ping-pong game
+/// Automaton for the Client, used to connect to a ping-pong game
 module StateMachine = 
     //TODO: for now, event queue stores strings
     let ev = AsyncEventQueue<String>()
@@ -34,6 +34,8 @@ module StateMachine =
     // start in a lobby
     let rec start() = 
         async {
+            printfn "state: start"; 
+
             //TODO: add broadcast message 
 
             let! msg = ev.Receive();
@@ -46,7 +48,7 @@ module StateMachine =
     /// start a server process to host a game
     and startServerProcess() = 
         async {
-            //printfn "state: startServerProcess"; 
+            Console.WriteLine "state: startServerProcess"; 
             //TODO: start a server process
 
             let! msg = ev.Receive();
@@ -54,7 +56,7 @@ module StateMachine =
              | "Two players have now joined"  -> return! joinGame()
              | _         -> failwith("startServerProcess: unexpected message")
             }
-            
+
     /// shows game window; waits for two players to join
     and joinGame() = 
         async {
