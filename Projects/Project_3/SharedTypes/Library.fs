@@ -104,15 +104,15 @@ module SharedTypes =
 
         member public this.ToBytes() =
             match this with
-            | Up     -> [|0|]
-            | Down   -> [|1|]
-            | Escape -> [|2|]
+            | Up     -> [|0uy|]
+            | Down   -> [|1uy|]
+            | Escape -> [|2uy|]
 
         member public this.ToStream(byteWriter: BinaryWriter) = 
             match this with
             | Up     -> byteWriter.Write(0uy)
-            | Down   -> byteWriter.Write(1)
-            | Escape -> byteWriter.Write(2)
+            | Down   -> byteWriter.Write(1uy)
+            | Escape -> byteWriter.Write(2uy)
 
         static member public FromBytes(bytes: byte array) =
             match bytes with
