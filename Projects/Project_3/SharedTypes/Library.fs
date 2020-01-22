@@ -1,15 +1,167 @@
 ﻿namespace SharedTypes
 
-module SharedTypes =
-    type Vector = float * float
-    //              player pos  score
-    type PlayerData = Vector * int
-    //         ball pos  ball dir
-    type Ball = Vector * Vector
-    type GameState = Ball * PlayerData * PlayerData 
-    type Input = Up | Down | Escape
+open System
+open System.IO
+open System.Net
 
-    type GameServer = int
+module SharedTypes =
+    type Vector(x: float32, y: float32) = 
+        member public this.X = x
+        member public this.Y = y
+
+        member public this.ToBytes() =
+            use storageStream = new MemoryStream()
+            use byteWriter = new BinaryWriter(storageStream)
+            this.ToStream(byteWriter)
+            storageStream.ToArray()
+
+        member public this.ToStream(byteWriter: BinaryWriter) = 
+            byteWriter.Write(this.X)
+            byteWriter.Write(this.Y)
+
+        static member public FromBytes(bytes: byte array) =
+            use storageStream = new MemoryStream(bytes)
+            use byteReader = new BinaryReader(storageStream)
+            Vector.FromStream(byteReader)
+
+        static member public FromStream(stream: BinaryReader) =
+            Vector(stream.ReadSingle(), stream.ReadSingle())            
+
+    //              player pos  score
+    type PlayerData(playerPos: Vector, score: int) =
+        member public this.Position = playerPos
+        member public this.Score = score        
+
+        member public this.ToBytes() =
+            use storageStream = new MemoryStream()
+            use byteWriter = new BinaryWriter(storageStream)
+            this.ToStream(byteWriter)
+            storageStream.ToArray()
+
+        member public this.ToStream(byteWriter: BinaryWriter) = 
+            this.Position.ToStream(byteWriter)
+            byteWriter.Write(this.Score)
+
+        static member public FromBytes(bytes: byte array) =
+            use storageStream = new MemoryStream(bytes)
+            use byteReader = new BinaryReader(storageStream)
+            PlayerData.FromStream(byteReader)
+
+        static member public FromStream(stream: BinaryReader) =
+            PlayerData(Vector.FromStream(stream), stream.ReadInt32())
+
+    //         ball pos  ball dir
+    type Ball(ballPos: Vector, ballDir: Vector) =
+        member public this.BallPosition = ballPos
+        member public this.BallDirection = ballDir
+
+        member public this.ToBytes() =
+            use storageStream = new MemoryStream()
+            use byteWriter = new BinaryWriter(storageStream)
+            this.ToStream(byteWriter)
+            storageStream.ToArray()
+
+        member public this.ToStream(byteWriter: BinaryWriter) = 
+            this.BallPosition.ToStream(byteWriter)
+            this.BallDirection.ToStream(byteWriter)
+
+        static member public FromBytes(bytes: byte array) =
+            use storageStream = new MemoryStream(bytes)
+            use byteReader = new BinaryReader(storageStream)
+            Ball.FromStream(byteReader)
+
+        static member public FromStream(stream: BinaryReader) =
+            Ball(Vector.FromStream(stream), Vector.FromStream(stream))
+
+    type GameState(ball: Ball, player1: PlayerData, player2: PlayerData) = 
+        member public this.Ball = ball
+        member public this.Player1 = player1
+        member public this.Player2 = player2
+
+        member public this.ToBytes() =
+            use storageStream = new MemoryStream()
+            use byteWriter = new BinaryWriter(storageStream)
+            this.ToStream(byteWriter)
+            storageStream.ToArray()
+
+        member public this.ToStream(byteWriter: BinaryWriter) = 
+            this.Ball.ToStream(byteWriter)
+            this.Player1.ToStream(byteWriter)
+            this.Player2.ToStream(byteWriter)
+
+        static member public FromBytes(bytes: byte array) =
+            use storageStream = new MemoryStream(bytes)
+            use byteReader = new BinaryReader(storageStream)
+            GameState.FromStream(byteReader)
+
+        static member public FromStream(stream: BinaryReader) =
+            GameState(Ball.FromStream(stream), PlayerData.FromStream(stream), PlayerData.FromStream(stream))
+
+    type Input =
+        | Up 
+        | Down 
+        | Escape
+
+        member public this.ToBytes() =
+            match this with
+            | Up     -> [|0|]
+            | Down   -> [|1|]
+            | Escape -> [|2|]
+
+        member public this.ToStream(byteWriter: BinaryWriter) = 
+            match this with
+            | Up     -> byteWriter.Write(0uy)
+            | Down   -> byteWriter.Write(1)
+            | Escape -> byteWriter.Write(2)
+
+        static member public FromBytes(bytes: byte array) =
+            match bytes with
+            | [|0uy|] -> Up
+            | [|1uy|] -> Down
+            | [|2uy|] -> Escape
+            | _ -> failwith (String.Format("failed to convert byte array to input.\nByte array content: {0}", String.Join(", ", bytes)))
+
+        static member public FromStream(stream: BinaryReader) =
+            match stream.ReadByte() with
+            | 0uy -> Up
+            | 1uy -> Down
+            | 2uy -> Escape
+            | a -> failwith (String.Format("failed to convert byte to input.\nByte: {0}", a))
+
+    type GameServer(serverName: string, address: IPAddress) = 
+        member public this.ServerName = serverName
+        member public this.Address = address
+
+        member public this.ToBytes() =
+            use storageStream = new MemoryStream()
+            use byteWriter = new BinaryWriter(storageStream)
+            this.ToStream(byteWriter)
+            storageStream.ToArray()
+
+        member public this.ToStream(byteWriter: BinaryWriter) = 
+            let stringAsBytes = System.Text.Encoding.UTF8.GetBytes(this.ServerName)
+            byteWriter.Write(stringAsBytes, 0, stringAsBytes.Length)
+            let addressAsBytes = System.Text.Encoding.UTF8.GetBytes(this.Address.ToString())
+            byteWriter.Write(addressAsBytes, 0, addressAsBytes.Length)
+
+        static member public FromBytes(bytes: byte array) =
+            use storageStream = new MemoryStream(bytes)
+            use byteReader = new BinaryReader(storageStream)
+            GameServer.FromStream(byteReader)
+
+        static member public FromStream(stream: BinaryReader) =
+            GameServer(stream.ReadString(), IPAddress.Parse(stream.ReadString()))
+
+    type Messages = 
+       | RequestServers
+       | Server of GameServer
+       | JoinGame of IPAddress
+       | YouJoinedTheGame of int
+       | StartGame
+       | GameDone
+       | GameStateUpdate
+       | PlayerInput of int * Input
+
 
     // An asynchronous event queue kindly provided by Don Syme 
     type AsyncEventQueue<'T>() = 
