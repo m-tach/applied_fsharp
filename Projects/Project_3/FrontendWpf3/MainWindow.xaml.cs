@@ -56,7 +56,10 @@ namespace FrontendWpf3
 
 		private void Client_NewGameServerFound(object sender, SharedTypes.SharedTypes.GameServer server)
 		{
-			Dispatcher.Invoke(() => Servers.Add(server));
+			Dispatcher.Invoke(() => {
+				if (!Servers.Any(x => x.Address.Equals(server.Address)))
+					Servers.Add(server);
+			});
 		}
 
 		// Sets the current screen by hiding all screens and showing the screen.
@@ -80,16 +83,26 @@ namespace FrontendWpf3
 		// Render the game given a state.
 		public void RenderGame(SharedTypes.SharedTypes.GameState state)
 		{
-			int middleY = 180;
-			int middleX = 387;
+			double widthScale = GameCanvas.Width / 20.0;
+			double heightScale = GameCanvas.Height / 20.0;
 
-			GameCanvasPlayer1.Y1 = middleY + state.Player1.Position.Y * 10;
-			GameCanvasPlayer1.Y2 = middleY + state.Player1.Position.Y * 10 + 80;
+			double middleY = GameCanvas.Height / 2.0;
+			double middleX = GameCanvas.Width / 2.0;
 
-			GameCanvasPlayer2.Y1 = middleY + state.Player2.Position.Y * 10;
-			GameCanvasPlayer2.Y2 = middleY + state.Player2.Position.Y * 10 + 80;
+			double paddleHeight = 3.0;
+			double paddleHeightHalf = paddleHeight / 2.0;
 
-			GameCanvasBall.Margin = new Thickness(middleX + state.Ball.BallPosition.X * 10, middleY + state.Ball.BallPosition.Y * 10, 0, 0);
+			GameCanvasPlayer1.Y1 = middleY + (state.Player1.Position.Y - paddleHeightHalf) * heightScale;
+			GameCanvasPlayer1.Y2 = middleY + (state.Player1.Position.Y + paddleHeightHalf) * heightScale;
+
+			GameCanvasPlayer2.Y1 = middleY + (state.Player2.Position.Y - paddleHeightHalf) * heightScale;
+			GameCanvasPlayer2.Y2 = middleY + (state.Player2.Position.Y + paddleHeightHalf) * heightScale;
+
+			/*GameCanvasBall.Margin = new Thickness(
+				middleX + state.Ball.BallPosition.X * widthScale,
+				middleY + state.Ball.BallPosition.Y * heightScale,
+				0, 0
+			);*/
 
 			Player1Score.Content = $"P1: {state.Player1.Score} Points";
 			Player2Score.Content = $"P2: {state.Player2.Score} Points";
