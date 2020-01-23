@@ -132,15 +132,16 @@ module ServerStuff =
             async {  
                 printfn "state: WaitFor2Inputs"; 
 
-                use cancel = new CancellationTokenSource(TimeSpan.FromSeconds(1.0))
-                Async.StartWithContinuations(
-                    async { return! ev.Receive() }, 
-                    (fun x -> ev.Post(x)), 
-                    (fun x -> Console.Error.WriteLine(x.ToString())), 
-                    (fun _ -> ev.Post(GameDone)), 
-                    cancel.Token)
+                use cancel = new CancellationTokenSource()
+                let token = cancel.Token
+                Async.Start (async {
+                    do! Async.Sleep(TimeSpan.FromSeconds(2.0).Milliseconds)
+                    if not token.IsCancellationRequested
+                    then ev.Post(GameDone)
+                })
 
                 let! msg = ev.Receive();
+                cancel.Cancel()
                 printfn "parsing msg: %A" msg;
                 match msg with
                 | PlayerInput (_, Escape) -> return! this.Leaving(player1Address, player2Address)
@@ -156,15 +157,16 @@ module ServerStuff =
             async {                
                 printfn "state: WaitFor1Input"; 
 
-                use cancel = new CancellationTokenSource(TimeSpan.FromSeconds(1.0))
-                Async.StartWithContinuations(
-                    async { return! ev.Receive() }, 
-                    (fun x -> ev.Post(x)), 
-                    (fun x -> Console.Error.WriteLine(x.ToString())), 
-                    (fun _ -> ev.Post(GameDone)), 
-                    cancel.Token)            
+                use cancel = new CancellationTokenSource()
+                let token = cancel.Token
+                Async.Start (async {
+                    do! Async.Sleep(TimeSpan.FromSeconds(2.0).Milliseconds)
+                    if not token.IsCancellationRequested
+                    then ev.Post(GameDone)
+                })
 
                 let! msg = ev.Receive();
+                cancel.Cancel()
                 printfn "parsing msg: %A" msg;
                 match msg with
                 | PlayerInput (_, Escape) -> return! this.Leaving(player1Address, player2Address)
@@ -218,5 +220,6 @@ module ServerStuff =
             Async.RunSynchronously (stateMachine.Start())
             printfn "Server is done"; 
         with 
-        |e -> printfn "Exception thrown %A" e        
+        |e -> printfn "Exception thrown %A" e
+        Console.ReadLine() |> ignore
         0 // return an integer exit code
