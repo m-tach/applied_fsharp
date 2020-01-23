@@ -80,6 +80,8 @@ namespace FrontendWpf3
 
 		private void Refresh_Click(object sender, RoutedEventArgs e) => BroadcastForGames();
 
+		private void SinglePlayer_Click(object sender, RoutedEventArgs e) => client.HostGame("SinglePlayer");
+
 		// Render the game given a state.
 		public void RenderGame(SharedTypes.SharedTypes.GameState state)
 		{
