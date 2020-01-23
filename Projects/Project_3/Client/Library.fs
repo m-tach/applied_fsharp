@@ -181,8 +181,7 @@ module ClientStuff =
                 cancel.Cancel()
                 match msg with
                  | GameStateUpdate gState  ->
-                                cl.NewGameStateEventTrigger.Trigger(gState);
-                                do! Async.Sleep(50) 
+                                cl.NewGameStateEventTrigger.Trigger(gState); 
                                 return! this.SendInput(playerId, serverAddress)
                  | GameDone -> return! this.StartLobby();                    
                  | _         -> return! this.ReceiveGameState(playerId, serverAddress)

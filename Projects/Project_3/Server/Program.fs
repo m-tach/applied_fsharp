@@ -182,6 +182,8 @@ module ServerStuff =
             async {       
                 printfn "state: SendGameStateUpdate"; 
 
+                do! Async.Sleep(10)
+
                 if againstComputer && player1Address.Equals(IPAddress.Loopback)
                 then do! computerSender.Send(GameStateUpdate(state), player1Address)
                 else do! sender.Send(GameStateUpdate(state), player1Address);
