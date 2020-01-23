@@ -12,6 +12,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ComputerOpponent.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 </Project>

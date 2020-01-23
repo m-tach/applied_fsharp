@@ -12,16 +12,27 @@ open Game
 /// Automaton for the Server, hosting a ping-pong game
 module ServerStuff = 
 
-    type ServerStateMachine(serverName: string) =
+    type ServerStateMachine(serverName: string, againstComputer : bool) =
         let ev = AsyncEventQueue<SharedTypes.SharedTypes.Message>()
         let messagesReceiver = NetworkReceiver(SERVER_PORT)
         let sender = NetworkSender(CLIENT_PORT)
+        let computersender = NetworkSender(9003)
         do
             //receiver is only used to put messages in the event queue
             messagesReceiver.StartListening();
             messagesReceiver.ReceiveMessageEvent.Add(ev.Post)
+            if againstComputer
+            then Async.StartImmediate (async {
+                let recs = NetworkReceiver(9003)
+                let sends = NetworkSender(SERVER_PORT)
+                let eawdv = AsyncEventQueue<SharedTypes.SharedTypes.Message>()
+                recs.ReceiveMessageEvent.Add(eawdv.Post)
+                do! sends.Send(JoinGame(IPAddress.Loopback), IPAddress.Loopback)
+                
+            })
 
         member public this.ServerName = serverName
+        member public this.AgainstComputer = againstComputer
 
         (*
             #############################
@@ -110,7 +121,8 @@ module ServerStuff =
                 printfn "state: WaitFor2Inputs"; 
 
                 let! msg = ev.Receive();
-                printfn "parsing msg: %A" msg;                 match msg with
+                printfn "parsing msg: %A" msg;
+                match msg with
                 | PlayerInput (_, Escape) -> return! this.Leaving(player1Address, player2Address)
                 | PlayerInput (playerId, key) -> 
                     let updatedState = GameEngine.calculateState(state.Ball, state.Player1, state.Player2, key, playerId)
@@ -124,7 +136,8 @@ module ServerStuff =
                 printfn "state: WaitFor1Input"; 
 
                 let! msg = ev.Receive();
-                printfn "parsing msg: %A" msg;                 match msg with
+                printfn "parsing msg: %A" msg;
+                match msg with
                 | PlayerInput (_, Escape) -> return! this.Leaving(player1Address, player2Address)
                 | PlayerInput (playerId, key) -> 
                     let updatedState = GameEngine.calculateState(state.Ball, state.Player1, state.Player2, key, playerId)
@@ -137,7 +150,9 @@ module ServerStuff =
             async {       
                 printfn "state: SendGameStateUpdate"; 
 
-                do! sender.Send(GameStateUpdate(state), player1Address);
+                if againstComputer
+                then do! computersender.Send(GameStateUpdate(state), IPAddress.Loopback)
+                else do! sender.Send(GameStateUpdate(state), player1Address);
                 do! sender.Send(GameStateUpdate(state), player2Address);
                 return! this.WaitFor2Inputs(player1Address, player2Address, state)
                 }
@@ -146,7 +161,9 @@ module ServerStuff =
         member public this.Leaving(player1Address: IPAddress, player2Address: IPAddress) =
               async {     
                 printfn "state: Leaving"; 
-                do! sender.Send(GameDone, player1Address);
+                if againstComputer
+                then do! computersender.Send(GameDone, IPAddress.Loopback)
+                else do! sender.Send(GameDone, player1Address);
                 do! sender.Send(GameDone, player2Address);
                 //server dies
             }      
@@ -157,7 +174,8 @@ module ServerStuff =
         try             
             printfn "Server has just started"; 
             let serverName = argv.[0]
-            let stateMachine = ServerStateMachine(serverName)
+            let againstComputer = argv.[1]
+            let stateMachine = ServerStateMachine(serverName, againstComputer.Equals("1"))
             Async.RunSynchronously (stateMachine.Start())
             printfn "Server is done"; 
         with 

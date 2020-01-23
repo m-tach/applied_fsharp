@@ -48,7 +48,10 @@ module ClientStuff =
             stateMachineQueue.Post(JoinGame(server.Address))
 
         member public this.HostGame(serverName: string) =
-            stateMachineQueue.Post(HostGame(serverName))
+            stateMachineQueue.Post(HostGame(serverName, false))
+
+        member public this.HostGameComputer() =
+            stateMachineQueue.Post(HostGame("-", true))
 
         member public this.BroadcastRequestServers() =
             stateMachineQueue.Post(BroadcastRequestServers)
@@ -99,13 +102,14 @@ module ClientStuff =
 
         
         /// start a server process to host a game
-        member private this.StartServerProcess(serverName: string) = 
+        member private this.StartServerProcess(serverName: string, againstComputer: bool) = 
             let procStartInfo = 
                 ProcessStartInfo(
                     UseShellExecute = true,
                     CreateNoWindow = false,
                     FileName = "Server.exe",
-                    Arguments = serverName
+                    Arguments = (String.collect (function '\n'->""|'\r'->""|'"'->""|c->string c) serverName) + " " + // Escape server name of ", newline & return
+                        (match againstComputer with true -> "1" | false -> "0") // bool to 1 or 0 for cmd args
                 )
             let p = new Process(StartInfo = procStartInfo)
             printfn "state: StartServerProcess"; 
@@ -128,9 +132,9 @@ module ClientStuff =
                 cl.GoToLobbyTrigger.Trigger()                
                 let! msg = ev.Receive();
                 match msg with
-                 | HostGame  serverName -> this.StartServerProcess(serverName);
-                                           do! sender.Send(JoinGame(getOwnIpAddress), IPAddress.Loopback) ;
-                                           return! this.StartLobby()
+                 | HostGame(serverName, againstComputer) -> this.StartServerProcess(serverName, againstComputer);
+                                                            do! sender.Send(JoinGame(getOwnIpAddress), IPAddress.Loopback) ;
+                                                            return! this.StartLobby()
 
                  | JoinGame ipAddr-> do! sender.Send(JoinGame(getOwnIpAddress), ipAddr) ;
                                      return! this.StartLobby();
