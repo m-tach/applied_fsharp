@@ -7,7 +7,7 @@
       <Name>SharedTypes.fsproj</Name>
     </ProjectReference>
     <ProjectReference Include="..\Server\Server.fsproj">
-      <Name>SharedTypes.fsproj</Name>
+      <Name>Server.fsproj</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
