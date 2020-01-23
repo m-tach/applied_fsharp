@@ -13,5 +13,10 @@
       <Name>SharedTypes.fsproj</Name>
     </ProjectReference>
   </ItemGroup>
+  <Target Name="CopyCustomContent" AfterTargets="AfterBuild">
+    <Copy SourceFiles="..\Server\bin\Debug\netcoreapp3.1\Server.dll" DestinationFolder="$(OutDir)" />
+    <Copy SourceFiles="..\Server\bin\Debug\netcoreapp3.1\Server.exe" DestinationFolder="$(OutDir)" />
+    <Copy SourceFiles="..\Server\bin\Debug\netcoreapp3.1\Server.pdb" DestinationFolder="$(OutDir)" />
+  </Target>
 
 </Project>
