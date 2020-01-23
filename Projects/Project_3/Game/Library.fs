@@ -28,6 +28,7 @@
         let private BALL_RADIUS = 1.0f
         let private BALL_SPEED_X = -1.0f
         let private BALL_SPEED_Y = 1.0f
+        let private MAX_BOUNCE_ANGLE = 5.0f;
 
         // Configs - player
         [<Literal>]
@@ -92,31 +93,38 @@
             else
                 GameState(ball', player1, player2)                            
 
+        //Reflect ball; finds the angle for which the ball should be reflected upon hitting a paddle
+        let reflectBall (ballPos:Vector, paddlePos:Vector) : Vector =
+            let diffY = paddlePos.Y - ballPos.Y
+            let normalizedDiffY = diffY / PADDLE_LENGHT
+            let bounceAngle = float (normalizedDiffY * MAX_BOUNCE_ANGLE)
+            let xDir = match ballPos.X < paddlePos.X with
+                       | true  -> -1.0f
+                       | false ->  1.0f
+            Vector(xDir * BALL_SPEED_X * (float32 (Math.Cos bounceAngle)), BALL_SPEED_Y * (float32 (-Math.Sin bounceAngle)))
+
+        //Is hitting paddle; helper for detecting simple intersection for Player1 / Player2.
+        let isHittingPaddle (ball':Ball, playerPos:Vector, leftSide:bool) =
+            if (leftSide && ball'.BallPosition.X - BALL_RADIUS <= playerPos.X + PADDLE_WIDTH / 2.0f) ||
+               (not leftSide && ball'.BallPosition.X + BALL_RADIUS >= playerPos.X - PADDLE_WIDTH / 2.0f) then
+                (ball'.BallPosition.Y < playerPos.Y + PADDLE_LENGHT / 2.0f) ||
+                   (ball'.BallPosition.Y > playerPos.Y - PADDLE_LENGHT / 2.0f)
+            else
+                false
+
         ///Move ball; change direction if hitting top edge; bottom edge; player paddle
         let moveBall (ball':Ball, player1:PlayerData, player2:PlayerData) : Ball = 
             let rx = ball'.BallPosition.X
             let ry = ball'.BallPosition.Y
             
             // change direction when hitting top / bottom
-            let vy = if (ry + ball'.BallDirection.Y + BALL_RADIUS > Y_MAX) then -(ball'.BallDirection.Y)
-                     elif (ry + ball'.BallDirection.Y + BALL_RADIUS < Y_MIN) then -(ball'.BallDirection.Y)
-                     else ball'.BallDirection.Y
-                                 
-            let vx = if rx + ball'.BallDirection.X < (X_MIN + BALL_RADIUS) then //is ball at left edge
-                        if (((ry + vy) < player1.Position.Y + PADDLE_LENGHT/2.0f) ||             //is ball hitting player1
-                            ((ry + vy) > player1.Position.Y - PADDLE_LENGHT/2.0f)) 
-                            then -ball'.BallDirection.X
-                        else 
-                            1.0f                                                
-                     elif rx +  ball'.BallDirection.X > (X_MAX - BALL_RADIUS) then //is ball at right edge
-                        if (((ry + vy) < player2.Position.Y + PADDLE_LENGHT/2.0f) ||             //is ball hitting player2
-                            ((ry + vy) > player2.Position.Y - PADDLE_LENGHT/2.0f)) 
-                            then -ball'.BallDirection.X
-                        else
-                            1.0f                                               
-                     else
-                        ball'.BallDirection.X
-            Ball(Vector(rx + vx, ry + vy), Vector(vx, vy))
+            let v = if (ry + ball'.BallDirection.Y + BALL_RADIUS > Y_MAX) then Vector(ball'.BallDirection.X, -ball'.BallDirection.Y) // Hit bottom
+                    elif (ry + ball'.BallDirection.Y + BALL_RADIUS < Y_MIN) then Vector(ball'.BallDirection.X, -ball'.BallDirection.Y) // Hit top
+                    else if isHittingPaddle (ball', player1.Position, true) then reflectBall(ball'.BallPosition, player1.Position) // Hit p1 paddle
+                    else if isHittingPaddle (ball', player2.Position, false) then reflectBall(ball'.BallPosition, player2.Position) // Hit p2 paddle
+                    else ball'.BallDirection // Nothing hit
+            
+            Ball(Vector(rx + v.X, ry + v.Y), v)
 
         /// Derive new state from old state + key press command
         /// Flow:
