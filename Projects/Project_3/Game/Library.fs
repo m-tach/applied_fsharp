@@ -6,10 +6,10 @@
     module GameEngine =
         // Configs - field       
         [<Literal>]
-        let private X_MAX = 10.0f
+        let private X_MAX = 80.0f
         
         [<Literal>]
-        let private X_MIN = -10.0f
+        let private X_MIN = -80.0f
                 
         [<Literal>]
         let private Y_MAX = 10.0f

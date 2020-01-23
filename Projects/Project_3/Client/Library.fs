@@ -142,7 +142,7 @@ module ClientStuff =
                  | Server gameServer -> cl.NewGameServerTrigger.Trigger(gameServer); 
                                         return! this.StartLobby();
 
-                 | BroadcastRequestServers -> do! Broadcast(RequestServers(getOwnIpAddress), SERVER_PORT);
+                 | BroadcastRequestServers -> do! Broadcast(SERVER_PORT);
                                               return! this.StartLobby();                            
                                         
                  | _         -> printfn "start: unexpected message %A" msg; 
