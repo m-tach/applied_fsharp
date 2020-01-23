@@ -36,10 +36,17 @@
 					</ListView.ItemTemplate>
 				</ListView>
 			</StackPanel>
-			<DockPanel Height="42" LastChildFill="False" VerticalAlignment="Bottom" Margin="0,0,0,20">
-				<Button x:Name="HostGame" Content="Host game" Margin="10,6,5,6" Height="30" FontSize="14" Width="92" Click="HostGame_Click"/>
-				<Button x:Name="Refresh" Content="Refresh" Margin="5,6,10,6" Height="30" FontSize="14" Width="75" Click="Refresh_Click"/>
-			</DockPanel>
+			<StackPanel Orientation="Horizontal" >
+			    <StackPanel.Resources>
+					<Style TargetType="{x:Type Button}">
+						<Setter Property="Margin" Value="10"/>
+						<Setter Property="Padding" Value="5"/>
+					</Style>
+				</StackPanel.Resources> 
+				<Button x:Name="HostGame" Content="Host game" FontSize="14" Click="HostGame_Click"/>
+				<Button x:Name="Refresh" Content="Refresh" FontSize="14" Click="Refresh_Click"/>
+				<Button x:Name="SinglePlayer" Content="Single Player" FontSize="14" Click="SinglePlayer_Click"/>
+			</StackPanel>
 		</StackPanel>
 		<StackPanel x:Name="ScreenCreateGame" Margin="10" Visibility="Hidden">
 			<Label x:Name="TitleCreateGame" Content="Create new game" Height="32" VerticalAlignment="Top" FontSize="14" FontWeight="Bold"/>

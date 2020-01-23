@@ -159,7 +159,7 @@ module SharedTypes =
        | GameDone
        | GameStateUpdate of GameState
        | PlayerInput of int * Input
-       | HostGame of string
+       | HostGame of string * bool
        | BroadcastRequestServers 
 
         member public this.ToBytes() =
@@ -181,7 +181,7 @@ module SharedTypes =
                                     s.ToStream(byteWriter)
             | PlayerInput(p, i) -> byteWriter.Write(7uy)
                                    byteWriter.Write(p)
-                                   i.ToStream(byteWriter)                         
+                                   i.ToStream(byteWriter)    
             storageStream.ToArray()                     
         static member public FromBytes(bytes: byte array) =
             use storageStream = new MemoryStream(bytes)
