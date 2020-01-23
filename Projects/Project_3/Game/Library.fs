@@ -26,17 +26,26 @@
         // Configs - ball
         [<Literal>]
         let private BALL_RADIUS = 1.0f
-        let private BALL_SPEED_X = -1.0f
-        let private BALL_SPEED_Y = 1.0f
+        [<Literal>]
+        let private BALL_SPEED_X = -0.1f
+        [<Literal>]
+        let private BALL_SPEED_Y = 0.1f
 
         // Configs - player
         [<Literal>]
         /// distance player moves on one press on Up/Down key
-        let private MOVE_DISTANCE_PLAYER = 1.0f
+        let private MOVE_DISTANCE_PLAYER = 0.4f
         [<Literal>]
         let private PADDLE_LENGHT = 3.0f
         [<Literal>]
         let private PADDLE_WIDTH = 1.0f
+       
+        let public DEFAULT_GAME_STATE =
+            GameState(
+                Ball(Vector(0.0f, 0.0f), Vector(BALL_SPEED_X, BALL_SPEED_Y)), //Ball
+                PlayerData(Vector(-10.0f, 0.0f), 0), //Player 1
+                PlayerData(Vector(10.0f, 0.0f), 0) //Player 2
+                )
         
 
         ///Move player one up

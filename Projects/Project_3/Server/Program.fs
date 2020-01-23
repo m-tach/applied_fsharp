@@ -123,11 +123,7 @@ module ServerStuff =
                 else do! sender.Send(StartGame, player2Address);
 
                 return! this.WaitFor2Inputs(player1Address, player2Address,
-                    GameState(
-                        Ball(Vector(0.0f, 0.0f), Vector(-0.2f, 0.2f)), //Ball
-                        PlayerData(Vector(-10.0f, 0.0f), 0), //Player 1
-                        PlayerData(Vector(10.0f, 0.0f), 0) //Player 2
-                        )
+                    GameEngine.DEFAULT_GAME_STATE
                     )
                 }
 
