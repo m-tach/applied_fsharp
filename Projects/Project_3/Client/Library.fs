@@ -7,6 +7,7 @@ open System.Threading
 
 open SharedTypes.NetworkStuff
 open SharedTypes.SharedTypes 
+open SharedTypes.Constants
 
 module ClientStuff =
 
@@ -15,11 +16,13 @@ module ClientStuff =
         let newGameState = new Event<GameState>()
         let waitForStartGame = new Event<int>()
         let launchGame = new Event<_>()
+        let goToLobby = new Event<_>()
+
         let mutable keyInput = Up
 
         member public this.KeyInput = keyInput
         
-        
+        //Events for communication with WPF
         [<CLIEvent>]
         member public this.NewGameServerFoundEvent = newGameServerFound.Publish
         member public this.NewGameServerTrigger = newGameServerFound
@@ -36,12 +39,19 @@ module ClientStuff =
         member public this.LaunchGameEvent = launchGame.Publish
         member public this.LaunchGameTrigger = launchGame
 
+        [<CLIEvent>]
+        member public this.GoToLobbyEvent = goToLobby.Publish
+        member public this.GoToLobbyTrigger = goToLobby
+
 
         member public this.JoinGame(server: GameServer) =
             stateMachineQueue.Post(JoinGame(server.Address))
 
         member public this.HostGame(serverName: string) =
             stateMachineQueue.Post(HostGame(serverName))
+
+        member public this.BroadcastRequestServers() =
+            stateMachineQueue.Post(BroadcastRequestServers)
             
         member public this.KeyPressed(input: Input) =
             keyInput <- input                              
@@ -53,9 +63,9 @@ module ClientStuff =
         ///ev is a queue, which stores messages in order they have been received
         let ev = AsyncEventQueue<Message>()
         let cl = Client(ev);
-        let sender = NetworkSender(9001) 
-        ///nwRec listens for incoming traffic on 9001 and adds it to queue0
-        let nwRec = NetworkReceiver(9001)
+        let sender = NetworkSender(SERVER_PORT) 
+        ///nwRec listens for incoming traffic on CLIENT_PORT and adds it to queue0
+        let nwRec = NetworkReceiver(CLIENT_PORT)
         do
             nwRec.StartListening();
             nwRec.ReceiveMessageEvent.Add(fun x -> ev.Post(x))
@@ -106,8 +116,9 @@ module ClientStuff =
         member private this.StartLobby() = 
             async {
                 printfn "state: start"; 
+                cl.GoToLobbyTrigger.Trigger()
                 //broadcast request available servers for lobby 
-                do! Broadcast(RequestServers(getOwnIpAddress), 9001);
+                do! Broadcast(RequestServers(getOwnIpAddress), SERVER_PORT);
                 let! msg = ev.Receive();
                 match msg with
                  | HostGame  serverName -> this.StartServerProcess(serverName);
