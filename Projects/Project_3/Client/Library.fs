@@ -162,6 +162,7 @@ module ClientStuff =
                 let! msg = ev.Receive();
                 match msg with 
                 | StartGame  -> cl.LaunchGameTrigger.Trigger(); return! this.SendInput(playerId, serverAddress);
+                | GameDone -> return! this.StartLobby();
                 | _ -> return! this.WaitForStartGame(playerId, serverAddress);
             }
 
