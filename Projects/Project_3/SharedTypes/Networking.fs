@@ -22,6 +22,18 @@ module NetworkStuff =
                  bList.ToArray()              
             else Array.empty) (NetworkInterface.GetAllNetworkInterfaces())
 
+    let public getOwnIpAddress: IPAddress =
+        (Array.collect(fun (x: NetworkInterface) -> 
+            if not x.IsReceiveOnly && x.NetworkInterfaceType <> NetworkInterfaceType.Loopback && x.OperationalStatus = OperationalStatus.Up
+            then // In order to unpack the unique collection from x.GetIPProperties().UnicastAddresses
+                 // this was necessary
+                 let bList = Collections.Generic.List<IPAddress>()
+                 for i in x.GetIPProperties().UnicastAddresses do
+                    if i.IsDnsEligible
+                    then bList.Add(i.Address)
+                 bList.ToArray()              
+            else Array.empty) (NetworkInterface.GetAllNetworkInterfaces())).[0]
+
     let public Broadcast(message: SharedTypes.Message, port) =
         async {               
             Array.iter(fun (x:IPAddress) ->

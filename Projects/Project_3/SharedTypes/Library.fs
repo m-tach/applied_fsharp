@@ -153,27 +153,32 @@ module SharedTypes =
             GameServer(stream.ReadString(), IPAddress.Parse(stream.ReadString()))
 
     type public Message = 
-       | RequestServers
+       | RequestServers of IPAddress
        | Server of GameServer
        | JoinGame of IPAddress
-       | YouJoinedTheGame of int
+       | YouJoinedTheGame of int * IPAddress
        | StartGame
        | GameDone
        | GameStateUpdate of GameState
        | PlayerInput of int * Input
+       | HostGame of string
 
         member public this.ToBytes() =
             use storageStream = new MemoryStream()
             use byteWriter = new BinaryWriter(storageStream)
             match this with
-            | RequestServers -> byteWriter.Write(0uy)
+            | RequestServers(ip) -> byteWriter.Write(0uy)
+                                    let addressAsBytes = System.Text.Encoding.UTF8.GetBytes(ip.ToString())
+                                    byteWriter.Write(addressAsBytes, 0, addressAsBytes.Length)
             | Server(gs) -> byteWriter.Write(1uy)
                             gs.ToStream(byteWriter)
             | JoinGame(ip) -> byteWriter.Write(2uy)
                               let addressAsBytes = System.Text.Encoding.UTF8.GetBytes(ip.ToString())
                               byteWriter.Write(addressAsBytes, 0, addressAsBytes.Length)
-            | YouJoinedTheGame(p) -> byteWriter.Write(3uy)
-                                     byteWriter.Write(p)
+            | YouJoinedTheGame(p, ip) -> byteWriter.Write(3uy)
+                                         byteWriter.Write(p)
+                                         let addressAsBytes = System.Text.Encoding.UTF8.GetBytes(ip.ToString())
+                                         byteWriter.Write(addressAsBytes, 0, addressAsBytes.Length)                                     
             | StartGame -> byteWriter.Write(4uy)
             | GameDone -> byteWriter.Write(5uy)
             | GameStateUpdate(s) -> byteWriter.Write(6uy)
@@ -186,10 +191,10 @@ module SharedTypes =
             use storageStream = new MemoryStream(bytes)
             use byteReader = new BinaryReader(storageStream)
             match byteReader.ReadByte() with
-            | 0uy -> RequestServers
+            | 0uy -> RequestServers(IPAddress.Parse(byteReader.ReadString()))
             | 1uy -> Server(GameServer.FromStream(byteReader))
             | 2uy -> JoinGame(IPAddress.Parse(byteReader.ReadString()))
-            | 3uy -> YouJoinedTheGame(byteReader.ReadInt32())
+            | 3uy -> YouJoinedTheGame(byteReader.ReadInt32(), IPAddress.Parse(byteReader.ReadString()))
             | 4uy -> StartGame
             | 5uy -> GameDone
             | 6uy -> GameStateUpdate(GameState.FromStream(byteReader))

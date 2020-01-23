@@ -1,17 +1,39 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace FrontendWpf
+using SharedTypes;
+
+namespace FrontendWpf3
 {
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		// Client F# library
+		
+		private Client.ClientStuff.Client client;
+		// List of servers discovered
+		private List<SharedTypes.SharedTypes.GameServer> servers = new List<SharedTypes.SharedTypes.GameServer>();
+
 		public MainWindow()
 		{
 			InitializeComponent();
+			client = new Client.ClientStuff.Client(null);
+
+			client.NewGameServerFoundEvent += Client_NewGameServerFoundEvent1;
+		}
+
+		private void Client_NewGameServerFoundEvent1(object sender, SharedTypes.SharedTypes.GameServer server)
+		{
+			System.Diagnostics.Debug.Print("Found a new server! " + server);
+		}
+
+		private void Client_NewGameServerFoundEvent(SharedTypes.SharedTypes.GameServer server)
+		{
+			; // arg should be a GameServer, waiting for PR.
 		}
 
 		// Sets the current screen by hiding all screens and showing the screen.
@@ -80,6 +102,20 @@ namespace FrontendWpf
 
 		// Exit a game screen. Brings you to the lobby.
 		private void ExitGameBtn_Click(object sender, RoutedEventArgs e) => SetScreen(ScreenLobby);
+
+		private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+		{
+			SharedTypes.SharedTypes.Input input = e.Key switch
+			{
+				System.Windows.Input.Key.W => SharedTypes.SharedTypes.Input.Up,
+				System.Windows.Input.Key.Up => SharedTypes.SharedTypes.Input.Up,
+				System.Windows.Input.Key.S => SharedTypes.SharedTypes.Input.Down,
+				System.Windows.Input.Key.Down => SharedTypes.SharedTypes.Input.Down,
+				System.Windows.Input.Key.Escape => SharedTypes.SharedTypes.Input.Escape,
+				_ => null
+			};
+			//if (input != null) client.KeyPressed(input);
+		}
 	}
 
 	// Placeholder, until we tie together the FS modules and this.
