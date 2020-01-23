@@ -60,9 +60,15 @@
 			</StackPanel>
 
 		</StackPanel>
+		<StackPanel x:Name="ScreenWaitForPlayers" Margin="10" Visibility="Hidden">
+			<DockPanel HorizontalAlignment="Left" Margin="0,0,0,5">
+				<Label x:Name="TitleWaitForPlayersScreen" Content="Waiting for opponent..." Height="32" VerticalAlignment="Top" FontSize="14" FontWeight="Bold"/>
+				<Button x:Name="ExitGameBtn2" Content="Exit" Width="75" FontSize="14" Margin="15,0,0,0" Height="24" Click="ExitGameBtn_Click"/>
+			</DockPanel>
+		</StackPanel>
 		<StackPanel x:Name="ScreenGame" Margin="10" Visibility="Hidden">
 			<DockPanel HorizontalAlignment="Left" Margin="0,0,0,5">
-				<Label x:Name="TitleGameScreen" Content="Waiting for opponent..." Height="32" VerticalAlignment="Top" FontSize="14" FontWeight="Bold"/>
+				<Label x:Name="TitleGameScreen" Content="The Game!" Height="32" VerticalAlignment="Top" FontSize="14" FontWeight="Bold"/>
 				<Button x:Name="ExitGameBtn" Content="Exit" Width="75" FontSize="14" Margin="15,0,0,0" Height="24" Click="ExitGameBtn_Click"/>
 				<Label x:Name="label1" Content="Controls: S/D, Arrow Up/Down to move your bar" Margin="30,0,0,0"/>
 				<Label x:Name="Player1Score" Content="P1: 0 Points" Margin="20,0,0,0" FontSize="12" FontWeight="Bold" Foreground="#FFDD4444"/>

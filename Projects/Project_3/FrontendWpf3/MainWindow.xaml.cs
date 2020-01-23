@@ -36,7 +36,7 @@ namespace FrontendWpf3
 
 		private void Client_WaitForStartGameEvent(object sender, int args)
 		{
-			Dispatcher.Invoke(() => this.SetScreen(ScreenGame));
+			Dispatcher.Invoke(() => this.SetScreen(ScreenWaitForPlayers));
 		}
 
 		private void Client_NewGameStateEvent(object sender, SharedTypes.SharedTypes.GameState args)
@@ -171,7 +171,7 @@ namespace FrontendWpf3
 		private void CreateGameBtn_Click(object sender, RoutedEventArgs e)
 		{
 			client.HostGame(GameNameCreateGame.Text);
-			SetScreen(ScreenGame);
+			SetScreen(ScreenWaitForPlayers);
 		}
 	}
 
