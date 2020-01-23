@@ -129,12 +129,14 @@ namespace Server
                                 match command with
                                 | Up -> (moveUp player1, player2)
                                 | Down -> (moveDown  player1, player2)
+                                | i -> failwith (String.Format("unexpected input: {0}", i))
                             elif (player = 2) then 
                                 match command with
                                      | Up -> (player1, moveUp player2)
-                                     | Down -> (player1, moveDown  player2)              
+                                     | Down -> (player1, moveDown  player2)   
+                                     | i -> failwith (String.Format("unexpected input: {0}", i))           
                             else
-                                (player1, player2)    
+                                failwith (String.Format("unexpected player: {0}", player))    
             let gState = checkBounds(ball, p1, p2)
             let newBall = moveBall (gState.Ball, gState.Player1, gState.Player2)
 
