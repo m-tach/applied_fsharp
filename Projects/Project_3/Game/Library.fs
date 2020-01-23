@@ -49,19 +49,19 @@
         
 
         ///Move player one up
-        let moveUp (player: PlayerData) : PlayerData = if player.Position.Y < Y_MAX 
-                                                       then PlayerData(Vector(player.Position.X , (player.Position.Y + MOVE_DISTANCE_PLAYER)), player.Score) 
-                                                       else player
+        let private moveUp (player: PlayerData) : PlayerData = if player.Position.Y < Y_MAX 
+                                                               then PlayerData(Vector(player.Position.X , (player.Position.Y + MOVE_DISTANCE_PLAYER)), player.Score) 
+                                                               else player
         
         ///Move player one down
-        let moveDown (player: PlayerData) : PlayerData = if player.Position.Y > Y_MIN 
-                                                         then PlayerData(Vector(player.Position.X , (player.Position.Y - MOVE_DISTANCE_PLAYER)), player.Score)
-                                                         else player
+        let private moveDown (player: PlayerData) : PlayerData = if player.Position.Y > Y_MIN 
+                                                                 then PlayerData(Vector(player.Position.X , (player.Position.Y - MOVE_DISTANCE_PLAYER)), player.Score)
+                                                                 else player
         ///Increment score of player
-        let incrementScore (player: PlayerData) = PlayerData(player.Position, (player.Score + 1) )
+        let private incrementScore (player: PlayerData) = PlayerData(player.Position, (player.Score + 1) )
 
         ///Restart game - reset positions of ball and players
-        let restartGame (player1: PlayerData, player2: PlayerData) : GameState = 
+        let private restartGame (player1: PlayerData, player2: PlayerData) : GameState = 
             printfn "Ball has left the field : restarting game"
             printfn "Player1 score: %d " player1.Score
             printfn "Player2 score: %d " player2.Score
@@ -73,7 +73,7 @@
 
         /// Check if ball will be hit or missed by a player the next time it moves. 
         /// If missed - increment score and restart positions
-        let checkBounds (ball':Ball, player1:PlayerData, player2:PlayerData) : GameState =
+        let private checkBounds (ball':Ball, player1:PlayerData, player2:PlayerData) : GameState =
             let rx = ball'.BallPosition.X
             let ry = ball'.BallPosition.Y
             let vy = ball'.BallDirection.Y//direction y
@@ -102,7 +102,7 @@
                 GameState(ball', player1, player2)                            
 
         ///Move ball; change direction if hitting top edge; bottom edge; player paddle
-        let moveBall (ball':Ball, player1:PlayerData, player2:PlayerData) : Ball = 
+        let private moveBall (ball':Ball, player1:PlayerData, player2:PlayerData) : Ball = 
             let rx = ball'.BallPosition.X
             let ry = ball'.BallPosition.Y
             
@@ -133,7 +133,7 @@
         /// 2. Check if ball's current trajectory will be missed by the paddle in this turn
         ///     - if yes -> restart game
         ///     - if no -> move ball 
-        let calculateState (ball:Ball, player1:PlayerData, player2:PlayerData, command:Input, player: int) : GameState =
+        let public calculateState (ball:Ball, player1:PlayerData, player2:PlayerData, command:Input, player: int) : GameState =
             let (p1, p2 ) = if (player = 1) then 
                                 match command with
                                 | Up -> (moveUp player1, player2)

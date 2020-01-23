@@ -5,7 +5,7 @@ open System.IO
 open System.Net
 
 module SharedTypes =
-    type Vector(x: float32, y: float32) = 
+    type public Vector(x: float32, y: float32) = 
         member public this.X = x
         member public this.Y = y
 
@@ -28,7 +28,7 @@ module SharedTypes =
             Vector(stream.ReadSingle(), stream.ReadSingle())            
 
     //              player pos  score
-    type PlayerData(playerPos: Vector, score: int) =
+    type public PlayerData(playerPos: Vector, score: int) =
         member public this.Position = playerPos
         member public this.Score = score        
 
@@ -51,7 +51,7 @@ module SharedTypes =
             PlayerData(Vector.FromStream(stream), stream.ReadInt32())
 
     //         ball pos  ball dir
-    type Ball(ballPos: Vector, ballDir: Vector) =
+    type public Ball(ballPos: Vector, ballDir: Vector) =
         member public this.BallPosition = ballPos
         member public this.BallDirection = ballDir
 
@@ -73,7 +73,7 @@ module SharedTypes =
         static member public FromStream(stream: BinaryReader) =
             Ball(Vector.FromStream(stream), Vector.FromStream(stream))
 
-    type GameState(ball: Ball, player1: PlayerData, player2: PlayerData) = 
+    type public GameState(ball: Ball, player1: PlayerData, player2: PlayerData) = 
         member public this.Ball = ball
         member public this.Player1 = player1
         member public this.Player2 = player2
@@ -97,7 +97,7 @@ module SharedTypes =
         static member public FromStream(stream: BinaryReader) =
             GameState(Ball.FromStream(stream), PlayerData.FromStream(stream), PlayerData.FromStream(stream))
 
-    type Input =
+    type public Input =
         | Up 
         | Down 
         | Escape
@@ -128,7 +128,7 @@ module SharedTypes =
             | 2uy -> Escape
             | a -> failwith (String.Format("failed to convert byte to input.\nByte: {0}", a))
 
-    type GameServer(serverName: string, address: IPAddress) = 
+    type public GameServer(serverName: string, address: IPAddress) = 
         member public this.ServerName = serverName
         member public this.Address = address
 
@@ -201,7 +201,7 @@ module SharedTypes =
 
 
     // An asynchronous event queue kindly provided by Don Syme 
-    type AsyncEventQueue<'T>() = 
+    type public AsyncEventQueue<'T>() = 
         let mutable cont = None 
         let queue = System.Collections.Generic.Queue<'T>()
         let tryTrigger() = 
