@@ -82,6 +82,7 @@ module ServerStuff =
                 | JoinGame ipAddress 
                     when againstComputer && ipAddress.Equals(IPAddress.Loopback) ->
                     do! computerSender.Send(YouJoinedTheGame(1, getOwnIpAddress), ipAddress);
+                    return! this.WaitingFor1Player(ipAddress);
                 | JoinGame ipAddress ->  do! sender.Send(YouJoinedTheGame(1, getOwnIpAddress), ipAddress);
                                          return! this.WaitingFor1Player(ipAddress);
                 | _        -> return! this.WaitingFor2Players()
@@ -100,7 +101,8 @@ module ServerStuff =
                                               return! this.WaitingFor1Player(player1Address);   
                 | JoinGame ipAddress 
                     when againstComputer && ipAddress.Equals(IPAddress.Loopback) ->
-                    do! computerSender.Send(YouJoinedTheGame(2, getOwnIpAddress), ipAddress);
+                    do! computerSender.Send(YouJoinedTheGame(2, getOwnIpAddress), ipAddress);                     
+                    return! this.StartGame(player1Address, ipAddress);
                 | JoinGame ipAddress ->  do! sender.Send(YouJoinedTheGame(2, getOwnIpAddress), ipAddress);
                                          return! this.StartGame(player1Address, ipAddress);
                 | _         -> return! this.WaitingFor1Player(player1Address)
