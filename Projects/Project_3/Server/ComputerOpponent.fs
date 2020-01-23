@@ -16,6 +16,7 @@ module ComputerOpponent =
         let ev = AsyncEventQueue<SharedTypes.SharedTypes.Message>()
         
         do
+            recs.StartListening()
             recs.ReceiveMessageEvent.Add(ev.Post)
 
         member private this.CalculateMove(playerId: int, gState: GameState) =
@@ -30,13 +31,17 @@ module ComputerOpponent =
 
         member public this.JoinGame() =
             async {
+                printfn "state: computer JoinGame"
                 do! sends.Send(JoinGame(IPAddress.Loopback), IPAddress.Loopback)
                 return! this.YouJoinedTheGame();
             }         
 
         member public this.YouJoinedTheGame() =
             async {
-                let! msg = ev.Receive()
+                printfn "state: computer YouJoinedTheGame"; 
+
+                let! msg = ev.Receive();
+                printfn "parsing msg: computer %A" msg;
                 match msg with
                 | YouJoinedTheGame(playerId, ip) -> return! this.WaitForGameStart(playerId)
                 | _ -> return! this.YouJoinedTheGame()
@@ -44,7 +49,10 @@ module ComputerOpponent =
         
         member private this.WaitForGameStart(playerId : int) =
             async {
-                let! msg = ev.Receive()
+                printfn "state: computer WaitForGameStart"; 
+
+                let! msg = ev.Receive();
+                printfn "parsing msg: computer %A" msg;
                 match msg with
                 | StartGame -> 
                 return! this.SendInput(
@@ -59,6 +67,7 @@ module ComputerOpponent =
 
         member private this.SendInput(playerId : int, gState: GameState) =
             async {
+                printfn "state: computer SendInput";
                 let computerMove = this.CalculateMove(playerId, gState)
                 do! sends.Send(PlayerInput(playerId, computerMove), IPAddress.Loopback)
                 return! this.WaitForGameState(playerId);
@@ -66,7 +75,10 @@ module ComputerOpponent =
 
         member private this.WaitForGameState(playerId : int) =
             async {
-                let! msg = ev.Receive()
+                printfn "state: computer WaitForGameStart"; 
+
+                let! msg = ev.Receive();
+                printfn "parsing msg: %A" msg;
                 match msg with
                 | GameStateUpdate gState -> return! this.SendInput(playerId, gState)
                 | GameDone -> printfn("Computer opponent: Game over")

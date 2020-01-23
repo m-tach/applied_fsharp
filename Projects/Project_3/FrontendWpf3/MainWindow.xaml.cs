@@ -80,16 +80,16 @@ namespace FrontendWpf3
 
 		private void Refresh_Click(object sender, RoutedEventArgs e) => BroadcastForGames();
 
-		private void SinglePlayer_Click(object sender, RoutedEventArgs e) => client.HostGame("SinglePlayer");
+		private void SinglePlayer_Click(object sender, RoutedEventArgs e) => client.HostGameComputer();
 
 		// Render the game given a state.
 		public void RenderGame(SharedTypes.SharedTypes.GameState state)
 		{
-			double widthScale = GameCanvas.Width / 20.0;
-			double heightScale = GameCanvas.Height / 20.0;
+			double widthScale = GameCanvas.ActualWidth / 20.0;
+			double heightScale = GameCanvas.ActualHeight / 20.0;
 
-			double middleY = GameCanvas.Height / 2.0;
-			double middleX = GameCanvas.Width / 2.0;
+			double middleY = GameCanvas.ActualHeight / 2.0;
+			double middleX = GameCanvas.ActualWidth / 2.0;
 
 			double paddleHeight = 3.0;
 			double paddleHeightHalf = paddleHeight / 2.0;
@@ -100,11 +100,11 @@ namespace FrontendWpf3
 			GameCanvasPlayer2.Y1 = middleY + (state.Player2.Position.Y - paddleHeightHalf) * heightScale;
 			GameCanvasPlayer2.Y2 = middleY + (state.Player2.Position.Y + paddleHeightHalf) * heightScale;
 
-			/*GameCanvasBall.Margin = new Thickness(
+			GameCanvasBall.Margin = new Thickness(
 				middleX + state.Ball.BallPosition.X * widthScale,
 				middleY + state.Ball.BallPosition.Y * heightScale,
 				0, 0
-			);*/
+			);
 
 			Player1Score.Content = $"P1: {state.Player1.Score} Points";
 			Player2Score.Content = $"P2: {state.Player2.Score} Points";

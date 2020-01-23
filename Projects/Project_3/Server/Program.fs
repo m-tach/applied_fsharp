@@ -19,6 +19,8 @@ module ServerStuff =
         let sender = NetworkSender(CLIENT_PORT)
         let computerSender = NetworkSender(9003)
         do
+            printfn "Server name: %s" serverName
+            printfn "Use bot: %s" (againstComputer.ToString())
             //receiver is only used to put messages in the event queue
             messagesReceiver.StartListening();
             messagesReceiver.ReceiveMessageEvent.Add(ev.Post)
@@ -81,6 +83,7 @@ module ServerStuff =
                                               return! this.WaitingFor2Players();   
                 | JoinGame ipAddress 
                     when againstComputer && ipAddress.Equals(IPAddress.Loopback) ->
+                    printfn "awjaowijfaowijdawoijf"                    
                     do! computerSender.Send(YouJoinedTheGame(1, getOwnIpAddress), ipAddress);
                     return! this.WaitingFor1Player(ipAddress);
                 | JoinGame ipAddress ->  do! sender.Send(YouJoinedTheGame(1, getOwnIpAddress), ipAddress);
@@ -194,7 +197,9 @@ module ServerStuff =
             printfn "Server has just started"; 
             let serverName = argv.[0]
             let againstComputer = argv.[1]
-            let stateMachine = ServerStateMachine(serverName, againstComputer.Equals("1"))
+            printfn "argument 1: %s" serverName
+            printfn "argument 2: %s" againstComputer
+            let stateMachine = ServerStateMachine(serverName, bool.Parse(againstComputer))
             Async.RunSynchronously (stateMachine.Start())
             printfn "Server is done"; 
         with 
