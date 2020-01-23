@@ -6,6 +6,7 @@ open System.Net
 open SharedTypes.NetworkStuff
 open SharedTypes.SharedTypes
 open SharedTypes.Constants
+open Game
 
 
 /// Automaton for the Server, hosting a ping-pong game
