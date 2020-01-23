@@ -42,6 +42,9 @@ module ClientStuff =
 
         member public this.HostGame(serverName: string) =
             stateMachineQueue.Post(HostGame(serverName))
+
+        member public this.BroadcastRequestServers() =
+            stateMachineQueue.Post(BroadcastRequestServers)
             
         member public this.KeyPressed(input: Input) =
             keyInput <- input                              
