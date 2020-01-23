@@ -102,14 +102,15 @@ module ClientStuff =
         member private this.StartServerProcess(serverName: string) = 
             let procStartInfo = 
                 ProcessStartInfo(
-                    UseShellExecute = true,
+                    UseShellExecute = false,
                     CreateNoWindow = false,
                     FileName = "Server.exe",
-                    Arguments = serverName
+                    Arguments = serverName,
+                    RedirectStandardInput = true
                 )
             let p = new Process(StartInfo = procStartInfo)
             printfn "state: StartServerProcess"; 
-            p.Start() |> ignore 
+            p.Start() |> ignore
             let processes = Process.GetProcessesByName("Server");
             printfn "Started process %A " processes
 
@@ -129,6 +130,7 @@ module ClientStuff =
                 let! msg = ev.Receive();
                 match msg with
                  | HostGame  serverName -> this.StartServerProcess(serverName);
+                                           do! Async.Sleep(2000)
                                            do! sender.Send(JoinGame(getOwnIpAddress), IPAddress.Loopback) ;
                                            return! this.StartLobby()
 
