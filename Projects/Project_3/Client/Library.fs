@@ -16,11 +16,13 @@ module ClientStuff =
         let newGameState = new Event<GameState>()
         let waitForStartGame = new Event<int>()
         let launchGame = new Event<_>()
+        let goToLobby = new Event<_>()
+
         let mutable keyInput = Up
 
         member public this.KeyInput = keyInput
         
-        
+        //Events for communication with WPF
         [<CLIEvent>]
         member public this.NewGameServerFoundEvent = newGameServerFound.Publish
         member public this.NewGameServerTrigger = newGameServerFound
@@ -36,6 +38,10 @@ module ClientStuff =
         [<CLIEvent>]
         member public this.LaunchGameEvent = launchGame.Publish
         member public this.LaunchGameTrigger = launchGame
+
+        [<CLIEvent>]
+        member public this.GoToLobbyEvent = goToLobby.Publish
+        member public this.GoToLobbyTrigger = goToLobby
 
 
         member public this.JoinGame(server: GameServer) =
@@ -110,6 +116,7 @@ module ClientStuff =
         member private this.StartLobby() = 
             async {
                 printfn "state: start"; 
+                cl.GoToLobbyTrigger.Trigger()
                 //broadcast request available servers for lobby 
                 do! Broadcast(RequestServers(getOwnIpAddress), SERVER_PORT);
                 let! msg = ev.Receive();
