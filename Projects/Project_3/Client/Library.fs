@@ -105,7 +105,7 @@ module ClientStuff =
         member private this.StartServerProcess(serverName: string, againstComputer: bool) = 
             let procStartInfo = 
                 ProcessStartInfo(
-                    UseShellExecute = true,
+                    UseShellExecute = false,
                     CreateNoWindow = false,
                     FileName = "Server.exe",
                     Arguments = (String.collect (function '\n'->""|'\r'->""|'"'->""|c->string c) serverName) + " " + // Escape server name of ", newline & return
@@ -113,7 +113,7 @@ module ClientStuff =
                 )
             let p = new Process(StartInfo = procStartInfo)
             printfn "state: StartServerProcess"; 
-            p.Start() |> ignore 
+            p.Start() |> ignore
             let processes = Process.GetProcessesByName("Server");
             printfn "Started process %A " processes
 
@@ -133,6 +133,7 @@ module ClientStuff =
                 let! msg = ev.Receive();
                 match msg with
                  | HostGame(serverName, againstComputer) -> this.StartServerProcess(serverName, againstComputer);
+                                                            do! Async.Sleep(2000)
                                                             do! sender.Send(JoinGame(getOwnIpAddress), IPAddress.Loopback) ;
                                                             return! this.StartLobby()
 
@@ -144,7 +145,7 @@ module ClientStuff =
                  | Server gameServer -> cl.NewGameServerTrigger.Trigger(gameServer); 
                                         return! this.StartLobby();
 
-                 | BroadcastRequestServers -> do! Broadcast(RequestServers(getOwnIpAddress), SERVER_PORT);
+                 | BroadcastRequestServers -> do! Broadcast(SERVER_PORT);
                                               return! this.StartLobby();                            
                                         
                  | _         -> printfn "start: unexpected message %A" msg; 

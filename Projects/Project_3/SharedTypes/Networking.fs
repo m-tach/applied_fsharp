@@ -10,21 +10,21 @@ module NetworkStuff =
         let broadcastBytes = Array.map2(fun x y -> x ||| ~~~y) (uni.GetAddressBytes()) (sub.GetAddressBytes())
         IPAddress(broadcastBytes)
 
-    let private getBroadcastAddresses: IPAddress array =
+    let private getBroadcastAddresses: (IPAddress * IPAddress) array =
         Array.collect(fun (x: NetworkInterface) -> 
             if not x.IsReceiveOnly && x.NetworkInterfaceType <> NetworkInterfaceType.Loopback && x.OperationalStatus = OperationalStatus.Up
             then // In order to unpack the unique collection from x.GetIPProperties().UnicastAddresses
                  // this was necessary
-                 let bList = Collections.Generic.List<IPAddress>()
+                 let bList = Collections.Generic.List<IPAddress * IPAddress>()
                  for i in x.GetIPProperties().UnicastAddresses do
                     if i.IsDnsEligible
-                    then bList.Add(convertToBroadcast (i.Address) (i.IPv4Mask))
+                    then bList.Add((convertToBroadcast (i.Address) (i.IPv4Mask), i.Address))
                  bList.ToArray()              
             else Array.empty) (NetworkInterface.GetAllNetworkInterfaces())
 
     let public getOwnIpAddress: IPAddress =
         (Array.collect(fun (x: NetworkInterface) -> 
-            if not x.IsReceiveOnly && x.NetworkInterfaceType <> NetworkInterfaceType.Loopback && x.OperationalStatus = OperationalStatus.Up
+            if not x.IsReceiveOnly && x.NetworkInterfaceType <> NetworkInterfaceType.Loopback && x.OperationalStatus = OperationalStatus.Up && x.NetworkInterfaceType = NetworkInterfaceType.Wireless80211
             then // In order to unpack the unique collection from x.GetIPProperties().UnicastAddresses
                  // this was necessary
                  let bList = Collections.Generic.List<IPAddress>()
@@ -34,16 +34,16 @@ module NetworkStuff =
                  bList.ToArray()              
             else Array.empty) (NetworkInterface.GetAllNetworkInterfaces())).[0]
 
-    let public Broadcast(message: SharedTypes.Message, port) =
+    let public Broadcast(port) =
         async {               
-            Array.iter(fun (x:IPAddress) ->
+            Array.iter(fun (broad:IPAddress, addrss: IPAddress) ->
                 use broadcastClient = new UdpClient()
                 broadcastClient.ExclusiveAddressUse <- false
                 broadcastClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true) 
                 broadcastClient.EnableBroadcast <- true
 
-                broadcastClient.Connect(IPEndPoint(x, port))
-                let bytes = message.ToBytes()
+                broadcastClient.Connect(IPEndPoint(broad, port))
+                let bytes = (SharedTypes.Message.RequestServers(addrss)).ToBytes()
                 broadcastClient.Send(bytes, bytes.Length) |> ignore
                 ) getBroadcastAddresses
         }    
