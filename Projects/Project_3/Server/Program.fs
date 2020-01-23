@@ -7,6 +7,7 @@ open SharedTypes.NetworkStuff
 open SharedTypes.SharedTypes
 open SharedTypes.Constants
 open Game
+open ComputerOpponent
 
 
 /// Automaton for the Server, hosting a ping-pong game
@@ -16,19 +17,15 @@ module ServerStuff =
         let ev = AsyncEventQueue<SharedTypes.SharedTypes.Message>()
         let messagesReceiver = NetworkReceiver(SERVER_PORT)
         let sender = NetworkSender(CLIENT_PORT)
-        let computersender = NetworkSender(9003)
+        let computerSender = NetworkSender(9003)
         do
             //receiver is only used to put messages in the event queue
             messagesReceiver.StartListening();
             messagesReceiver.ReceiveMessageEvent.Add(ev.Post)
             if againstComputer
             then Async.StartImmediate (async {
-                let recs = NetworkReceiver(9003)
-                let sends = NetworkSender(SERVER_PORT)
-                let eawdv = AsyncEventQueue<SharedTypes.SharedTypes.Message>()
-                recs.ReceiveMessageEvent.Add(eawdv.Post)
-                do! sends.Send(JoinGame(IPAddress.Loopback), IPAddress.Loopback)
-                
+                let compOpponent = ComputerOpponentStateMachine();
+                do! compOpponent.JoinGame();                       
             })
 
         member public this.ServerName = serverName
@@ -82,6 +79,9 @@ module ServerStuff =
                 match msg with
                 | RequestServers ipAddress -> do! sender.Send(Server(GameServer(serverName, getOwnIpAddress)), ipAddress);
                                               return! this.WaitingFor2Players();   
+                | JoinGame ipAddress 
+                    when againstComputer && ipAddress.Equals(IPAddress.Loopback) ->
+                    do! computerSender.Send(YouJoinedTheGame(1, getOwnIpAddress), ipAddress);
                 | JoinGame ipAddress ->  do! sender.Send(YouJoinedTheGame(1, getOwnIpAddress), ipAddress);
                                          return! this.WaitingFor1Player(ipAddress);
                 | _        -> return! this.WaitingFor2Players()
@@ -98,6 +98,9 @@ module ServerStuff =
                 match msg with
                 | RequestServers ipAddress -> do! sender.Send(Server(GameServer(serverName, getOwnIpAddress)), ipAddress);
                                               return! this.WaitingFor1Player(player1Address);   
+                | JoinGame ipAddress 
+                    when againstComputer && ipAddress.Equals(IPAddress.Loopback) ->
+                    do! computerSender.Send(YouJoinedTheGame(2, getOwnIpAddress), ipAddress);
                 | JoinGame ipAddress ->  do! sender.Send(YouJoinedTheGame(2, getOwnIpAddress), ipAddress);
                                          return! this.StartGame(player1Address, ipAddress);
                 | _         -> return! this.WaitingFor1Player(player1Address)
@@ -106,8 +109,14 @@ module ServerStuff =
         member public this.StartGame(player1Address: IPAddress, player2Address: IPAddress) = 
             async {             
                 printfn "state: StartGame"; 
-                do! sender.Send(StartGame, player1Address);
-                do! sender.Send(StartGame, player2Address);
+                if (againstComputer) && player1Address.Equals(IPAddress.Loopback)
+                then do! computerSender.Send(StartGame, player1Address)
+                else do! sender.Send(StartGame, player1Address);
+                
+                if (againstComputer) && player2Address.Equals(IPAddress.Loopback)
+                then do! computerSender.Send(StartGame, player2Address)
+                else do! sender.Send(StartGame, player2Address);
+
                 return! this.WaitFor2Inputs(player1Address, player2Address,
                     GameState(
                         Ball(Vector(0.0f, 0.0f), Vector(-0.2f, 0.2f)), //Ball
@@ -151,10 +160,14 @@ module ServerStuff =
             async {       
                 printfn "state: SendGameStateUpdate"; 
 
-                if againstComputer
-                then do! computersender.Send(GameStateUpdate(state), IPAddress.Loopback)
+                if againstComputer && player1Address.Equals(IPAddress.Loopback)
+                then do! computerSender.Send(GameStateUpdate(state), player1Address)
                 else do! sender.Send(GameStateUpdate(state), player1Address);
-                do! sender.Send(GameStateUpdate(state), player2Address);
+
+                if againstComputer && player2Address.Equals(IPAddress.Loopback)
+                then do! computerSender.Send(GameStateUpdate(state), player2Address);
+                else do! sender.Send(GameStateUpdate(state), player2Address);
+
                 return! this.WaitFor2Inputs(player1Address, player2Address, state)
                 }
                 
@@ -162,10 +175,13 @@ module ServerStuff =
         member public this.Leaving(player1Address: IPAddress, player2Address: IPAddress) =
               async {     
                 printfn "state: Leaving"; 
-                if againstComputer
-                then do! computersender.Send(GameDone, IPAddress.Loopback)
+                if againstComputer  && player1Address.Equals(IPAddress.Loopback)
+                then do! computerSender.Send(GameDone, player1Address)
                 else do! sender.Send(GameDone, player1Address);
-                do! sender.Send(GameDone, player2Address);
+
+                if againstComputer  && player2Address.Equals(IPAddress.Loopback)
+                then do! computerSender.Send(GameDone, player2Address)
+                else do! sender.Send(GameDone, player2Address);
                 //server dies
             }      
 
