@@ -93,6 +93,8 @@ namespace FrontendWpf3
 			double paddleHeight = 3.0;
 			double paddleHeightHalf = paddleHeight / 2.0;
 
+			int ballRadius = 8;
+
 			GameCanvasPlayer1.Y1 = middleY + (state.Player1.Position.Y - paddleHeightHalf) * heightScale;
 			GameCanvasPlayer1.Y2 = middleY + (state.Player1.Position.Y + paddleHeightHalf) * heightScale;
 
@@ -100,8 +102,8 @@ namespace FrontendWpf3
 			GameCanvasPlayer2.Y2 = middleY + (state.Player2.Position.Y + paddleHeightHalf) * heightScale;
 
 			GameCanvasBall.Margin = new Thickness(
-				middleX + state.Ball.BallPosition.X * widthScale,
-				middleY + state.Ball.BallPosition.Y * heightScale,
+				middleX + state.Ball.BallPosition.X * widthScale - ballRadius,
+				middleY + state.Ball.BallPosition.Y * heightScale - ballRadius,
 				0, 0
 			);
 

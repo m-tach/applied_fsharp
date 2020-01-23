@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Ping Pong" Height="450" Width="800" ResizeMode="NoResize" Loaded="Window_Loaded" KeyDown="Window_KeyDown">
 	<Grid x:Name="WindowContent">
-		<StackPanel x:Name="ScreenLobby" Margin="10" Visibility="Visible">
+		<StackPanel x:Name="ScreenLobby" Margin="10" Visibility="Hidden">
 			<Label x:Name="TitleLobby" Content="Games" Height="32" VerticalAlignment="Top" FontSize="14" FontWeight="Bold"/>
 			<StackPanel Height="304" Margin="0,5,20,5">
                 <ListView x:Name="GameServerList" ItemsSource="{Binding Servers}" Margin="10" Height="245" BorderBrush="{x:Null}">
@@ -66,7 +66,7 @@
 				<Button x:Name="ExitGameBtn2" Content="Exit" Width="75" FontSize="14" Margin="15,0,0,0" Height="24" Click="ExitGameBtn_Click"/>
 			</DockPanel>
 		</StackPanel>
-		<StackPanel x:Name="ScreenGame" Margin="10" Visibility="Hidden">
+		<StackPanel x:Name="ScreenGame" Margin="10" Visibility="Visible">
 			<DockPanel HorizontalAlignment="Left" Margin="0,0,0,5">
 				<Label x:Name="TitleGameScreen" Content="The Game!" Height="32" VerticalAlignment="Top" FontSize="14" FontWeight="Bold"/>
 				<Button x:Name="ExitGameBtn" Content="Exit" Width="75" FontSize="14" Margin="15,0,0,0" Height="24" Click="ExitGameBtn_Click"/>
@@ -77,15 +77,15 @@
 			</DockPanel>
 			<Canvas x:Name="GameCanvas" Height="360" Background="#F2F2F2">
 				<Line x:Name="GameCanvasPlayer1"
-					X1="10" Y1="20"
-					X2="10" Y2="80"
+					X1="25" Y1="20"
+					X2="25" Y2="80"
 					Stroke="#D44"
 					StrokeThickness="6"
 					StrokeStartLineCap="Round"
 					StrokeEndLineCap="Round" RenderTransformOrigin="0.5,0.5" />
 				<Line x:Name="GameCanvasPlayer2"
-					X1="753" Y1="20"
-					X2="753" Y2="80"
+					X1="738" Y1="20"
+					X2="738" Y2="80"
 					Stroke="#44D"
 					StrokeThickness="6"
 					StrokeStartLineCap="Round"
