@@ -51,15 +51,21 @@ module NetworkStuff =
 
     type public NetworkSender(port: int) =
         let port = port
+        let mutable client = new UdpClient()
+        let mutable oldAddress = IPAddress.None
 
         member public this.Send(message: SharedTypes.Message, address: IPAddress) =
             async { 
                 let bytes = message.ToBytes()
-                use client = new UdpClient()
-                client.ExclusiveAddressUse <- false
-                //client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true)
-                client.Connect(IPEndPoint(address, port))
-                client.Send(bytes, bytes.Length) |> ignore 
+                if not (oldAddress.Equals(address))
+                then client.Close()
+                     client.Dispose()
+                     client <- new UdpClient()
+                     client.ExclusiveAddressUse <- false
+                     //client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true)
+                     client.Connect(IPEndPoint(address, port))
+                client.Send(bytes, bytes.Length) |> ignore
+                oldAddress <- address 
                 }
 
     type public NetworkReceiver(port: int) =
