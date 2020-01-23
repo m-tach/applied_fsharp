@@ -51,9 +51,9 @@ module ClientStuff =
     /// Automaton for the Client, used to connect to a ping-pong game
     type ClientStateMachine() = 
         ///ev is a queue, which stores messages in order they have been received
-        let ev = AsyncEventQueue<SharedTypes.SharedTypes.Message>()
+        let ev = AsyncEventQueue<Message>()
         let cl = Client(ev);
-        let mutable nwSender = NetworkSender(9001, IPAddress.Loopback) 
+        let sender = NetworkSender(9001) 
         ///nwRec listens for incoming traffic on 9001 and adds it to queue0
         let nwRec = NetworkReceiver(9001)
         do
@@ -61,6 +61,32 @@ module ClientStuff =
             nwRec.ReceiveMessageEvent.Add(fun x -> ev.Post(x))
       
         member public this.InternalClient = cl
+
+        (*
+            #############################
+            ####### State machine #######            
+            #############################
+
+               /-----------------------\
+               |                       |
+               |   /------\ Server     |
+               V   V      | JoinGame   |
+            StartLobby ---/ HostGame   |
+              |                        |
+              | YouJoinedTheGame       |
+              V                        |
+            WaitForStartGame           |
+              |                        | 
+              | StartGame              |
+              V                        |
+            SendInput                  |
+              |   ^                    |
+              |   | GameStateUpdate    |
+              V   |                    | GameDone
+            ReceiveGameState ----------/ 
+        *)            
+
+
         
         /// start a server process to host a game
         member private this.StartServerProcess(serverName: string) = 
@@ -73,19 +99,11 @@ module ClientStuff =
                 )
             let p = new Process(StartInfo = procStartInfo)
             printfn "state: StartServerProcess"; 
-            p.Start() ;            
+            p.Start() |> ignore 
             let processes = Process.GetProcessesByName("Server");
             printfn "Started process %A " processes
 
-
-
-
-
-        /// Start in a lobby
-        /// Flow:
-        /// 1. Broadcast request available servers for lobby
-        /// 2. Process incoming messages from queue
-        member private this.startLobby() = 
+        member private this.StartLobby() = 
             async {
                 printfn "state: start"; 
                 //broadcast request available servers for lobby 
@@ -93,36 +111,34 @@ module ClientStuff =
                 let! msg = ev.Receive();
                 match msg with
                  | HostGame  serverName -> this.StartServerProcess(serverName);
-                                           nwSender <- NetworkSender(9001, IPAddress.Loopback);
-                                           do! nwSender.Send(JoinGame(getOwnIpAddress)) ;
-                                           return! this.startLobby()
+                                           do! sender.Send(JoinGame(getOwnIpAddress), IPAddress.Loopback) ;
+                                           return! this.StartLobby()
 
-                 | JoinGame ipAddr-> nwSender <- NetworkSender(9001, ipAddr);
-                                     do! nwSender.Send(JoinGame(getOwnIpAddress)) ;
-                                     return! this.startLobby();
+                 | JoinGame ipAddr-> do! sender.Send(JoinGame(getOwnIpAddress), ipAddr) ;
+                                     return! this.StartLobby();
 
-                 | YouJoinedTheGame playerId-> return! this.waitForStartGame(playerId);   
+                 | YouJoinedTheGame(playerId, serverAddress) -> return! this.WaitForStartGame(playerId, serverAddress);   
 
                  | Server gameServer -> cl.NewGameServerTrigger.Trigger(gameServer); 
-                                        return! this.startLobby();
+                                        return! this.StartLobby();
                                         
                  | _         -> printfn "start: unexpected message %A" msg; 
-                                return! this.startLobby();
+                                return! this.StartLobby();
                 }
         
         /// screen shows player names + "Waiting for start game"
-        member private this.waitForStartGame(playerId : int) = 
+        member private this.WaitForStartGame(playerId : int, serverAddress: IPAddress) = 
             async {
                 printfn "state: waitForStartGame for player id %d" playerId; 
                 cl.WaitForStartGameTrigger.Trigger(playerId);    
                 let! msg = ev.Receive();
                 match msg with 
-                | StartGame  -> cl.LaunchGameTrigger.Trigger(); return! this.sendInput(playerId);
-                | _ -> return! this.waitForStartGame(playerId);
+                | StartGame  -> cl.LaunchGameTrigger.Trigger(); return! this.SendInput(playerId, serverAddress);
+                | _ -> return! this.WaitForStartGame(playerId, serverAddress);
             }
 
         /// receives a game state and updates UI
-        member private this.receiveGameState(playerId: int) = 
+        member private this.ReceiveGameState(playerId : int, serverAddress: IPAddress) = 
             async {
                 //printfn "state: receiveGameState"; 
                 let! msg = ev.Receive();
@@ -130,16 +146,16 @@ module ClientStuff =
                  | GameStateUpdate gState  ->
                                 cl.NewGameStateEventTrigger.Trigger(gState);
                                 do! Async.Sleep(50) 
-                                return! this.sendInput(playerId)
-                 | GameDone -> return! this.startLobby();                    
-                 | _         -> failwith("receiveGameState: unexpected message")
+                                return! this.SendInput(playerId, serverAddress)
+                 | GameDone -> return! this.StartLobby();                    
+                 | _         -> return! this.ReceiveGameState(playerId, serverAddress)
                 }
 
         /// receives a key stroke and updates server
         /// TODO: fix/clear cl.KeyInput
-        member private this.sendInput(playerId: int) = 
+        member private this.SendInput(playerId : int, serverAddress: IPAddress) = 
             async {
-                do! nwSender.Send(PlayerInput(playerId, cl.KeyInput))
-                return! this.receiveGameState(playerId)
+                do! sender.Send(PlayerInput(playerId, cl.KeyInput), serverAddress)
+                return! this.ReceiveGameState(playerId, serverAddress)
             }        
 

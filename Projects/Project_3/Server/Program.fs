@@ -1,68 +1,88 @@
 ﻿namespace Server
-// Learn more about F# at http://fsharp.org
 
-    open System
-    open System.Net
-    open System.Threading
+open System
+open System.Net
 
-    open SharedTypes.NetworkStuff
-    open SharedTypes.SharedTypes 
-    open GameEngine
+open SharedTypes.NetworkStuff
+open SharedTypes.SharedTypes
 
-    /// Automaton for the Server, hosting a ping-pong game
-    /// TODO: make state machine a type
-    module ServerStateMachine = 
+/// Automaton for the Server, hosting a ping-pong game
+module ServerStuff = 
+
+    type ServerStateMachine(serverName: string) =
         let ev = AsyncEventQueue<SharedTypes.SharedTypes.Message>()
-        ///nwRec listens for incoming traffic on 9001 and adds it to queue
-        let nwRec = NetworkReceiver(9001)
-        nwRec.StartListening();
-        nwRec.ReceiveMessageEvent.Add(fun x -> ev.Post(x))
-        //nwSender for broadcasts
-        let mutable nwSender = NetworkSender(9001, IPAddress.Loopback) 
-        let mutable nwSenderPlayer1 = NetworkSender(9001, IPAddress.Loopback) 
-        let mutable nwSenderPlayer2 = NetworkSender(9001, IPAddress.Loopback) 
-        let mutable serverName = "NOT SET"
+        let messagesReceiver = NetworkReceiver(9001)
+        let sender = NetworkSender(9001)
+        do
+            //receiver is only used to put messages in the event queue
+            messagesReceiver.StartListening();
+            messagesReceiver.ReceiveMessageEvent.Add(ev.Post)
 
-        let rec start(serverName': string) = 
+        member public this.ServerName = serverName
+
+        (*
+            #############################
+            ####### State machine #######            
+            #############################
+
+            Start
+              |
+              |            /------\
+              V            V      | RequestServers
+            WaitingFor2Players ---/
+              |
+              | JoinGame   /------\
+              V            V      | RequestServers
+            WaitingFor1Player ---/
+              |
+              | JoinGame
+              V
+            StartGame 
+              |
+              |       /-----------\
+              V       V           |    PlayerInput Escape
+            WaitFor2Inputs -------+---------------\
+              |                   |                \
+              | PlayerInput       |                 -----------> Leaving
+              V                   |                /
+            WaitFor1Input --------+---------------/
+              |                   |    PlayerInput Escape
+              | PlayerInput       |
+              V                   |
+            SendGameStateUpdate --/                      
+        *)
+
+        member public this.Start() = 
             async {
-                //printfn "state: start"; 
-                serverName <- serverName';
-                return! waitingFor2Players()
+                return! this.WaitingFor2Players()
             }    
         
-        and waitingFor2Players() = 
+        member public this.WaitingFor2Players() = 
             async {
-                //printfn "state: waitingFor2Players"; 
                 let! msg = ev.Receive();
                 match msg with
-                | RequestServers ipAddress -> nwSender <- NetworkSender(9001, ipAddress);
-                                              do! nwSender.Send(Server(GameServer(serverName, getOwnIpAddress)));
-                                              return! waitingFor2Players();   
-                | JoinGame ipAddress ->  nwSenderPlayer1 <- NetworkSender(9001, ipAddress);
-                                         do! nwSenderPlayer1.Send(YouJoinedTheGame(1));
-                                         return! waitingFor1Player();
-                | _        -> return! waitingFor2Players()
+                | RequestServers ipAddress -> do! sender.Send(Server(GameServer(serverName, getOwnIpAddress)), ipAddress);
+                                              return! this.WaitingFor2Players();   
+                | JoinGame ipAddress ->  do! sender.Send(YouJoinedTheGame(1, getOwnIpAddress), ipAddress);
+                                         return! this.WaitingFor1Player(ipAddress);
+                | _        -> return! this.WaitingFor2Players()
             }
 
         /// wait until two players are connected
-        and waitingFor1Player() = 
+        member public this.WaitingFor1Player(player1Address: IPAddress) = 
             async {
-                //printfn "state: waitingForPlayers"; 
                 let! msg = ev.Receive();
                 match msg with
-                | RequestServers ipAddress -> nwSender <- NetworkSender(9001, ipAddress);
-                                              do! nwSender.Send(Server(GameServer(serverName, getOwnIpAddress)));
-                                              return! waitingFor1Player();   
-                | JoinGame ipAddress ->  nwSenderPlayer1 <- NetworkSender(9001, ipAddress);
-                                         do! nwSenderPlayer1.Send(YouJoinedTheGame(2));
-                                         return! startGame();
-                | _         -> return! waitingFor1Player()
+                | RequestServers ipAddress -> do! sender.Send(Server(GameServer(serverName, getOwnIpAddress)), ipAddress);
+                                              return! this.WaitingFor1Player(player1Address);   
+                | JoinGame ipAddress ->  do! sender.Send(YouJoinedTheGame(2, getOwnIpAddress), ipAddress);
+                                         return! this.StartGame(player1Address, ipAddress);
+                | _         -> return! this.WaitingFor1Player(player1Address)
             }
 
-        ///TODO: is this state needed? leave it for now incase WPF needs smthg special 
-        and startGame() = 
+        member public this.StartGame(player1Address: IPAddress, player2Address: IPAddress) = 
             async {                
-                return! waitFor2Inputs( 
+                return! this.WaitFor2Inputs(player1Address, player2Address,
                     GameState(
                         Ball(Vector(0.0f, 0.0f), Vector(-1.0f, 1.0f)), //Ball
                         PlayerData(Vector(-10.0f, 0.0f), 0), //Player 1
@@ -71,52 +91,49 @@
                     )
                 }
 
-        and waitFor2Inputs(state: GameState) = 
+        member public this.WaitFor2Inputs(player1Address: IPAddress, player2Address: IPAddress, state: GameState) = 
             async {  
                 let! msg = ev.Receive();
                 match msg with
-                | PlayerInput (playerId, Escape) ->
-                    return! leaving()
+                | PlayerInput (_, Escape) -> return! this.Leaving(player1Address, player2Address)
                 | PlayerInput (playerId, key) -> 
                     let updatedState = GameEngine.calculateState(state.Ball, state.Player1, state.Player2, key, playerId)
-                    return! waitFor1Inputs(updatedState);
-                |_ -> return! waitFor2Inputs(state: GameState)
+                    return! this.WaitFor1Input(player1Address, player2Address, updatedState);
+                | _ -> return! this.WaitFor2Inputs(player1Address, player2Address, state)
 
             }
 
-        and waitFor1Inputs(state: GameState) = 
+        member public this.WaitFor1Input(player1Address: IPAddress, player2Address: IPAddress, state: GameState) = 
             async {                
                 let! msg = ev.Receive();
                 match msg with
-                | PlayerInput (playerId, Escape) ->
-                    return! leaving()
+                | PlayerInput (_, Escape) -> return! this.Leaving(player1Address, player2Address)
                 | PlayerInput (playerId, key) -> 
                     let updatedState = GameEngine.calculateState(state.Ball, state.Player1, state.Player2, key, playerId)
-                    return! sendGameStateUpdate(updatedState);
-                |_ ->return! waitFor1Inputs(state);
+                    return! this.SendGameStateUpdate(player1Address, player2Address, updatedState);
+                | _ -> return! this.WaitFor1Input(player1Address, player2Address, state);
             }
 
         ///sends a GameState to connected players
-        and sendGameStateUpdate(state: GameState) = 
+        member public this.SendGameStateUpdate(player1Address: IPAddress, player2Address: IPAddress, state: GameState) = 
             async {            
-                printfn "GameState: %A" (state)
-                do! nwSenderPlayer1.Send(GameStateUpdate(state));
-                do! nwSenderPlayer2.Send(GameStateUpdate(state));
-                return! waitFor2Inputs(state)
+                do! sender.Send(GameStateUpdate(state), player1Address);
+                do! sender.Send(GameStateUpdate(state), player2Address);
+                return! this.WaitFor2Inputs(player1Address, player2Address, state)
                 }
                 
         //when an ESC is pressed -> server dies
-        and leaving() =
+        member public this.Leaving(player1Address: IPAddress, player2Address: IPAddress) =
               async {            
-                do! nwSenderPlayer1.Send(GameDone);
-                do! nwSenderPlayer2.Send(GameDone);
+                do! sender.Send(GameDone, player1Address);
+                do! sender.Send(GameDone, player2Address);
                 //server dies
             }      
 
-        /// call "Start" to launch a new Server 
-        [<EntryPoint>]
-        let main argv = 
-            //TODO: fix this
-            let serverName = argv.[0]
-            Async.StartImmediate (start(serverName))                                   
-            0 // return an integer exit code
+    /// call "Start" to launch a new Server 
+    [<EntryPoint>]
+    let main argv = 
+        let serverName = argv.[0]
+        let stateMachine = ServerStateMachine(serverName)
+        Async.StartImmediate (stateMachine.Start())
+        0 // return an integer exit code
