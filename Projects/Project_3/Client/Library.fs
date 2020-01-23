@@ -111,7 +111,7 @@ module ClientStuff =
                     UseShellExecute = false,
                     CreateNoWindow = false,
                     FileName = "Server.exe",
-                    Arguments = serverName + " " + againstComputer.ToString()
+                    Arguments = "\"" + serverName + "\"" + " " + againstComputer.ToString()
                 )
             let p = new Process(StartInfo = procStartInfo)
             printfn "state: StartServerProcess"; 
