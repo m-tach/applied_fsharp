@@ -135,7 +135,7 @@ module ServerStuff =
                 use cancel = new CancellationTokenSource()
                 let token = cancel.Token
                 Async.Start (async {
-                    do! Async.Sleep(TimeSpan.FromSeconds(2.0).Milliseconds)
+                    do! Async.Sleep(int(TimeSpan.FromSeconds(2.0).TotalMilliseconds))
                     if not token.IsCancellationRequested
                     then ev.Post(GameDone)
                 })
@@ -160,7 +160,7 @@ module ServerStuff =
                 use cancel = new CancellationTokenSource()
                 let token = cancel.Token
                 Async.Start (async {
-                    do! Async.Sleep(TimeSpan.FromSeconds(2.0).Milliseconds)
+                    do! Async.Sleep(int(TimeSpan.FromSeconds(2.0).TotalMilliseconds))
                     if not token.IsCancellationRequested
                     then ev.Post(GameDone)
                 })
