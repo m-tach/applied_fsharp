@@ -169,7 +169,16 @@ module ClientStuff =
         member private this.ReceiveGameState(playerId : int, serverAddress: IPAddress) = 
             async {
                 //printfn "state: receiveGameState"; 
+                use cancel = new CancellationTokenSource()
+                let token = cancel.Token
+                Async.Start (async {
+                    do! Async.Sleep(int(TimeSpan.FromSeconds(2.0).TotalMilliseconds))
+                    if not token.IsCancellationRequested
+                    then ev.Post(GameDone)
+                })
+
                 let! msg = ev.Receive();
+                cancel.Cancel()
                 match msg with
                  | GameStateUpdate gState  ->
                                 cl.NewGameStateEventTrigger.Trigger(gState);
