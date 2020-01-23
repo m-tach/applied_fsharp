@@ -49,19 +49,18 @@ module NetworkStuff =
         }    
 
 
-    type public NetworkSender(port: int, recAddr: IPAddress) =
+    type public NetworkSender(port: int) =
         let port = port
-        let receiverAddress = recAddr
-        let client = new UdpClient()
-        do
-            client.ExclusiveAddressUse <- false
-            client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true)
-            client.Connect(IPEndPoint(receiverAddress, port))
 
-        member public this.Send(message: SharedTypes.Message) =
+        member public this.Send(message: SharedTypes.Message, address: IPAddress) =
             async { 
                 let bytes = message.ToBytes()
-                client.SendAsync(bytes, bytes.Length) |> ignore }
+                use client = new UdpClient()
+                client.ExclusiveAddressUse <- false
+                //client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true)
+                client.Connect(IPEndPoint(address, port))
+                client.Send(bytes, bytes.Length) |> ignore 
+                }
 
     type public NetworkReceiver(port: int) =
         let port = port
