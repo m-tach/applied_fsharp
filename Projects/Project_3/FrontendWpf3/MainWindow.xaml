@@ -7,10 +7,10 @@
         mc:Ignorable="d"
         Title="Ping Pong" Height="450" Width="800" ResizeMode="NoResize" Loaded="Window_Loaded" KeyDown="Window_KeyDown">
 	<Grid x:Name="WindowContent">
-		<StackPanel x:Name="ScreenLobby" Margin="10" Visibility="Hidden">
+		<StackPanel x:Name="ScreenLobby" Margin="10" Visibility="Visible">
 			<Label x:Name="TitleLobby" Content="Games" Height="32" VerticalAlignment="Top" FontSize="14" FontWeight="Bold"/>
 			<StackPanel Height="304" Margin="0,5,20,5">
-				<ListView x:Name="GameServerList" Margin="10" Height="245" BorderBrush="{x:Null}">
+                <ListView x:Name="GameServerList" ItemsSource="{Binding Servers}" Margin="10" Height="245" BorderBrush="{x:Null}">
 					<ListView.ItemContainerStyle>
 						<Style TargetType="ListViewItem">
 							<Setter Property="Focusable" Value="false"/>
@@ -28,8 +28,8 @@
 						<DataTemplate>
 							<Border BorderThickness="0,0,0,1" BorderBrush="Gainsboro" Padding="0,4" Visibility="Visible">
 								<DockPanel Height="28" LastChildFill="False">
-									<Label x:Name="label" Content="{Binding Name}" Height="28" Width="600" Padding="5" Margin="0,0,10,0" HorizontalAlignment="Left"/>
-									<Button x:Name="JoinGameBtn" Tag="{Binding IPAddress}" Content="Join game" Height="28" VerticalAlignment="Top" Width="94" RenderTransformOrigin="1.896,0.548" HorizontalAlignment="Right" Click="JoinGameBtn_Click"/>
+                                    <Label x:Name="label" Content="{Binding ServerName}" Height="28" Width="600" Padding="5" Margin="0,0,10,0" HorizontalAlignment="Left"/>
+                                    <Button x:Name="JoinGameBtn" Tag="{Binding Address}" Content="Join game" Height="28" VerticalAlignment="Top" Width="94" RenderTransformOrigin="1.896,0.548" HorizontalAlignment="Right" Click="JoinGameBtn_Click"/>
 								</DockPanel>
 							</Border>
 						</DataTemplate>
@@ -38,7 +38,7 @@
 			</StackPanel>
 			<DockPanel Height="42" LastChildFill="False" VerticalAlignment="Bottom" Margin="0,0,0,20">
 				<Button x:Name="HostGame" Content="Host game" Margin="10,6,5,6" Height="30" FontSize="14" Width="92" Click="HostGame_Click"/>
-				<Button x:Name="Refresh" Content="Refresh" Margin="5,6,10,6" Height="30" FontSize="14" Width="75"/>
+				<Button x:Name="Refresh" Content="Refresh" Margin="5,6,10,6" Height="30" FontSize="14" Width="75" Click="Refresh_Click"/>
 			</DockPanel>
 		</StackPanel>
 		<StackPanel x:Name="ScreenCreateGame" Margin="10" Visibility="Hidden">
@@ -47,13 +47,13 @@
 				<DockPanel Height="30" LastChildFill="False" Margin="0,0,0,10">
 					<Label x:Name="GameNameTitleCreateGame" Content="Game name:" Height="30" VerticalAlignment="Top" Width="91"/>
 					<TextBox x:Name="GameNameCreateGame" Height="30" TextWrapping="Wrap" Text="Name" VerticalAlignment="Top" Width="246" VerticalContentAlignment="Center" Margin="0,0,15,0" Padding="4,0"/>
-					<Button x:Name="CreateGameBtn" Content="Create game" Margin="0,0,0,0" Height="30" Width="88"/>
+					<Button x:Name="CreateGameBtn" Content="Create game" Margin="0,0,0,0" Height="30" Width="88" Click="CreateGameBtn_Click"/>
 					<Button x:Name="ExitCreateGame" Content="Cancel" Margin="10,0,0,0" Height="30" Width="57" Click="ExitCreateGame_Click"/>
 				</DockPanel>
 			</StackPanel>
 
 		</StackPanel>
-		<StackPanel x:Name="ScreenGame" Margin="10" Visibility="Visible">
+		<StackPanel x:Name="ScreenGame" Margin="10" Visibility="Hidden">
 			<DockPanel HorizontalAlignment="Left" Margin="0,0,0,5">
 				<Label x:Name="TitleGameScreen" Content="Waiting for opponent..." Height="32" VerticalAlignment="Top" FontSize="14" FontWeight="Bold"/>
 				<Button x:Name="ExitGameBtn" Content="Exit" Width="75" FontSize="14" Margin="15,0,0,0" Height="24" Click="ExitGameBtn_Click"/>

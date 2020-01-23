@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -16,24 +18,22 @@ namespace FrontendWpf3
 		
 		private Client.ClientStuff.Client client;
 		// List of servers discovered
-		private List<SharedTypes.SharedTypes.GameServer> servers = new List<SharedTypes.SharedTypes.GameServer>();
+		private readonly ObservableCollection<SharedTypes.SharedTypes.GameServer> Servers = new ObservableCollection<SharedTypes.SharedTypes.GameServer>();
+
 
 		public MainWindow()
 		{
 			InitializeComponent();
-			client = new Client.ClientStuff.Client(null);
+			Client.ClientStuff.ClientStateMachine stateMachine = new Client.ClientStuff.ClientStateMachine();
+			client = stateMachine.InternalClient;
+			client.NewGameServerFoundEvent += Client_NewGameServerFound;
 
-			client.NewGameServerFoundEvent += Client_NewGameServerFoundEvent1;
+			stateMachine.StartStateMachine();
 		}
 
-		private void Client_NewGameServerFoundEvent1(object sender, SharedTypes.SharedTypes.GameServer server)
+		private void Client_NewGameServerFound(object sender, SharedTypes.SharedTypes.GameServer server)
 		{
-			System.Diagnostics.Debug.Print("Found a new server! " + server);
-		}
-
-		private void Client_NewGameServerFoundEvent(SharedTypes.SharedTypes.GameServer server)
-		{
-			; // arg should be a GameServer, waiting for PR.
+			Dispatcher.Invoke(() => Servers.Add(server));
 		}
 
 		// Sets the current screen by hiding all screens and showing the screen.
@@ -47,17 +47,15 @@ namespace FrontendWpf3
 			screen.Visibility = Visibility.Visible;
 		}
 
-		// Shorthand, in case we need to do more in the future.
-		// Sets the list of games to show on the lobby list.
-		private void SetLobbyGames(GameServer[] games) => GameServerList.ItemsSource = games;
-
 		private void BroadcastForGames()
 		{
-			
+			client.BroadcastRequestServers();
 		}
 
+		private void Refresh_Click(object sender, RoutedEventArgs e) => BroadcastForGames();
+
 		// Render the game given a state.
-		public void RenderGame(GameState state)
+		public void RenderGame(SharedTypes.SharedTypes.GameState state)
 		{
 			int middleY = 180;
 			int middleX = 387;
@@ -77,13 +75,16 @@ namespace FrontendWpf3
 		// When the window has loaded, ping for game hosts and get 'em.
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
+			this.DataContext = this;
+			this.GameServerList.ItemsSource = Servers;
+
 			BroadcastForGames();
-			RenderGame(new GameState()
+			/*RenderGame(new GameState()
 			{
 				Ball = new Ball() { BallPosition = new Vector(15, 0), BallDirection = new Vector(1, 0.25f) },
 				Player1 = new PlayerData() { Position = new Vector(0, 4), Score = 4 },
 				Player2 = new PlayerData() { Position = new Vector(0, 3), Score = 1 }
-			});
+			});*/
 		}
 
 		// Lobby -> Create game
@@ -91,18 +92,25 @@ namespace FrontendWpf3
 		// Create game -> Lobby
 		private void ExitCreateGame_Click(object sender, RoutedEventArgs e) => SetScreen(ScreenLobby);
 
-		// Join a game host. Currently this prints the dummy IP address and switches the view to the game screen.
+		// Join a game host.
 		private void JoinGameBtn_Click(object sender, RoutedEventArgs e)
 		{
-			Button btn = e.Source as Button;
-			System.Diagnostics.Debug.Print(btn.Tag + "");
+			Button btn = (Button)sender;
+			IPAddress key = (IPAddress)btn.Tag;
 
-			SetScreen(ScreenGame);
+			SharedTypes.SharedTypes.GameServer server = Servers.SingleOrDefault(x => x.Address.Equals(key));
+
+			if (server != default(SharedTypes.SharedTypes.GameServer))
+			{
+				client.JoinGame(server);
+			}
+			else MessageBox.Show("The game host does not exist.");
 		}
 
 		// Exit a game screen. Brings you to the lobby.
 		private void ExitGameBtn_Click(object sender, RoutedEventArgs e) => SetScreen(ScreenLobby);
 
+		// Listen for keypresses and send those to the Client. Later we will have holding the button loop the direction.
 		private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
 		{
 			SharedTypes.SharedTypes.Input input = e.Key switch
@@ -114,46 +122,15 @@ namespace FrontendWpf3
 				System.Windows.Input.Key.Escape => SharedTypes.SharedTypes.Input.Escape,
 				_ => null
 			};
-			//if (input != null) client.KeyPressed(input);
+			if (input != null) client.KeyPressed(input);
 		}
-	}
 
-	// Placeholder, until we tie together the FS modules and this.
-	public class GameServer
-	{
-		public string Name { get; set; }
-		public System.Net.IPAddress IPAddress { get; set; }
-
-		public GameServer(string name, System.Net.IPAddress ipAddress)
+		// Host the game. Immediately changes screen, although the host may take a bit of time to become available (network stuff)
+		private void CreateGameBtn_Click(object sender, RoutedEventArgs e)
 		{
-			Name = name;
-			IPAddress = ipAddress;
+			client.HostGame(GameNameCreateGame.Text);
+			SetScreen(ScreenGame);
 		}
 	}
 
-	public struct Vector
-	{
-		public float X;
-		public float Y;
-		public Vector(float x, float y) { X = x; Y = y; }
-	}
-
-	public struct PlayerData
-	{
-		public Vector Position;
-		public int Score;
-	}
-
-	public struct Ball
-	{
-		public Vector BallPosition;
-		public Vector BallDirection;
-	}
-
-	public struct GameState
-	{
-		public Ball Ball;
-		public PlayerData Player1;
-		public PlayerData Player2;
-	}
 }

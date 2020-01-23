@@ -139,10 +139,8 @@ module SharedTypes =
             storageStream.ToArray()
 
         member public this.ToStream(byteWriter: BinaryWriter) = 
-            let stringAsBytes = System.Text.Encoding.UTF8.GetBytes(this.ServerName)
-            byteWriter.Write(stringAsBytes, 0, stringAsBytes.Length)
-            let addressAsBytes = System.Text.Encoding.UTF8.GetBytes(this.Address.ToString())
-            byteWriter.Write(addressAsBytes, 0, addressAsBytes.Length)
+            byteWriter.Write(this.ServerName.ToString())
+            byteWriter.Write(this.Address.ToString())
 
         static member public FromBytes(bytes: byte array) =
             use storageStream = new MemoryStream(bytes)
@@ -162,30 +160,28 @@ module SharedTypes =
        | GameStateUpdate of GameState
        | PlayerInput of int * Input
        | HostGame of string
+       | BroadcastRequestServers 
 
         member public this.ToBytes() =
             use storageStream = new MemoryStream()
             use byteWriter = new BinaryWriter(storageStream)
             match this with
             | RequestServers(ip) -> byteWriter.Write(0uy)
-                                    let addressAsBytes = System.Text.Encoding.UTF8.GetBytes(ip.ToString())
-                                    byteWriter.Write(addressAsBytes, 0, addressAsBytes.Length)
+                                    byteWriter.Write(ip.ToString())
             | Server(gs) -> byteWriter.Write(1uy)
                             gs.ToStream(byteWriter)
             | JoinGame(ip) -> byteWriter.Write(2uy)
-                              let addressAsBytes = System.Text.Encoding.UTF8.GetBytes(ip.ToString())
-                              byteWriter.Write(addressAsBytes, 0, addressAsBytes.Length)
+                              byteWriter.Write(ip.ToString())
             | YouJoinedTheGame(p, ip) -> byteWriter.Write(3uy)
                                          byteWriter.Write(p)
-                                         let addressAsBytes = System.Text.Encoding.UTF8.GetBytes(ip.ToString())
-                                         byteWriter.Write(addressAsBytes, 0, addressAsBytes.Length)                                     
+                                         byteWriter.Write(ip.ToString())                                    
             | StartGame -> byteWriter.Write(4uy)
             | GameDone -> byteWriter.Write(5uy)
             | GameStateUpdate(s) -> byteWriter.Write(6uy)
                                     s.ToStream(byteWriter)
             | PlayerInput(p, i) -> byteWriter.Write(7uy)
                                    byteWriter.Write(p)
-                                   i.ToStream(byteWriter)
+                                   i.ToStream(byteWriter)                         
             storageStream.ToArray()                     
         static member public FromBytes(bytes: byte array) =
             use storageStream = new MemoryStream(bytes)
