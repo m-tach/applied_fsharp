@@ -5,14 +5,16 @@ open System.Net
 
 open SharedTypes.NetworkStuff
 open SharedTypes.SharedTypes
+open SharedTypes.Constants
+
 
 /// Automaton for the Server, hosting a ping-pong game
 module ServerStuff = 
 
     type ServerStateMachine(serverName: string) =
         let ev = AsyncEventQueue<SharedTypes.SharedTypes.Message>()
-        let messagesReceiver = NetworkReceiver(9001)
-        let sender = NetworkSender(9001)
+        let messagesReceiver = NetworkReceiver(SERVER_PORT)
+        let sender = NetworkSender(CLIENT_PORT)
         do
             //receiver is only used to put messages in the event queue
             messagesReceiver.StartListening();

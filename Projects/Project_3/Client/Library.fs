@@ -7,6 +7,7 @@ open System.Threading
 
 open SharedTypes.NetworkStuff
 open SharedTypes.SharedTypes 
+open SharedTypes.Constants
 
 module ClientStuff =
 
@@ -56,9 +57,9 @@ module ClientStuff =
         ///ev is a queue, which stores messages in order they have been received
         let ev = AsyncEventQueue<Message>()
         let cl = Client(ev);
-        let sender = NetworkSender(9001) 
-        ///nwRec listens for incoming traffic on 9001 and adds it to queue0
-        let nwRec = NetworkReceiver(9001)
+        let sender = NetworkSender(SERVER_PORT) 
+        ///nwRec listens for incoming traffic on CLIENT_PORT and adds it to queue0
+        let nwRec = NetworkReceiver(CLIENT_PORT)
         do
             nwRec.StartListening();
             nwRec.ReceiveMessageEvent.Add(fun x -> ev.Post(x))
@@ -110,7 +111,7 @@ module ClientStuff =
             async {
                 printfn "state: start"; 
                 //broadcast request available servers for lobby 
-                do! Broadcast(RequestServers(getOwnIpAddress), 9001);
+                do! Broadcast(RequestServers(getOwnIpAddress), SERVER_PORT);
                 let! msg = ev.Receive();
                 match msg with
                  | HostGame  serverName -> this.StartServerProcess(serverName);
