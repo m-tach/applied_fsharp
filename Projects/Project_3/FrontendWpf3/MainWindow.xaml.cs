@@ -19,6 +19,8 @@ namespace FrontendWpf3
 		private Client.ClientStuff.Client client;
 		// List of servers discovered
 		private readonly ObservableCollection<SharedTypes.SharedTypes.GameServer> Servers = new ObservableCollection<SharedTypes.SharedTypes.GameServer>();
+		// Client SM gives GoToLobby for unexpected cases!
+		private bool CanGoToLobby = true;
 
 
 		public MainWindow()
@@ -35,24 +37,18 @@ namespace FrontendWpf3
 		}
 
 		private void Client_WaitForStartGameEvent(object sender, int args)
-		{
-			Dispatcher.Invoke(() => this.SetScreen(ScreenGame));
-		}
+			=> Dispatcher.Invoke(() => SetScreen(ScreenWaitForPlayers));
 
 		private void Client_NewGameStateEvent(object sender, SharedTypes.SharedTypes.GameState args)
 		{
-			Dispatcher.Invoke(() => this.RenderGame(args));
+			Dispatcher.Invoke(() => RenderGame(args));
 		}
 
 		private void Client_LaunchGameEvent(object sender, Microsoft.FSharp.Core.Unit args)
-		{
-			Dispatcher.Invoke(() => this.SetScreen(ScreenGame));
-		}
+			=> Dispatcher.Invoke(() => SetScreen(ScreenGame));
 
 		private void Client_GoToLobbyEvent(object sender, Microsoft.FSharp.Core.Unit args)
-		{
-			Dispatcher.Invoke(() => this.SetScreen(ScreenLobby));
-		}
+			=> Dispatcher.Invoke(() => { if (CanGoToLobby) SetScreen(ScreenLobby); });
 
 		private void Client_NewGameServerFound(object sender, SharedTypes.SharedTypes.GameServer server)
 		{
@@ -73,21 +69,18 @@ namespace FrontendWpf3
 			screen.Visibility = Visibility.Visible;
 		}
 
-		private void BroadcastForGames()
-		{
-			client.BroadcastRequestServers();
-		}
+		private void BroadcastForGames() => client.BroadcastRequestServers();
 
 		private void Refresh_Click(object sender, RoutedEventArgs e) => BroadcastForGames();
 
 		// Render the game given a state.
 		public void RenderGame(SharedTypes.SharedTypes.GameState state)
 		{
-			double widthScale = GameCanvas.Width / 20.0;
-			double heightScale = GameCanvas.Height / 20.0;
+			double widthScale = GameCanvas.ActualWidth / 20.0;
+			double heightScale = GameCanvas.ActualHeight / 20.0;
 
-			double middleY = GameCanvas.Height / 2.0;
-			double middleX = GameCanvas.Width / 2.0;
+			double middleY = GameCanvas.ActualHeight / 2.0;
+			double middleX = GameCanvas.ActualWidth / 2.0;
 
 			double paddleHeight = 3.0;
 			double paddleHeightHalf = paddleHeight / 2.0;
@@ -98,11 +91,11 @@ namespace FrontendWpf3
 			GameCanvasPlayer2.Y1 = middleY + (state.Player2.Position.Y - paddleHeightHalf) * heightScale;
 			GameCanvasPlayer2.Y2 = middleY + (state.Player2.Position.Y + paddleHeightHalf) * heightScale;
 
-			/*GameCanvasBall.Margin = new Thickness(
+			GameCanvasBall.Margin = new Thickness(
 				middleX + state.Ball.BallPosition.X * widthScale,
 				middleY + state.Ball.BallPosition.Y * heightScale,
 				0, 0
-			);*/
+			);
 
 			Player1Score.Content = $"P1: {state.Player1.Score} Points";
 			Player2Score.Content = $"P2: {state.Player2.Score} Points";
@@ -126,7 +119,11 @@ namespace FrontendWpf3
 		// Lobby -> Create game
 		private void HostGame_Click(object sender, RoutedEventArgs e) => SetScreen(ScreenCreateGame);
 		// Create game -> Lobby
-		private void ExitCreateGame_Click(object sender, RoutedEventArgs e) => SetScreen(ScreenLobby);
+		private void ExitCreateGame_Click(object sender, RoutedEventArgs e)
+		{
+			SetScreen(ScreenLobby);
+			CanGoToLobby = true;
+		}
 
 		// Join a game host.
 		private void JoinGameBtn_Click(object sender, RoutedEventArgs e)
@@ -144,7 +141,11 @@ namespace FrontendWpf3
 		}
 
 		// Exit a game screen. Brings you to the lobby.
-		private void ExitGameBtn_Click(object sender, RoutedEventArgs e) => SetScreen(ScreenLobby);
+		private void ExitGameBtn_Click(object sender, RoutedEventArgs e)
+		{
+			SetScreen(ScreenLobby);
+			CanGoToLobby = true;
+		}
 
 		// Listen for keypresses and send those to the Client. Later we will have holding the button loop the direction.
 		private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
@@ -164,8 +165,9 @@ namespace FrontendWpf3
 		// Host the game. Immediately changes screen, although the host may take a bit of time to become available (network stuff)
 		private void CreateGameBtn_Click(object sender, RoutedEventArgs e)
 		{
+			CanGoToLobby = false;
 			client.HostGame(GameNameCreateGame.Text);
-			SetScreen(ScreenGame);
+			SetScreen(ScreenWaitForPlayers);
 		}
 	}
 

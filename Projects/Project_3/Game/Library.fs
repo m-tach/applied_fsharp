@@ -6,10 +6,10 @@
     module GameEngine =
         // Configs - field       
         [<Literal>]
-        let private X_MAX = 80.0f
+        let private X_MAX = 10.0f
         
         [<Literal>]
-        let private X_MIN = -80.0f
+        let private X_MIN = -10.0f
                 
         [<Literal>]
         let private Y_MAX = 10.0f
@@ -26,8 +26,11 @@
         // Configs - ball
         [<Literal>]
         let private BALL_RADIUS = 1.0f
-        let private BALL_SPEED_X = -1.0f
-        let private BALL_SPEED_Y = 1.0f
+        [<Literal>]
+        let private BALL_SPEED_X = -0.2f
+        [<Literal>]
+        let private BALL_SPEED_Y = 0.4f
+        [<Literal>]
         let private MAX_BOUNCE_ANGLE = 5.0f;
 
         // Configs - player
@@ -37,18 +40,22 @@
         [<Literal>]
         let private PADDLE_LENGHT = 3.0f
         [<Literal>]
+        let private PADDLE_HALF = 1.5f
+        [<Literal>]
         let private PADDLE_WIDTH = 1.0f
         
 
-        ///Move player one up
-        let moveUp (player: PlayerData) : PlayerData = if player.Position.Y < Y_MAX 
-                                                       then PlayerData(Vector(player.Position.X , (player.Position.Y + MOVE_DISTANCE_PLAYER)), player.Score) 
-                                                       else player
-        
         ///Move player one down
-        let moveDown (player: PlayerData) : PlayerData = if player.Position.Y > Y_MIN 
-                                                         then PlayerData(Vector(player.Position.X , (player.Position.Y - MOVE_DISTANCE_PLAYER)), player.Score)
-                                                         else player
+        let moveDown (player: PlayerData) : PlayerData = PlayerData(Vector(
+                                                                             player.Position.X, 
+                                                                             Math.Min(Y_MAX - PADDLE_HALF, player.Position.Y + MOVE_DISTANCE_PLAYER)
+                                                                          ), player.Score)
+        
+        ///Move player one up
+        let moveUp (player: PlayerData) : PlayerData = PlayerData(Vector(
+                                                                             player.Position.X, 
+                                                                             Math.Min(Y_MIN + PADDLE_HALF, player.Position.Y - MOVE_DISTANCE_PLAYER)
+                                                                          ), player.Score)
         ///Increment score of player
         let incrementScore (player: PlayerData) = PlayerData(player.Position, (player.Score + 1) )
 
@@ -58,7 +65,7 @@
             printfn "Player1 score: %d " player1.Score
             printfn "Player2 score: %d " player2.Score
             GameState(
-                Ball(Vector(X_MIDDLE, Y_MIDDLE), Vector(BALL_SPEED_X, BALL_SPEED_Y)), //Ball
+                Ball(Vector(X_MIDDLE, Y_MIDDLE), Vector(BALL_SPEED_X * ((float32 (Random().Next(0, 1)) - 0.5f) * 2.0f), 0.0f)), //Ball
                 PlayerData(Vector(X_MIN, Y_MIDDLE), player1.Score), //Player 1
                 PlayerData(Vector(X_MAX, Y_MIDDLE), player2.Score) //Player 2
             ) 
@@ -71,8 +78,8 @@
             let vy = ball'.BallDirection.Y//direction y
 
             if rx + ball'.BallDirection.X < (X_MIN + BALL_RADIUS) then //is ball at left edge
-                if (((ry + vy) > player1.Position.Y + PADDLE_LENGHT/2.0f ) ||             
-                    ((ry + vy) < player1.Position.Y - PADDLE_LENGHT/2.0f )) 
+                if (((ry + vy) > player1.Position.Y + PADDLE_HALF ) ||             
+                    ((ry + vy) < player1.Position.Y - PADDLE_HALF )) 
                 then 
                     printfn "Player1 missed ball"
                     restartGame (player1, incrementScore player2)
@@ -81,8 +88,8 @@
                     GameState(ball',player1, player2)    
 
             else if rx + ball'.BallDirection.X > (X_MAX - BALL_RADIUS) then //is ball at right edge
-                if (((ry + vy) > player2.Position.Y + PADDLE_LENGHT/2.0f ) ||             //is ball hitting player1
-                    ((ry + vy) < player2.Position.Y - PADDLE_LENGHT/2.0f )) 
+                if (((ry + vy) > player2.Position.Y + PADDLE_HALF ) ||             //is ball hitting player1
+                    ((ry + vy) < player2.Position.Y - PADDLE_HALF )) 
                 then 
                     printfn "Player2 missed ball"
                     restartGame (incrementScore player1, player2)
@@ -105,8 +112,8 @@
 
         //Is hitting paddle; helper for detecting simple intersection for Player1 / Player2.
         let isHittingPaddle (ball':Ball, playerPos:Vector, leftSide:bool) =
-            if (leftSide && ball'.BallPosition.X - BALL_RADIUS <= playerPos.X + PADDLE_WIDTH / 2.0f) ||
-               (not leftSide && ball'.BallPosition.X + BALL_RADIUS >= playerPos.X - PADDLE_WIDTH / 2.0f) then
+            if (leftSide && (ball'.BallPosition.X - BALL_RADIUS <= playerPos.X + PADDLE_WIDTH / 2.0f)) ||
+               (not leftSide && (ball'.BallPosition.X + BALL_RADIUS >= playerPos.X - PADDLE_WIDTH / 2.0f)) then
                 (ball'.BallPosition.Y < playerPos.Y + PADDLE_LENGHT / 2.0f) ||
                    (ball'.BallPosition.Y > playerPos.Y - PADDLE_LENGHT / 2.0f)
             else
@@ -118,8 +125,8 @@
             let ry = ball'.BallPosition.Y
             
             // change direction when hitting top / bottom
-            let v = if (ry + ball'.BallDirection.Y + BALL_RADIUS > Y_MAX) then Vector(ball'.BallDirection.X, -ball'.BallDirection.Y) // Hit bottom
-                    elif (ry + ball'.BallDirection.Y + BALL_RADIUS < Y_MIN) then Vector(ball'.BallDirection.X, -ball'.BallDirection.Y) // Hit top
+            let v = if (ry + ball'.BallDirection.Y + BALL_RADIUS * 2.0f > Y_MAX) then Vector(ball'.BallDirection.X, -ball'.BallDirection.Y) // Hit bottom
+                    elif (ry + ball'.BallDirection.Y + BALL_RADIUS * 2.0f < Y_MIN) then Vector(ball'.BallDirection.X, -ball'.BallDirection.Y) // Hit top
                     else if isHittingPaddle (ball', player1.Position, true) then reflectBall(ball'.BallPosition, player1.Position) // Hit p1 paddle
                     else if isHittingPaddle (ball', player2.Position, false) then reflectBall(ball'.BallPosition, player2.Position) // Hit p2 paddle
                     else ball'.BallDirection // Nothing hit
