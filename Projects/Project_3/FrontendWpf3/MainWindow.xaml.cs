@@ -149,7 +149,6 @@ namespace FrontendWpf3
 		private void ExitGameBtn_Click(object sender, RoutedEventArgs e)
 		{
 			client.ExitGame();
-			SetScreen(ScreenLobby);
 		}
 
 		// Listen for keypresses and send those to the Client. Later we will have holding the button loop the direction.
