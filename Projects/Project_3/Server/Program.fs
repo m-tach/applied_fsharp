@@ -57,12 +57,17 @@ module ServerStuff =
 
         member public this.Start() = 
             async {
+                printfn "state: Start"; 
+
                 return! this.WaitingFor2Players()
             }    
         
         member public this.WaitingFor2Players() = 
             async {
+                printfn "state: WaitingFor2Players"; 
+
                 let! msg = ev.Receive();
+                printfn "parsing msg: %A" msg; 
                 match msg with
                 | RequestServers ipAddress -> do! sender.Send(Server(GameServer(serverName, getOwnIpAddress)), ipAddress);
                                               return! this.WaitingFor2Players();   
@@ -74,7 +79,11 @@ module ServerStuff =
         /// wait until two players are connected
         member public this.WaitingFor1Player(player1Address: IPAddress) = 
             async {
+                printfn "state: WaitingFor1Player"; 
+
                 let! msg = ev.Receive();
+                printfn "parsing msg: %A" msg; 
+
                 match msg with
                 | RequestServers ipAddress -> do! sender.Send(Server(GameServer(serverName, getOwnIpAddress)), ipAddress);
                                               return! this.WaitingFor1Player(player1Address);   
@@ -84,7 +93,9 @@ module ServerStuff =
             }
 
         member public this.StartGame(player1Address: IPAddress, player2Address: IPAddress) = 
-            async {                
+            async {             
+                printfn "state: StartGame"; 
+   
                 return! this.WaitFor2Inputs(player1Address, player2Address,
                     GameState(
                         Ball(Vector(0.0f, 0.0f), Vector(-1.0f, 1.0f)), //Ball
@@ -96,8 +107,10 @@ module ServerStuff =
 
         member public this.WaitFor2Inputs(player1Address: IPAddress, player2Address: IPAddress, state: GameState) = 
             async {  
+                printfn "state: WaitFor2Inputs"; 
+
                 let! msg = ev.Receive();
-                match msg with
+                printfn "parsing msg: %A" msg;                 match msg with
                 | PlayerInput (_, Escape) -> return! this.Leaving(player1Address, player2Address)
                 | PlayerInput (playerId, key) -> 
                     let updatedState = GameEngine.calculateState(state.Ball, state.Player1, state.Player2, key, playerId)
@@ -108,8 +121,10 @@ module ServerStuff =
 
         member public this.WaitFor1Input(player1Address: IPAddress, player2Address: IPAddress, state: GameState) = 
             async {                
+                printfn "state: WaitFor1Input"; 
+
                 let! msg = ev.Receive();
-                match msg with
+                printfn "parsing msg: %A" msg;                 match msg with
                 | PlayerInput (_, Escape) -> return! this.Leaving(player1Address, player2Address)
                 | PlayerInput (playerId, key) -> 
                     let updatedState = GameEngine.calculateState(state.Ball, state.Player1, state.Player2, key, playerId)
@@ -119,7 +134,9 @@ module ServerStuff =
 
         ///sends a GameState to connected players
         member public this.SendGameStateUpdate(player1Address: IPAddress, player2Address: IPAddress, state: GameState) = 
-            async {            
+            async {       
+                printfn "state: SendGameStateUpdate"; 
+
                 do! sender.Send(GameStateUpdate(state), player1Address);
                 do! sender.Send(GameStateUpdate(state), player2Address);
                 return! this.WaitFor2Inputs(player1Address, player2Address, state)
@@ -127,7 +144,8 @@ module ServerStuff =
                 
         //when an ESC is pressed -> server dies
         member public this.Leaving(player1Address: IPAddress, player2Address: IPAddress) =
-              async {            
+              async {     
+                printfn "state: Leaving"; 
                 do! sender.Send(GameDone, player1Address);
                 do! sender.Send(GameDone, player2Address);
                 //server dies
@@ -136,7 +154,12 @@ module ServerStuff =
     /// call "Start" to launch a new Server 
     [<EntryPoint>]
     let main argv = 
-        let serverName = argv.[0]
-        let stateMachine = ServerStateMachine(serverName)
-        Async.StartImmediate (stateMachine.Start())
+        try             
+            printfn "Server has just started"; 
+            let serverName = argv.[0]
+            let stateMachine = ServerStateMachine(serverName)
+            Async.RunSynchronously (stateMachine.Start())
+            printfn "Server is done"; 
+        with 
+        |e -> printfn "Exception thrown %A" e        
         0 // return an integer exit code

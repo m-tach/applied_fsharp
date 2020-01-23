@@ -113,12 +113,19 @@ module ClientStuff =
             let processes = Process.GetProcessesByName("Server");
             printfn "Started process %A " processes
 
+        member public this.StartStateMachine() =
+            Async.StartImmediate (async { 
+                try
+                    do! this.StartLobby()
+                with
+                | e -> Console.Error.WriteLine (String.Format("exception: {0}\n{1}", e.Message, e.StackTrace))                                
+            })
+            
+
         member private this.StartLobby() = 
             async {
                 printfn "state: start"; 
-                cl.GoToLobbyTrigger.Trigger()
-                //broadcast request available servers for lobby 
-                do! Broadcast(RequestServers(getOwnIpAddress), SERVER_PORT);
+                cl.GoToLobbyTrigger.Trigger()                
                 let! msg = ev.Receive();
                 match msg with
                  | HostGame  serverName -> this.StartServerProcess(serverName);
@@ -132,6 +139,9 @@ module ClientStuff =
 
                  | Server gameServer -> cl.NewGameServerTrigger.Trigger(gameServer); 
                                         return! this.StartLobby();
+
+                 | BroadcastRequestServers -> do! Broadcast(RequestServers(getOwnIpAddress), SERVER_PORT);
+                                              return! this.StartLobby();                            
                                         
                  | _         -> printfn "start: unexpected message %A" msg; 
                                 return! this.StartLobby();

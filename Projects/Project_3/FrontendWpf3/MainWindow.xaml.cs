@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -16,20 +18,22 @@ namespace FrontendWpf3
 		
 		private Client.ClientStuff.Client client;
 		// List of servers discovered
-		private Dictionary<string, SharedTypes.SharedTypes.GameServer> servers = new Dictionary<string, SharedTypes.SharedTypes.GameServer>();
+		private readonly ObservableCollection<SharedTypes.SharedTypes.GameServer> Servers = new ObservableCollection<SharedTypes.SharedTypes.GameServer>();
+
 
 		public MainWindow()
 		{
 			InitializeComponent();
-			client = new Client.ClientStuff.Client(new SharedTypes.SharedTypes.AsyncEventQueue<SharedTypes.SharedTypes.Message>());
-
+			Client.ClientStuff.ClientStateMachine stateMachine = new Client.ClientStuff.ClientStateMachine();
+			client = stateMachine.InternalClient;
 			client.NewGameServerFoundEvent += Client_NewGameServerFound;
+
+			stateMachine.StartStateMachine();
 		}
 
 		private void Client_NewGameServerFound(object sender, SharedTypes.SharedTypes.GameServer server)
 		{
-			servers[server.Address.ToString()] = server;
-			SetLobbyGames();
+			Dispatcher.Invoke(() => Servers.Add(server));
 		}
 
 		// Sets the current screen by hiding all screens and showing the screen.
@@ -43,13 +47,9 @@ namespace FrontendWpf3
 			screen.Visibility = Visibility.Visible;
 		}
 
-		// Shorthand, in case we need to do more in the future.
-		// Sets the list of games to show on the lobby list.
-		private void SetLobbyGames() => GameServerList.ItemsSource = servers.ToArray().Select(serv => serv.Value).ToList();
-
 		private void BroadcastForGames()
 		{
-			
+			client.BroadcastRequestServers();
 		}
 
 		private void Refresh_Click(object sender, RoutedEventArgs e) => BroadcastForGames();
@@ -75,6 +75,9 @@ namespace FrontendWpf3
 		// When the window has loaded, ping for game hosts and get 'em.
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
+			this.DataContext = this;
+			this.GameServerList.ItemsSource = Servers;
+
 			BroadcastForGames();
 			/*RenderGame(new GameState()
 			{
@@ -92,10 +95,15 @@ namespace FrontendWpf3
 		// Join a game host.
 		private void JoinGameBtn_Click(object sender, RoutedEventArgs e)
 		{
-			Button btn = e.Source as Button;
-			string key = btn.Tag.ToString();
+			Button btn = (Button)sender;
+			IPAddress key = (IPAddress)btn.Tag;
 
-			if (servers.ContainsKey(key)) client.JoinGame(servers[key]);
+			SharedTypes.SharedTypes.GameServer server = Servers.SingleOrDefault(x => x.Address.Equals(key));
+
+			if (server != default(SharedTypes.SharedTypes.GameServer))
+			{
+				client.JoinGame(server);
+			}
 			else MessageBox.Show("The game host does not exist.");
 		}
 
