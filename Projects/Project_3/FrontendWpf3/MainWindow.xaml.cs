@@ -154,10 +154,10 @@ namespace FrontendWpf3
 		{
 			SharedTypes.SharedTypes.Input input = e.Key switch
 			{
-				System.Windows.Input.Key.W => SharedTypes.SharedTypes.Input.Up,
-				System.Windows.Input.Key.Up => SharedTypes.SharedTypes.Input.Up,
-				System.Windows.Input.Key.S => SharedTypes.SharedTypes.Input.Down,
-				System.Windows.Input.Key.Down => SharedTypes.SharedTypes.Input.Down,
+				System.Windows.Input.Key.W => SharedTypes.SharedTypes.Input.Down,
+				System.Windows.Input.Key.Up => SharedTypes.SharedTypes.Input.Down,
+				System.Windows.Input.Key.S => SharedTypes.SharedTypes.Input.Up,
+				System.Windows.Input.Key.Down => SharedTypes.SharedTypes.Input.Up,
 				System.Windows.Input.Key.Escape => SharedTypes.SharedTypes.Input.Escape,
 				_ => null
 			};

@@ -27,22 +27,29 @@
         [<Literal>]
         let private BALL_RADIUS = 1.0f
         [<Literal>]
-        let private BALL_SPEED_X = -0.2f
+        let private BALL_SPEED_X = -0.1f
         [<Literal>]
-        let private BALL_SPEED_Y = 0.4f
+        let private BALL_SPEED_Y = 0.1f
         [<Literal>]
         let private MAX_BOUNCE_ANGLE = 5.0f;
 
         // Configs - player
         [<Literal>]
         /// distance player moves on one press on Up/Down key
-        let private MOVE_DISTANCE_PLAYER = 1.0f
+        let private MOVE_DISTANCE_PLAYER = 0.4f
         [<Literal>]
         let private PADDLE_LENGHT = 3.0f
         [<Literal>]
         let private PADDLE_HALF = 1.5f
         [<Literal>]
         let private PADDLE_WIDTH = 1.0f
+       
+        let public DEFAULT_GAME_STATE (p1Score : int, p2Score : int) =
+            GameState(
+                Ball(Vector(0.0f, 0.0f), Vector(BALL_SPEED_X * ((float32 (Random().Next(0, 1))) - 0.5f) * 2.0f, 0.0f)), //Ball
+                PlayerData(Vector(-10.0f, 0.0f), p1Score), //Player 1
+                PlayerData(Vector(10.0f, 0.0f), p2Score) //Player 2
+                )
         
 
         ///Move player one down
@@ -64,11 +71,7 @@
             printfn "Ball has left the field : restarting game"
             printfn "Player1 score: %d " player1.Score
             printfn "Player2 score: %d " player2.Score
-            GameState(
-                Ball(Vector(X_MIDDLE, Y_MIDDLE), Vector(BALL_SPEED_X * ((float32 (Random().Next(0, 1)) - 0.5f) * 2.0f), 0.0f)), //Ball
-                PlayerData(Vector(X_MIN, Y_MIDDLE), player1.Score), //Player 1
-                PlayerData(Vector(X_MAX, Y_MIDDLE), player2.Score) //Player 2
-            ) 
+            DEFAULT_GAME_STATE(player1.Score, player2.Score)
 
         /// Check if ball will be hit or missed by a player the next time it moves. 
         /// If missed - increment score and restart positions
