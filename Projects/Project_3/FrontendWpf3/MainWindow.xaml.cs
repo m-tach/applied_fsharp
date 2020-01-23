@@ -26,9 +26,32 @@ namespace FrontendWpf3
 			InitializeComponent();
 			Client.ClientStuff.ClientStateMachine stateMachine = new Client.ClientStuff.ClientStateMachine();
 			client = stateMachine.InternalClient;
+			client.GoToLobbyEvent += Client_GoToLobbyEvent;
+			client.LaunchGameEvent += Client_LaunchGameEvent;
 			client.NewGameServerFoundEvent += Client_NewGameServerFound;
-
+			client.NewGameStateEvent += Client_NewGameStateEvent;
+			client.WaitForStartGameEvent += Client_WaitForStartGameEvent;
 			stateMachine.StartStateMachine();
+		}
+
+		private void Client_WaitForStartGameEvent(object sender, int args)
+		{
+			Dispatcher.Invoke(() => this.SetScreen(ScreenGame));
+		}
+
+		private void Client_NewGameStateEvent(object sender, SharedTypes.SharedTypes.GameState args)
+		{
+			Dispatcher.Invoke(() => this.RenderGame(args));
+		}
+
+		private void Client_LaunchGameEvent(object sender, Microsoft.FSharp.Core.Unit args)
+		{
+			Dispatcher.Invoke(() => this.SetScreen(ScreenGame));
+		}
+
+		private void Client_GoToLobbyEvent(object sender, Microsoft.FSharp.Core.Unit args)
+		{
+			Dispatcher.Invoke(() => this.SetScreen(ScreenLobby));
 		}
 
 		private void Client_NewGameServerFound(object sender, SharedTypes.SharedTypes.GameServer server)
