@@ -52,6 +52,8 @@ namespace FrontendWpf3
 			
 		}
 
+		private void Refresh_Click(object sender, RoutedEventArgs e) => BroadcastForGames();
+
 		// Render the game given a state.
 		public void RenderGame(SharedTypes.SharedTypes.GameState state)
 		{

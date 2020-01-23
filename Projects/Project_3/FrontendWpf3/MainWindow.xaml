@@ -38,7 +38,7 @@
 			</StackPanel>
 			<DockPanel Height="42" LastChildFill="False" VerticalAlignment="Bottom" Margin="0,0,0,20">
 				<Button x:Name="HostGame" Content="Host game" Margin="10,6,5,6" Height="30" FontSize="14" Width="92" Click="HostGame_Click"/>
-				<Button x:Name="Refresh" Content="Refresh" Margin="5,6,10,6" Height="30" FontSize="14" Width="75"/>
+				<Button x:Name="Refresh" Content="Refresh" Margin="5,6,10,6" Height="30" FontSize="14" Width="75" Click="Refresh_Click"/>
 			</DockPanel>
 		</StackPanel>
 		<StackPanel x:Name="ScreenCreateGame" Margin="10" Visibility="Hidden">
