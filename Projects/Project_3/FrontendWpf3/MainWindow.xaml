@@ -77,15 +77,15 @@
 			</DockPanel>
 			<Canvas x:Name="GameCanvas" Height="360" Background="#F2F2F2">
 				<Line x:Name="GameCanvasPlayer1"
-					X1="20" Y1="20"
-					X2="20" Y2="80"
+					X1="25" Y1="20"
+					X2="25" Y2="80"
 					Stroke="#D44"
 					StrokeThickness="6"
 					StrokeStartLineCap="Round"
 					StrokeEndLineCap="Round" RenderTransformOrigin="0.5,0.5" />
 				<Line x:Name="GameCanvasPlayer2"
-					X1="743" Y1="20"
-					X2="743" Y2="80"
+					X1="738" Y1="20"
+					X2="738" Y2="80"
 					Stroke="#44D"
 					StrokeThickness="6"
 					StrokeStartLineCap="Round"
