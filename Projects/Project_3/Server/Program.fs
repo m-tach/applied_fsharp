@@ -8,6 +8,7 @@ open SharedTypes.SharedTypes
 open SharedTypes.Constants
 open Game
 open ComputerOpponent
+open System.Threading
 
 
 /// Automaton for the Server, hosting a ping-pong game
@@ -131,6 +132,14 @@ module ServerStuff =
             async {  
                 printfn "state: WaitFor2Inputs"; 
 
+                use cancel = new CancellationTokenSource(TimeSpan.FromSeconds(1.0))
+                Async.StartWithContinuations(
+                    async { return! ev.Receive() }, 
+                    (fun x -> ev.Post(x)), 
+                    (fun x -> Console.Error.WriteLine(x.ToString())), 
+                    (fun _ -> ev.Post(GameDone)), 
+                    cancel.Token)
+
                 let! msg = ev.Receive();
                 printfn "parsing msg: %A" msg;
                 match msg with
@@ -138,6 +147,7 @@ module ServerStuff =
                 | PlayerInput (playerId, key) -> 
                     let updatedState = GameEngine.calculateState(state.Ball, state.Player1, state.Player2, key, playerId)
                     return! this.WaitFor1Input(player1Address, player2Address, updatedState);
+                | GameDone -> return! this.Leaving(player1Address, player2Address)              
                 | _ -> return! this.WaitFor2Inputs(player1Address, player2Address, state)
 
             }
@@ -146,6 +156,14 @@ module ServerStuff =
             async {                
                 printfn "state: WaitFor1Input"; 
 
+                use cancel = new CancellationTokenSource(TimeSpan.FromSeconds(1.0))
+                Async.StartWithContinuations(
+                    async { return! ev.Receive() }, 
+                    (fun x -> ev.Post(x)), 
+                    (fun x -> Console.Error.WriteLine(x.ToString())), 
+                    (fun _ -> ev.Post(GameDone)), 
+                    cancel.Token)            
+
                 let! msg = ev.Receive();
                 printfn "parsing msg: %A" msg;
                 match msg with
@@ -153,6 +171,7 @@ module ServerStuff =
                 | PlayerInput (playerId, key) -> 
                     let updatedState = GameEngine.calculateState(state.Ball, state.Player1, state.Player2, key, playerId)
                     return! this.SendGameStateUpdate(player1Address, player2Address, updatedState);
+                | GameDone -> return! this.Leaving(player1Address, player2Address)                  
                 | _ -> return! this.WaitFor1Input(player1Address, player2Address, state);
             }
 
