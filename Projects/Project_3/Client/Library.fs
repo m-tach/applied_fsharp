@@ -11,7 +11,9 @@ open SharedTypes.Constants
 
 module ClientStuff =
 
-    type Client(stateMachineQueue:  AsyncEventQueue<Message>) =
+ ///Type Client is an intermediary between UI and State machine 
+    type Client() as this =
+        let stateMachineQueue = AsyncEventQueue<Message>()
         let newGameServerFound = new Event<GameServer>()
         let newGameState = new Event<GameState>()
         let waitForStartGame = new Event<int>()
@@ -19,6 +21,9 @@ module ClientStuff =
         let goToLobby = new Event<_>()
 
         let mutable keyInput = Up
+        do 
+            let csm = ClientStateMachine(this, stateMachineQueue);
+            csm.StartStateMachine();
 
         member public this.KeyInput = keyInput
         
@@ -62,21 +67,15 @@ module ClientStuff =
         member public this.KeyPressed(input: Input) =
             keyInput <- input                              
 
-
-
     /// Automaton for the Client, used to connect to a ping-pong game
-    type ClientStateMachine() = 
-        ///ev is a queue, which stores messages in order they have been received
-        let ev = AsyncEventQueue<Message>()
-        let cl = Client(ev);
+    /// ev is a queue, which stores messages in order they have been received
+    and ClientStateMachine(cl: Client, ev: AsyncEventQueue<Message>) = 
         let sender = NetworkSender(SERVER_PORT) 
         ///nwRec listens for incoming traffic on CLIENT_PORT and adds it to queue0
         let nwRec = NetworkReceiver(CLIENT_PORT)
         do
             nwRec.StartListening();
             nwRec.ReceiveMessageEvent.Add(fun x -> ev.Post(x))
-      
-        member public this.InternalClient = cl
 
         (*
             #############################
@@ -189,10 +188,10 @@ module ClientStuff =
                 }
 
         /// receives a key stroke and updates server
-        /// TODO: fix/clear cl.KeyInput
         member private this.SendInput(playerId : int, serverAddress: IPAddress) = 
             async {
                 do! sender.Send(PlayerInput(playerId, cl.KeyInput), serverAddress)
                 return! this.ReceiveGameState(playerId, serverAddress)
             }        
 
+   

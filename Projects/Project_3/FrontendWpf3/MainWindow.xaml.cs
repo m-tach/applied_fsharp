@@ -25,14 +25,12 @@ namespace FrontendWpf3
 		public MainWindow()
 		{
 			InitializeComponent();
-			Client.ClientStuff.ClientStateMachine stateMachine = new Client.ClientStuff.ClientStateMachine();
-			client = stateMachine.InternalClient;
+			client = new Client.ClientStuff.Client();
 			client.GoToLobbyEvent += Client_GoToLobbyEvent;
 			client.LaunchGameEvent += Client_LaunchGameEvent;
 			client.NewGameServerFoundEvent += Client_NewGameServerFound;
 			client.NewGameStateEvent += Client_NewGameStateEvent;
 			client.WaitForStartGameEvent += Client_WaitForStartGameEvent;
-			stateMachine.StartStateMachine();
 		}
 
 		private void Client_WaitForStartGameEvent(object sender, int args)
