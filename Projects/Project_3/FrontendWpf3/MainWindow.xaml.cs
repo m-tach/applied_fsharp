@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 
 using SharedTypes;
 
@@ -41,7 +42,7 @@ namespace FrontendWpf3
 
 		private void Client_NewGameStateEvent(object sender, SharedTypes.SharedTypes.GameState args)
 		{
-			Dispatcher.Invoke(() => this.RenderGame(args));
+			Dispatcher.BeginInvoke(() => this.RenderGame(args));
 		}
 
 		private void Client_LaunchGameEvent(object sender, Microsoft.FSharp.Core.Unit args)
