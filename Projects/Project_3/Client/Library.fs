@@ -53,6 +53,9 @@ module ClientStuff =
         member public this.HostGameComputer() =
             stateMachineQueue.Post(HostGame("-", true))
 
+        member public this.ExitGame() =
+            stateMachineQueue.Post(GameDone)
+
         member public this.BroadcastRequestServers() =
             stateMachineQueue.Post(BroadcastRequestServers)
             

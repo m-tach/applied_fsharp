@@ -146,7 +146,11 @@ namespace FrontendWpf3
 		}
 
 		// Exit a game screen. Brings you to the lobby.
-		private void ExitGameBtn_Click(object sender, RoutedEventArgs e) => SetScreen(ScreenLobby);
+		private void ExitGameBtn_Click(object sender, RoutedEventArgs e)
+		{
+			client.ExitGame();
+			SetScreen(ScreenLobby);
+		}
 
 		// Listen for keypresses and send those to the Client. Later we will have holding the button loop the direction.
 		private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
