@@ -27,16 +27,16 @@
         [<Literal>]
         let private BALL_RADIUS = 1.0f
         [<Literal>]
-        let private BALL_SPEED_X = -0.1f
+        let private BALL_SPEED_X = -0.07f
         [<Literal>]
-        let private BALL_SPEED_Y = 0.1f
+        let private BALL_SPEED_Y = 0.075f
 
         // Configs - player
         [<Literal>]
         /// distance player moves on one press on Up/Down key
-        let private MOVE_DISTANCE_PLAYER = 0.4f
+        let private MOVE_DISTANCE_PLAYER = 0.3f
         [<Literal>]
-        let private PADDLE_LENGHT = 3.0f
+        let private PADDLE_LENGHT = 4.0f
         [<Literal>]
         let private PADDLE_WIDTH = 1.0f
        

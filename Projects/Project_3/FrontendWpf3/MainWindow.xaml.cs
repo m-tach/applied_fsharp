@@ -90,7 +90,7 @@ namespace FrontendWpf3
 			double middleY = GameCanvas.ActualHeight / 2.0;
 			double middleX = GameCanvas.ActualWidth / 2.0;
 
-			double paddleHeight = 3.0;
+			double paddleHeight = 4.0;
 			double paddleHeightHalf = paddleHeight / 2.0;
 
 			int ballRadius = (int)(GameCanvas.ActualHeight * (1.0f / 20.0f));
