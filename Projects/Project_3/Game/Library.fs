@@ -49,14 +49,13 @@
         
 
         ///Move player one up
-        let private moveUp (player: PlayerData) : PlayerData = if player.Position.Y < Y_MAX 
-                                                               then PlayerData(Vector(player.Position.X , (player.Position.Y + MOVE_DISTANCE_PLAYER)), player.Score) 
-                                                               else player
+        let private moveUp (player: PlayerData) : PlayerData = 
+            PlayerData(Vector(player.Position.X , min (Y_MAX - (PADDLE_LENGHT / 2.0f)) (player.Position.Y + MOVE_DISTANCE_PLAYER)), player.Score)
         
         ///Move player one down
-        let private moveDown (player: PlayerData) : PlayerData = if player.Position.Y > Y_MIN 
-                                                                 then PlayerData(Vector(player.Position.X , (player.Position.Y - MOVE_DISTANCE_PLAYER)), player.Score)
-                                                                 else player
+        let private moveDown (player: PlayerData) : PlayerData = 
+            PlayerData(Vector(player.Position.X , max (Y_MIN + (PADDLE_LENGHT / 2.0f)) (player.Position.Y - MOVE_DISTANCE_PLAYER)), player.Score)
+        
         ///Increment score of player
         let private incrementScore (player: PlayerData) = PlayerData(player.Position, (player.Score + 1) )
 
@@ -73,80 +72,41 @@
 
         /// Check if ball will be hit or missed by a player the next time it moves. 
         /// If missed - increment score and restart positions
-        let private checkBounds (ball':Ball, player1:PlayerData, player2:PlayerData) : GameState =
-            let rx = ball'.BallPosition.X
-            let ry = ball'.BallPosition.Y
-            let vy = ball'.BallDirection.Y//direction y
-
-            if rx + ball'.BallDirection.X < (X_MIN + BALL_RADIUS) then //is ball at left edge
-                if (((ry + vy) > player1.Position.Y + PADDLE_LENGHT/2.0f ) ||             
-                    ((ry + vy) < player1.Position.Y - PADDLE_LENGHT/2.0f )) 
-                then 
-                    printfn "Player1 missed ball"
-                    restartGame (player1, incrementScore player2)
-                else 
-                    printfn "Player1 hit ball"
-                    GameState(ball',player1, player2)    
-
-            else if rx + ball'.BallDirection.X > (X_MAX - BALL_RADIUS) then //is ball at right edge
-                if (((ry + vy) > player2.Position.Y + PADDLE_LENGHT/2.0f ) ||             //is ball hitting player1
-                    ((ry + vy) < player2.Position.Y - PADDLE_LENGHT/2.0f )) 
-                then 
-                    printfn "Player2 missed ball"
-                    restartGame (incrementScore player1, player2)
-                else 
-                    printfn "Player2 hit ball"
-                    GameState(ball', player1, player2)
-
-            else
-                GameState(ball', player1, player2)                            
+        let private checkBounds (ball:Ball, player1:PlayerData, player2:PlayerData) : GameState =
+            match ball.BallPosition.X with
+            | bx when bx < X_MIN -> restartGame (player1, incrementScore player2)
+            | bx when bx > X_MAX -> restartGame (incrementScore player1, player2)
+            | _ -> GameState(ball,player1, player2)                        
 
         ///Move ball; change direction if hitting top edge; bottom edge; player paddle
-        let private moveBall (ball':Ball, player1:PlayerData, player2:PlayerData) : Ball = 
-            let rx = ball'.BallPosition.X
-            let ry = ball'.BallPosition.Y
+        let private moveBall (ball:Ball, player1:PlayerData, player2:PlayerData) : Ball = 
+            let rx = ball.BallPosition.X
+            let ry = ball.BallPosition.Y
             
             // change direction when hitting top / bottom
-            let vy = if (ry + ball'.BallDirection.Y + BALL_RADIUS > Y_MAX) then -(ball'.BallDirection.Y)
-                     elif (ry + ball'.BallDirection.Y + BALL_RADIUS < Y_MIN) then -(ball'.BallDirection.Y)
-                     else ball'.BallDirection.Y
-                                 
-            let vx = if rx + ball'.BallDirection.X < (X_MIN + BALL_RADIUS) then //is ball at left edge
-                        if (((ry + vy) < player1.Position.Y + PADDLE_LENGHT/2.0f) ||             //is ball hitting player1
-                            ((ry + vy) > player1.Position.Y - PADDLE_LENGHT/2.0f)) 
-                            then -ball'.BallDirection.X
-                        else 
-                            1.0f                                                
-                     elif rx +  ball'.BallDirection.X > (X_MAX - BALL_RADIUS) then //is ball at right edge
-                        if (((ry + vy) < player2.Position.Y + PADDLE_LENGHT/2.0f) ||             //is ball hitting player2
-                            ((ry + vy) > player2.Position.Y - PADDLE_LENGHT/2.0f)) 
-                            then -ball'.BallDirection.X
-                        else
-                            1.0f                                               
-                     else
-                        ball'.BallDirection.X
+            let vy = if (ry + ball.BallDirection.Y + BALL_RADIUS > Y_MAX) ||
+                        (ry + ball.BallDirection.Y - BALL_RADIUS < Y_MIN)
+                     then -ball.BallDirection.Y
+                     else  ball.BallDirection.Y
+
+            let player = if ball.BallDirection.X < 0.0f then player1 else player2
+            let willBallBeOutsidePlayArea = 
+                rx + ball.BallDirection.X < (X_MIN + BALL_RADIUS) ||
+                rx + ball.BallDirection.X > (X_MAX - BALL_RADIUS)
+            let ballWithinPaddleYBound =
+                (ry + vy < player.Position.Y + PADDLE_LENGHT/2.0f) &&
+                (ry + vy > player.Position.Y - PADDLE_LENGHT/2.0f)                     
+            let vx = if willBallBeOutsidePlayArea && ballWithinPaddleYBound 
+                     then -ball.BallDirection.X
+                     else  ball.BallDirection.X 
             Ball(Vector(rx + vx, ry + vy), Vector(vx, vy))
 
-        /// Derive new state from old state + key press command
-        /// Flow:
-        /// 1. Move player
-        /// 2. Check if ball's current trajectory will be missed by the paddle in this turn
-        ///     - if yes -> restart game
-        ///     - if no -> move ball 
         let public calculateState (ball:Ball, player1:PlayerData, player2:PlayerData, command:Input, player: int) : GameState =
-            let (p1, p2 ) = if (player = 1) then 
-                                match command with
-                                | Up -> (moveUp player1, player2)
-                                | Down -> (moveDown  player1, player2)
-                                | i -> failwith (String.Format("unexpected input: {0}", i))
-                            elif (player = 2) then 
-                                match command with
-                                     | Up -> (player1, moveUp player2)
-                                     | Down -> (player1, moveDown  player2)   
-                                     | i -> failwith (String.Format("unexpected input: {0}", i))           
-                            else
-                                failwith (String.Format("unexpected player: {0}", player))    
-            let gState = checkBounds(ball, p1, p2)
-            let newBall = moveBall (gState.Ball, gState.Player1, gState.Player2)
-
-            GameState(newBall, gState.Player1, gState.Player2)
+            let (p1, p2 ) = match (player, command) with
+                            | (1, Up)   -> (moveUp    player1, player2)
+                            | (1, Down) -> (moveDown  player1, player2)
+                            | (2, Up)   -> (player1, moveUp    player2)
+                            | (2, Down) -> (player1, moveDown  player2)   
+                            | (p, i) -> failwith (String.Format("Player {0} with input {1} is invalid to update the state", p, i))
+            let newBall = moveBall (ball, p1, p2)
+            checkBounds(newBall, p1, p2)
